@@ -1,15 +1,14 @@
 package main
 
 import (
-	"net"
-	"fmt"
-	"encoding/json"
+	cp "../src/Client_properties"
+	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha512"
-	"crypto/rand"
+	"encoding/json"
+	"fmt"
+	"net"
 	"strings"
-	cp "../src/Client_properties"
-
 )
 
 // type  client_listen struct {
@@ -31,7 +30,7 @@ func getting_peers_from_server(c net.Conn, peers *[]string, msg *cp.Client_liste
 }
 
 func sending_to_server(name []byte, query []byte, conn net.Conn) {
-	object_to_send :=  cp.Client_Query{Name: name, Query: query}
+	object_to_send := cp.Client_Query{Name: name, Query: query}
 	encoder := json.NewEncoder(conn)
 	encoder.Encode(object_to_send)
 }
@@ -68,7 +67,7 @@ func DecryptWithPrivateKey(ciphertext []byte, priv *rsa.PrivateKey) []byte {
 
 func main() {
 
-	var active_client  cp.Client_listen
+	var active_client cp.Client_listen
 
 	peers := []string{}
 
