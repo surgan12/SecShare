@@ -9,30 +9,29 @@ import (
 	"fmt"
 	"net"
 	"strings"
+	// "sync"
+	"os"
 )
 
-// type  client_listen struct {
-// 	List    []string
-// 	Peer_IP map[string]string
-// }
-
-// type Client_Query struct {
-// 	Name  []byte
-// 	Query []byte
-// }
+//initializing a wait group
+// var wg sync.WaitGroup
 
 func getting_peers_from_server(c net.Conn, peers *[]string, msg *cp.Client_listen) {
 	for {
 		d := json.NewDecoder(c)
 		d.Decode(msg)
-		// fmt.Print(msg)
+		fmt.Println("Current active peers are -> ")
+		fmt.Println(msg)
 	}
 }
 
-func sending_to_server(name []byte, query []byte, conn net.Conn) {
+func sending_to_server(name []byte, query []byte, conn net.Conn, query_type string) {
 	object_to_send := cp.Client_Query{Name: name, Query: query}
 	encoder := json.NewEncoder(conn)
 	encoder.Encode(object_to_send)
+	if query_type == "quit" {
+		conn.Close()
+	}
 }
 
 // GenerateKeyPair generates a new key pair
@@ -41,6 +40,7 @@ func GenerateKeyPair() (*rsa.PrivateKey, *rsa.PublicKey) {
 
 	return privkey, &privkey.PublicKey
 }
+
 func PerformHandshake(conn net.Conn, pub *rsa.PublicKey) *rsa.PublicKey {
 	encoder := json.NewEncoder(conn)
 	encoder.Encode(pub)
@@ -92,7 +92,7 @@ func main() {
 			query = "login"
 			name_byte := EncryptWithPublicKey([]byte(name), ServerKey)
 			query_byte := EncryptWithPublicKey([]byte(query), ServerKey)
-			go sending_to_server(name_byte, query_byte, conn)
+			go sending_to_server(name_byte, query_byte, conn, query)
 			ln2, _ := net.Listen("tcp", strings.TrimLeft(active_client.Peer_IP[name], ":"))
 			go cp.ListenOnSelfPort(ln2)
 			continue
@@ -106,13 +106,14 @@ func main() {
 				if query == "quit" {
 					name_byte := EncryptWithPublicKey([]byte(name), ServerKey)
 					query_byte := EncryptWithPublicKey([]byte(query), ServerKey)
-					go sending_to_server(name_byte, query_byte, conn)
-					continue
+					sending_to_server(name_byte, query_byte, conn, query)
+					os.Exit(2)
 				} else if query == "receive_file" {
 					cp.Request_some_file(active_client, name)
 				}
 			}
-			go getting_peers_from_server(conn, &peers, &active_client)
+		
 		}
+		go getting_peers_from_server(conn, &peers, &active_client)
 	}
 }
