@@ -8,6 +8,7 @@ import (
 	"crypto/sha512"
 	"crypto/rand"
 	"strings"
+	client_listen "../src/client_listen"
 )
 
 type client_list struct {
@@ -64,16 +65,6 @@ func DecryptWithPrivateKey(ciphertext []byte, priv *rsa.PrivateKey) []byte {
 	return plaintext
 }
 
-func listenOnSelfPort(ln net.Listener) {
-	for {
-		connection, err := ln.Accept()
-		if err != nil {
-			panic(err)
-		}
-		fmt.Print(connection)
-	}
-}
-
 func main() {
 
 	var active_client client_list
@@ -103,7 +94,7 @@ func main() {
 			query_byte := EncryptWithPublicKey([]byte(query), ServerKey)
 			go sending_to_server(name_byte, query_byte, conn)
 			ln2, _ := net.Listen("tcp", strings.TrimLeft(active_client.Peer_IP[name], ":"))
-			go listenOnSelfPort(ln2)
+			go client_listen.ListenOnSelfPort(ln2)
 			continue
 
 		} else {
@@ -118,9 +109,7 @@ func main() {
 					go sending_to_server(name_byte, query_byte, conn)
 					continue
 				} else if query == "receive_file" {
-					var sender_name string
-					fmt.Println("Whom do you want to receive the file from ? : ")
-					fmt.Scanln(&sender_name)
+					client_listen.Request_some_file(active_client, name)
 				}
 			}
 			go getting_peers_from_server(conn, &peers, &active_client)
