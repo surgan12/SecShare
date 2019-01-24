@@ -121,13 +121,17 @@ func maintain_connection(conn net.Conn, Peer_Keys map[net.Conn]*rsa.PublicKey,
 		decoder.Decode(&client_query)
 		Name := string(DecryptWithPrivateKey(client_query.Name, pri))
 		Query := string(DecryptWithPrivateKey(client_query.Query, pri))
-		fmt.Println("name and query are ", Name, Query)
+		// fmt.Println("name and query are ", Name, Query)
 		job := ClientJob{name: Name, query: Query, conn: conn}
 		mutex.Lock()
 		jobs = append(jobs, job)
 		fmt.Println("appended job is ", job)
 		mutex.Unlock()
+		if Query == "quit"{
+			break
+		}
 	}
+	conn = nil
 }
 
 // GenerateKeyPair generates a new key pair
