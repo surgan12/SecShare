@@ -8,10 +8,10 @@ import (
 	"crypto/sha512"
 	"crypto/rand"
 	"strings"
-	client_listen "../src/client_listen"
+	// client_listen "../src/client_listen"
 )
 
-type client_list struct {
+type  client_listen struct {
 	List    []string
 	Peer_IP map[string]string
 }
@@ -21,7 +21,7 @@ type Client_Query struct {
 	Query []byte
 }
 
-func getting_peers_from_server(c net.Conn, peers *[]string, msg *client_list) {
+func getting_peers_from_server(c net.Conn, peers *[]string, msg * client_listen) {
 	for {
 		d := json.NewDecoder(c)
 		d.Decode(msg)
@@ -67,7 +67,7 @@ func DecryptWithPrivateKey(ciphertext []byte, priv *rsa.PrivateKey) []byte {
 
 func main() {
 
-	var active_client client_list
+	var active_client  client_listen
 
 	peers := []string{}
 
@@ -94,7 +94,7 @@ func main() {
 			query_byte := EncryptWithPublicKey([]byte(query), ServerKey)
 			go sending_to_server(name_byte, query_byte, conn)
 			ln2, _ := net.Listen("tcp", strings.TrimLeft(active_client.Peer_IP[name], ":"))
-			go client_listen.ListenOnSelfPort(ln2)
+			go ListenOnSelfPort(ln2)
 			continue
 
 		} else {
@@ -109,7 +109,7 @@ func main() {
 					go sending_to_server(name_byte, query_byte, conn)
 					continue
 				} else if query == "receive_file" {
-					client_listen.Request_some_file(active_client, name)
+					Request_some_file(active_client, name)
 				}
 			}
 			go getting_peers_from_server(conn, &peers, &active_client)

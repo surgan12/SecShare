@@ -1,15 +1,12 @@
-package client_listen
+package main
 
 import (
 	"fmt"
 	"net"
 	"encoding/json"
+	// client "../../clients"
 )
 
-type Client_list struct {
-	List    []string
-	Peer_IP map[string]string
-}
 
 type FileRequest struct {
 	query string
@@ -18,7 +15,7 @@ type FileRequest struct {
 	requested_file string
 }
 
-func Request_some_file(active_client Client_list, name string) {
+func Request_some_file(active_client client_listen, name string) {
 	var sender_name string	// is the person who will send the file
 	fmt.Println("Whom do you want to receive the file from ? : ")
 	fmt.Scanln(&sender_name)
