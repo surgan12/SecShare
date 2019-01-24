@@ -26,8 +26,9 @@ func Request_some_file(active_client Client_listen, name string) {
 		my_name: name, requested_file: "any song"}
 
 	connection, err := net.Dial("tcp", active_client.Peer_IP[sender_name])
-	if err != nil {
-		panic(err)
+	
+	for err != nil {
+		fmt.Println("Please enter a valid person name - ")
 	}
 
 	encoder := json.NewEncoder(connection)
