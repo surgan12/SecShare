@@ -1,25 +1,27 @@
 package main
 
-import "net"
-import "fmt"
-import "encoding/json"
-import "crypto/rsa"
-import "crypto/sha512"
-import "crypto/rand"
+import (
+	cp "../src/Client_properties"
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/sha512"
+	"encoding/json"
+	"fmt"
+	"net"
+	"strings"
+)
 
-// import "os"
+// type  client_listen struct {
+// 	List    []string
+// 	Peer_IP map[string]string
+// }
 
-type client_list struct {
-	List    []string
-	Peer_IP map[string]string
-}
+// type Client_Query struct {
+// 	Name  []byte
+// 	Query []byte
+// }
 
-type Client_Query struct {
-	Name  []byte
-	Query []byte
-}
-
-func getting_peers_from_server(c net.Conn, peers *[]string, msg *client_list) {
+func getting_peers_from_server(c net.Conn, peers *[]string, msg *cp.Client_listen) {
 	for {
 		d := json.NewDecoder(c)
 		d.Decode(msg)
@@ -28,7 +30,7 @@ func getting_peers_from_server(c net.Conn, peers *[]string, msg *client_list) {
 }
 
 func sending_to_server(name []byte, query []byte, conn net.Conn) {
-	object_to_send := Client_Query{Name: name, Query: query}
+	object_to_send := cp.Client_Query{Name: name, Query: query}
 	encoder := json.NewEncoder(conn)
 	encoder.Encode(object_to_send)
 }
@@ -65,7 +67,7 @@ func DecryptWithPrivateKey(ciphertext []byte, priv *rsa.PrivateKey) []byte {
 
 func main() {
 
-	var active_client client_list
+	var active_client cp.Client_listen
 
 	peers := []string{}
 
@@ -80,7 +82,9 @@ func main() {
 
 	ServerKey := PerformHandshake(conn, PublicKey)
 	// fmt.Print(ServerKey.N)
+	fmt.Println("The follwing queries are supported - quit, receive_file - <sender_name>")
 	for {
+
 		if flag == false {
 			fmt.Print("Enter your credentials : ")
 			fmt.Scanln(&name)
@@ -89,19 +93,26 @@ func main() {
 			name_byte := EncryptWithPublicKey([]byte(name), ServerKey)
 			query_byte := EncryptWithPublicKey([]byte(query), ServerKey)
 			go sending_to_server(name_byte, query_byte, conn)
+			ln2, _ := net.Listen("tcp", strings.TrimLeft(active_client.Peer_IP[name], ":"))
+			go cp.ListenOnSelfPort(ln2)
 			continue
+
 		} else {
+
 			if flag == true {
-				fmt.Print("Do you want to quit : ")
+				fmt.Print("What do you want to do? : ")
 				fmt.Scanln(&query)
 				flag = false
-				name_byte := EncryptWithPublicKey([]byte(name), ServerKey)
-				query_byte := EncryptWithPublicKey([]byte(query), ServerKey)
-				go sending_to_server(name_byte, query_byte, conn)
-				continue
+				if query == "quit" {
+					name_byte := EncryptWithPublicKey([]byte(name), ServerKey)
+					query_byte := EncryptWithPublicKey([]byte(query), ServerKey)
+					go sending_to_server(name_byte, query_byte, conn)
+					continue
+				} else if query == "receive_file" {
+					cp.Request_some_file(active_client, name)
+				}
 			}
 			go getting_peers_from_server(conn, &peers, &active_client)
-
 		}
 	}
 }

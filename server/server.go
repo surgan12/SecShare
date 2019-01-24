@@ -73,28 +73,33 @@ func perform_jobs() { // storing each job in a queue in the server and executing
 func handler(c net.Conn, name string, query string) { // handling each connection
 
 	if query == "login" {
+
 		remote_addr := c.RemoteAddr().String()
 		new_client := client{address: remote_addr, name: name, connection_server: c} //making struct
-		cli.Peer_IP[query] = remote_addr                                             //creating the map
+		cli.Peer_IP[name] = remote_addr                                             //creating the map
 		clients = append(clients, new_client)                                        //append
 		cli.List = append(cli.List, name)
-		fmt.Print(cli)
 		go ping_all(clients, cli)
-		// fmt.Print(query)
-	} else if query == "yes" {
-		cli.Peer_IP[query] = ""
+
+	} else if query == "quit" {
+		
+		delete(cli.Peer_IP, name)
 		var j int
 		for i := 0; i < len(cli.List); i++ {
-			if cli.List[i] == query {
+			if cli.List[i] == name {
 				j = i
 				break
 			}
 		}
 		cli.List = append(cli.List[:j], cli.List[j+1:]...)
-		clients = remove_from_client(clients, query)
-		fmt.Print(cli)
+		clients = remove_from_client(clients, name)
 	}
+
+	fmt.Print("Active clients are -> ", cli.List, "\n")
+	fmt.Print("Active clients IPs are -> ", cli.Peer_IP, "\n")
+
 }
+
 func maintain_connection(conn net.Conn, Peer_Keys map[net.Conn]*rsa.PublicKey, pub *rsa.PublicKey, pri *rsa.PrivateKey) { //maintaining the connection between client and server
 
 	//performing handshake
