@@ -62,9 +62,11 @@ func perform_jobs() { // storing each job in a queue in the server and executing
 	for {
 		if len(jobs) != 0 {
 			mutex.Lock()
+			// fmt.Println("number of jobs currently are ", len(jobs))
 			get_job := jobs[0]
 			jobs = jobs[1:]
 			mutex.Unlock()
+			// fmt.Println("number of jobs currently are ", len(jobs))
 			handler(get_job.conn, get_job.name, get_job.query)
 		}
 	}
@@ -100,7 +102,8 @@ func handler(c net.Conn, name string, query string) { // handling each connectio
 
 }
 
-func maintain_connection(conn net.Conn, Peer_Keys map[net.Conn]*rsa.PublicKey, pub *rsa.PublicKey, pri *rsa.PrivateKey) { //maintaining the connection between client and server
+func maintain_connection(conn net.Conn, Peer_Keys map[net.Conn]*rsa.PublicKey, 
+			pub *rsa.PublicKey, pri *rsa.PrivateKey) { //maintaining the connection between client and server
 
 	//performing handshake
 	peer_key := &rsa.PublicKey{}
@@ -118,10 +121,11 @@ func maintain_connection(conn net.Conn, Peer_Keys map[net.Conn]*rsa.PublicKey, p
 		decoder.Decode(&client_query)
 		Name := string(DecryptWithPrivateKey(client_query.Name, pri))
 		Query := string(DecryptWithPrivateKey(client_query.Query, pri))
-		// fmt.Print(Name, Query)
+		fmt.Println("name and query are ", Name, Query)
 		job := ClientJob{name: Name, query: Query, conn: conn}
 		mutex.Lock()
 		jobs = append(jobs, job)
+		fmt.Println("appended job is ", job)
 		mutex.Unlock()
 	}
 }
