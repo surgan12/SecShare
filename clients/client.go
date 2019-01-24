@@ -1,13 +1,14 @@
 package main
 
-import "net"
-import "fmt"
-import "encoding/json"
-import "crypto/rsa"
-import "crypto/sha512"
-import "crypto/rand"
-
-// import "os"
+import (
+	"net"
+	"fmt"
+	"encoding/json"
+	"crypto/rsa"
+	"crypto/sha512"
+	"crypto/rand"
+	"strings"
+)
 
 type client_list struct {
 	List    []string
@@ -63,6 +64,16 @@ func DecryptWithPrivateKey(ciphertext []byte, priv *rsa.PrivateKey) []byte {
 	return plaintext
 }
 
+func listenOnSelfPort(ln net.Listener) {
+	for {
+		connection, err := ln.Accept()
+		if err != nil {
+			panic(err)
+		}
+		fmt.Print(connection)
+	}
+}
+
 func main() {
 
 	var active_client client_list
@@ -80,7 +91,9 @@ func main() {
 
 	ServerKey := PerformHandshake(conn, PublicKey)
 	// fmt.Print(ServerKey.N)
+	fmt.Println("The follwing queries are supported - quit, receive_file - <sender_name>")
 	for {
+
 		if flag == false {
 			fmt.Print("Enter your credentials : ")
 			fmt.Scanln(&name)
@@ -89,19 +102,28 @@ func main() {
 			name_byte := EncryptWithPublicKey([]byte(name), ServerKey)
 			query_byte := EncryptWithPublicKey([]byte(query), ServerKey)
 			go sending_to_server(name_byte, query_byte, conn)
+			ln2, _ := net.Listen("tcp", strings.TrimLeft(active_client.Peer_IP[name], ":"))
+			go listenOnSelfPort(ln2)
 			continue
+
 		} else {
+
 			if flag == true {
-				fmt.Print("Do you want to quit : ")
+				fmt.Print("What do you want to do? : ")
 				fmt.Scanln(&query)
 				flag = false
-				name_byte := EncryptWithPublicKey([]byte(name), ServerKey)
-				query_byte := EncryptWithPublicKey([]byte(query), ServerKey)
-				go sending_to_server(name_byte, query_byte, conn)
-				continue
+				if query == "quit" {
+					name_byte := EncryptWithPublicKey([]byte(name), ServerKey)
+					query_byte := EncryptWithPublicKey([]byte(query), ServerKey)
+					go sending_to_server(name_byte, query_byte, conn)
+					continue
+				} else if query == "receive_file" {
+					var sender_name string
+					fmt.Println("Whom do you want to receive the file from ? : ")
+					fmt.Scanln(&sender_name)
+				}
 			}
 			go getting_peers_from_server(conn, &peers, &active_client)
-
 		}
 	}
 }
