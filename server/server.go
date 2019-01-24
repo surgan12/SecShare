@@ -10,8 +10,7 @@ import "crypto/rand"
 
 /* Add relevant Print statements where confused , and comment print statements while pushing */
 
-var mutex = &sync.Mutex{}  // Lock and unlock (Mutex)
-
+var mutex = &sync.Mutex{} // Lock and unlock (Mutex)
 
 type client struct {
 	address           string
@@ -32,14 +31,13 @@ type ClientJob struct {
 	name  string
 	query string
 	conn  net.Conn
-
 }
 
 var jobs []ClientJob
 
 type Client_Query struct {
-	Name  [] byte
-	Query [] byte
+	Name  []byte
+	Query []byte
 }
 
 func remove_from_client(clients []client, name string) []client {
@@ -74,17 +72,16 @@ func perform_jobs() { // storing each job in a queue in the server and executing
 
 func handler(c net.Conn, name string, query string) { // handling each connection
 
-
-	if name == "login" {
+	if query == "login" {
 		remote_addr := c.RemoteAddr().String()
-		new_client := client{address: remote_addr, name: query, connection_server: c} //making struct
-		cli.Peer_IP[query] = remote_addr                                              //creating the map
-		clients = append(clients, new_client)                                         //append
-		cli.List = append(cli.List, query)
+		new_client := client{address: remote_addr, name: name, connection_server: c} //making struct
+		cli.Peer_IP[query] = remote_addr                                             //creating the map
+		clients = append(clients, new_client)                                        //append
+		cli.List = append(cli.List, name)
+		fmt.Print(cli)
 		go ping_all(clients, cli)
 		// fmt.Print(query)
-	} else if name == "quit" {
-		fmt.Print(cli.List)
+	} else if query == "yes" {
 		cli.Peer_IP[query] = ""
 		var j int
 		for i := 0; i < len(cli.List); i++ {
@@ -95,6 +92,7 @@ func handler(c net.Conn, name string, query string) { // handling each connectio
 		}
 		cli.List = append(cli.List[:j], cli.List[j+1:]...)
 		clients = remove_from_client(clients, query)
+		fmt.Print(cli)
 	}
 }
 func maintain_connection(conn net.Conn, Peer_Keys map[net.Conn]*rsa.PublicKey, pub *rsa.PublicKey, pri *rsa.PrivateKey) { //maintaining the connection between client and server
@@ -129,11 +127,12 @@ func GenerateKeyPair() (*rsa.PrivateKey, *rsa.PublicKey) {
 
 	return privkey, &privkey.PublicKey
 }
+
 // EncryptWithPublicKey encrypts data with public key
 func EncryptWithPublicKey(msg []byte, pub *rsa.PublicKey) []byte {
 	hash := sha512.New()
 	ciphertext, _ := rsa.EncryptOAEP(hash, rand.Reader, pub, msg, nil)
-	
+
 	return ciphertext
 }
 
@@ -144,14 +143,13 @@ func DecryptWithPrivateKey(ciphertext []byte, priv *rsa.PrivateKey) []byte {
 	return plaintext
 }
 
-
 func main() {
 
 	ln, _ := net.Listen("tcp", ":8081") // making a server
 	fmt.Println("server started on port 8081")
 
 	PrivateKey, PublicKey := GenerateKeyPair()
-	
+
 	Peer_Keys := make(map[net.Conn]*rsa.PublicKey)
 
 	cli = client_list{List: []string{}, Peer_IP: make(map[string]string)}
