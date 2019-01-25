@@ -1,7 +1,7 @@
 package main
 
 import (
-	cp "../src/Client_properties"
+	cp "./clientProperties"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha512"
@@ -16,7 +16,7 @@ import (
 //initializing a wait group
 // var wg sync.WaitGroup
 
-func getting_peers_from_server(c net.Conn, peers *[]string, msg *cp.Client_listen) {
+func gettingPeersFromServer(c net.Conn, peers *[]string, msg *cp.ClientListen) {
 	for {
 		d := json.NewDecoder(c)
 		d.Decode(msg)
@@ -25,11 +25,11 @@ func getting_peers_from_server(c net.Conn, peers *[]string, msg *cp.Client_liste
 	}
 }
 
-func sending_to_server(name []byte, query []byte, conn net.Conn, query_type string) {
-	object_to_send := cp.Client_Query{Name: name, Query: query}
+func sendingToServer(name []byte, query []byte, conn net.Conn, queryType string) {
+	objectToSend := cp.ClientQuery{Name: name, Query: query}
 	encoder := json.NewEncoder(conn)
-	encoder.Encode(object_to_send)
-	if query_type == "quit" {
+	encoder.Encode(objectToSend)
+	if queryType == "quit" {
 		conn.Close()
 	}
 }
@@ -40,14 +40,14 @@ func GenerateKeyPair() (*rsa.PrivateKey, *rsa.PublicKey) {
 
 	return privkey, &privkey.PublicKey
 }
-
+// PerformHandshake performs handshake with encryption done
 func PerformHandshake(conn net.Conn, pub *rsa.PublicKey) *rsa.PublicKey {
 	encoder := json.NewEncoder(conn)
 	encoder.Encode(pub)
-	server_keys := &rsa.PublicKey{}
+	serverkeys := &rsa.PublicKey{}
 	decoder := json.NewDecoder(conn)
-	decoder.Decode(&server_keys)
-	return server_keys
+	decoder.Decode(&serverkeys)
+	return serverkeys
 }
 
 // EncryptWithPublicKey encrypts data with public key
@@ -67,14 +67,14 @@ func DecryptWithPrivateKey(ciphertext []byte, priv *rsa.PrivateKey) []byte {
 
 func main() {
 
-	var active_client cp.Client_listen
+	var activeClient cp.ClientListen
 
 	peers := []string{}
 
 	// var myname string
 	var name string
 	var query string
-	var flag bool = false
+	var flag = false
 
 	_, PublicKey := GenerateKeyPair()
 
@@ -90,10 +90,10 @@ func main() {
 			fmt.Scanln(&name)
 			flag = true
 			query = "login"
-			name_byte := EncryptWithPublicKey([]byte(name), ServerKey)
-			query_byte := EncryptWithPublicKey([]byte(query), ServerKey)
-			go sending_to_server(name_byte, query_byte, conn, query)
-			ln2, _ := net.Listen("tcp", strings.TrimLeft(active_client.Peer_IP[name], ":"))
+			nameByte := EncryptWithPublicKey([]byte(name), ServerKey)
+			queryByte := EncryptWithPublicKey([]byte(query), ServerKey)
+			go sendingToServer(nameByte, queryByte, conn, query)
+			ln2, _ := net.Listen("tcp", strings.TrimLeft(activeClient.PeerIP[name], ":"))
 			go cp.ListenOnSelfPort(ln2)
 			continue
 
@@ -104,16 +104,16 @@ func main() {
 				fmt.Scanln(&query)
 				flag = false
 				if query == "quit" {
-					name_byte := EncryptWithPublicKey([]byte(name), ServerKey)
-					query_byte := EncryptWithPublicKey([]byte(query), ServerKey)
-					sending_to_server(name_byte, query_byte, conn, query)
+					nameByte := EncryptWithPublicKey([]byte(name), ServerKey)
+					queryByte := EncryptWithPublicKey([]byte(query), ServerKey)
+					sendingToServer(nameByte, queryByte, conn, query)
 					os.Exit(2)
 				} else if query == "receive_file" {
-					cp.Request_some_file(active_client, name)
+					cp.RequestSomeFile(activeClient, name)
 				}
 			}
 		
 		}
-		go getting_peers_from_server(conn, &peers, &active_client)
+		go gettingPeersFromServer(conn, &peers, &activeClient)
 	}
 }
