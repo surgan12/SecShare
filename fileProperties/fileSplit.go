@@ -14,7 +14,7 @@ var wg sync.WaitGroup
 
 func splitFile(partSize uint64, filesize int64, i uint64, fileContents []byte) {
 	fmt.Println("Writing part ", i, " from file")
-	currentSize := int(math.Min(float64(partSize), float64(int64(filesize) - int64(i*partSize))))
+	currentSize := int(math.Min(float64(partSize), float64((filesize) - int64(i*partSize))))
 	currentBuffer := make([]byte, currentSize)
 
 	for j := int(i*partSize); j < int(i*partSize) + int(currentSize); j++ {

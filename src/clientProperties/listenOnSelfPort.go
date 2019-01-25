@@ -1,16 +1,16 @@
-package Client_properties
+package clientProperties
 
 import (
 	"fmt"
 	"net"
 )
 
-type Client_listen struct {
+type ClientListen struct {
 	List    []string
-	Peer_IP map[string]string
+	PeerIP map[string]string
 }
 
-type Client_Query struct {
+type ClientQuery struct {
 	Name  []byte
 	Query []byte
 }
