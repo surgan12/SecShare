@@ -10,7 +10,7 @@ import (
 	"sync"
 )
 
-var wg sync.WaitGroup
+var wgSplit sync.WaitGroup
 
 func splitFile(partSize uint64, filesize int64, i uint64, fileContents []byte) {
 	fmt.Println("Writing part ", i, " from file")
@@ -23,7 +23,7 @@ func splitFile(partSize uint64, filesize int64, i uint64, fileContents []byte) {
 
 	currentfilename := "part_" + strconv.FormatUint(i, 10)
 
-	defer wg.Done()
+	defer wgSplit.Done()
 
 	_, err := os.Create(currentfilename)
 
@@ -61,11 +61,11 @@ func main() {
 	startTime := time.Now()
 	
 	for i := uint64(0); i < 10; i++ {
-		wg.Add(1)
+		wgSplit.Add(1)
 		go splitFile(partSize, filesize, i, fileContents)
 	}
 
-	wg.Wait()	// waiting for all routines to finish
+	wgSplit.Wait()	// waiting for all routines to finish
 	endTime := time.Now()
 	fmt.Println("Time taken to write the file ",endTime.Sub(startTime))
 
