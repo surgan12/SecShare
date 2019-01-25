@@ -1,7 +1,7 @@
 package main
 
 import (
-	cp "../src/clientProperties"
+	cp "./clientProperties"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha512"
