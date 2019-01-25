@@ -7,7 +7,7 @@ import (
 	// client "../../clients"
 )
 
-//struct for storing the information about requester
+// FileRequest stores the queries and information about requester
 type FileRequest struct {
 	query          string
 	myAddress     string
@@ -15,7 +15,7 @@ type FileRequest struct {
 	requestedFile string
 }
 
-//function to request files from peers among the network
+// RequestSomeFile request files from peers on network
 func RequestSomeFile(activeClient ClientListen, name string) {
 	var senderName string // is the person who will send the file
 	fmt.Println("Whom do you want to receive the file from ? : ")

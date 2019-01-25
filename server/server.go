@@ -28,7 +28,7 @@ type clientList struct {
 
 var cli clientList
 
-//struct for client jobs
+// ClientJob stores the names, jobs and connection 
 type ClientJob struct {
 	name  string
 	query string
@@ -37,7 +37,7 @@ type ClientJob struct {
 
 var jobs []ClientJob
 
-//struct for client queries
+// ClientQuery stores the name and query for client
 type ClientQuery struct {
 	Name  []byte
 	Query []byte
