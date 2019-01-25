@@ -1,7 +1,8 @@
 package main
 
 import (
-	cp "./clientProperties"
+
+	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/clients/clientProperties"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha512"

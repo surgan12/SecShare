@@ -9,10 +9,10 @@ import (
 	"sync"
 )
 
-var wg sync.WaitGroup
+var wgConcat sync.WaitGroup
 
 func concatFiles(i int, allFiles []byte) {
-	defer wg.Done()
+	defer wgConcat.Done()
 
 	filename := "part_" + strconv.Itoa(i)
 
@@ -44,10 +44,10 @@ func main() {
 	
 	startTme := time.Now()
 	for i := int(0); i < 10; i++ {
-		wg.Add(1)
+		wgConcat.Add(1)
 		go concatFiles(i, allFiles)
 	}
-	wg.Wait()
+	wgConcat.Wait()
 	endTime := time.Now()
 	fmt.Println("Time to concatenate files is ", endTime.Sub(startTme))
 
