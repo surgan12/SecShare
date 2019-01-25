@@ -40,7 +40,7 @@ func GenerateKeyPair() (*rsa.PrivateKey, *rsa.PublicKey) {
 
 	return privkey, &privkey.PublicKey
 }
-
+//function to perform handshake with encryption done
 func PerformHandshake(conn net.Conn, pub *rsa.PublicKey) *rsa.PublicKey {
 	encoder := json.NewEncoder(conn)
 	encoder.Encode(pub)

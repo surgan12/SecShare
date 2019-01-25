@@ -39,7 +39,7 @@ func main() {
 	}
 
 	fileInfo, _ := file.Stat()
-	var size int64 = fileInfo.Size()
+	var size = fileInfo.Size()
 	allFiles := make([]byte, size)
 	
 	startTme := time.Now()

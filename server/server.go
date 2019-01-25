@@ -28,6 +28,7 @@ type clientList struct {
 
 var cli clientList
 
+//struct for client jobs
 type ClientJob struct {
 	name  string
 	query string
@@ -36,19 +37,20 @@ type ClientJob struct {
 
 var jobs []ClientJob
 
+//struct for client queries
 type ClientQuery struct {
 	Name  []byte
 	Query []byte
 }
 
 func removeFromClient(clients []client, name string) []client {
-	temp_clients := []client{}
+	tempClients := []client{}
 	for i := 0; i < len(clients); i++ {
 		if clients[i].name != name {
-			temp_clients = append(temp_clients, clients[i])
+			tempClients = append(tempClients, clients[i])
 		}
 	}
-	return temp_clients
+	return tempClients
 }
 
 func pingAll(clients []client, cli clientList) {
@@ -103,17 +105,17 @@ func handler(c net.Conn, name string, query string) { // handling each connectio
 
 }
 
-func maintainConnection(conn net.Conn, Peer_Keys map[net.Conn]*rsa.PublicKey, 
+func maintainConnection(conn net.Conn, PeerKeys map[net.Conn]*rsa.PublicKey, 
 			pub *rsa.PublicKey, pri *rsa.PrivateKey) { //maintaining the connection between client and server
 
 	//performing handshake
-	peer_key := &rsa.PublicKey{}
+	peerKey := &rsa.PublicKey{}
 	decoder := json.NewDecoder(conn)
-	decoder.Decode(&peer_key)
+	decoder.Decode(&peerKey)
 	encoder := json.NewEncoder(conn)
 	encoder.Encode(pub)
-	Peer_Keys[conn] = peer_key
-	// fmt.Print(peer_key.N)
+	PeerKeys[conn] = peerKey
+	// fmt.Print(peerKey.N)
 	for {
 		clientQuery := ClientQuery{}
 
@@ -160,7 +162,7 @@ func DecryptWithPrivateKey(ciphertext []byte, priv *rsa.PrivateKey) []byte {
 func main() {
 
 	ln, _ := net.Listen("tcp", ":8081") // making a server
-	fmt.Println("server started on port 8081")
+	fmt.Println("  				 : SERVER STARTED ON PORT 8081  : ")
 
 	PrivateKey, PublicKey := GenerateKeyPair()
 
