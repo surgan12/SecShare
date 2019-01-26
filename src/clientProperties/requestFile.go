@@ -9,7 +9,7 @@ import (
 
 // FileRequest stores the queries and information about requester
 type FileRequest struct {
-	query          string
+	query         string
 	myAddress     string
 	myName        string
 	requestedFile string
@@ -28,7 +28,7 @@ func RequestSomeFile(activeClient ClientListen, name string) {
 		myName: name, requestedFile: "any song"}
 
 	connection, err := net.Dial("tcp", activeClient.PeerIP[senderName])
-	
+
 	for err != nil {
 		fmt.Println("Please enter a valid person name - ")
 	}
