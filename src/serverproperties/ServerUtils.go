@@ -7,6 +7,7 @@ import (
 
 // RemoveFromClient removes the client who quits from the list
 func RemoveFromClient(clients []cp.Client, name string) []cp.Client {
+
 	tempClients := []cp.Client{}
 	for i := 0; i < len(clients); i++ {
 		if clients[i].Name != name {
@@ -14,4 +15,18 @@ func RemoveFromClient(clients []cp.Client, name string) []cp.Client {
 		}
 	}
 	return tempClients
+}
+// QueryDeal upadtes client list and PeerIP table when quit query is passed
+func QueryDeal (clients []cp.Client, cli *cp.ClientListen, name string) {
+	
+	delete(cli.PeerIP, name)  
+	var j int
+	for i := 0; i < len(cli.List); i++ {
+		if cli.List[i] == name {
+			j = i
+			break
+		}
+	}
+	cli.List = append(cli.List[:j], cli.List[j+1:]...)
+	clients = RemoveFromClient(clients, name)
 }

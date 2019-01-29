@@ -59,17 +59,11 @@ func handler(c net.Conn, name string, query string, ClientListenPort string) { /
 		go pingAll(clients, cli)
 
 	} else if query == "quit" {
-		delete(cli.PeerIP, name)
-		var j int
-		for i := 0; i < len(cli.List); i++ {
-			if cli.List[i] == name {
-				j = i
-				break
-			}
-		}
-		cli.List = append(cli.List[:j], cli.List[j+1:]...)
-		clients = sp.RemoveFromClient(clients, name)
+	
+		sp.QueryDeal(clients, &cli, name)
+		
 	 } else if query == ""{
+	 
 	 	var name string
 		remoteAddress := c.RemoteAddr().String()
 		for i := 0; i < len(clients); i++ {
@@ -77,17 +71,8 @@ func handler(c net.Conn, name string, query string, ClientListenPort string) { /
 				name = clients[i].Name
 			}
 		}
-		delete(cli.PeerIP, name)  //TODO : adding the code below in a function
-		var j int
-		for i := 0; i < len(cli.List); i++ {
-			if cli.List[i] == name {
-				j = i
-				break
-			}
-		}
-		cli.List = append(cli.List[:j], cli.List[j+1:]...)
-		clients = sp.RemoveFromClient(clients, name)
-
+		sp.QueryDeal(clients, &cli, name)
+		
 	}
 
 	fmt.Print("Active clients are -> ", cli.List, "\n")
