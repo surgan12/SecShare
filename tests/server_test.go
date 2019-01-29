@@ -2,9 +2,9 @@ package main
 
 import "testing"
 
-import cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientProperties"
+import cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
 
-import sp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/ServerProperties"
+import sp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/serverproperties"
 
 func TestRemoveFromClient(t *testing.T) {
 

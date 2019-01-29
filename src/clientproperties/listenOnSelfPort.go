@@ -16,12 +16,14 @@ type Client struct {
 type ClientListen struct {
 	List   []string
 	PeerIP map[string]string
+	PeerListenPort map[string]string
 }
 
 // ClientQuery stores name and query of clients
 type ClientQuery struct {
 	Name  []byte
 	Query []byte
+	ClientListenPort []byte
 }
 
 // ClientJob stores the names, jobs and connection
@@ -29,6 +31,7 @@ type ClientJob struct {
 	Name  string
 	Query string
 	Conn  net.Conn
+	ClientListenPort string
 }
 
 // ListenOnSelfPort listens for clients on network

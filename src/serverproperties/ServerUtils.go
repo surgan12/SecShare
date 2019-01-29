@@ -1,6 +1,9 @@
 package serverproperties
 
-import cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientProperties"
+import (
+	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
+	// cp "../clientproperties"
+)
 
 // RemoveFromClient removes the client who quits from the list
 func RemoveFromClient(clients []cp.Client, name string) []cp.Client {
