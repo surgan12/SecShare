@@ -1,6 +1,6 @@
 package serverproperties
 
-import ("fmt"
+import (
 	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
 	// cp "../clientproperties"
 )
@@ -16,7 +16,7 @@ func RemoveFromClient(clients []cp.Client, name string) []cp.Client {
 	}
 	return tempClients
 }
-
+// QueryDeal upadtes client list and PeerIP table when quit query is passed
 func QueryDeal (clients []cp.Client, cli *cp.ClientListen, name string) {
 	
 	delete(cli.PeerIP, name)  
