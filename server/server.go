@@ -1,124 +1,117 @@
 package main
 
-import "net"
-import "fmt"
-import "sync"
-import "encoding/json"
-import "crypto/rsa"
-import "crypto/sha512"
-import "crypto/rand"
+import (
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/sha512"
+	"encoding/json"
+	"fmt"
+	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
+	sp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/serverproperties"
+	"net"
+	"sync"
+	// cp "../src/clientproperties"
+	// sp "../src/serverproperties"
+)
 
 /* Add relevant Print statements where confused , and comment print statements while pushing */
 
 var mutex = &sync.Mutex{} // Lock and unlock (Mutex)
 
-type client struct {
-	address           string
-	name              string
-	connection_server net.Conn
-}
+var clients []cp.Client
 
-var clients []client
+var cli cp.ClientListen
 
-type client_list struct {
-	List    []string
-	Peer_IP map[string]string
-}
+var jobs []cp.ClientJob
 
-var cli client_list
-
-type ClientJob struct {
-	name  string
-	query string
-	conn  net.Conn
-}
-
-var jobs []ClientJob
-
-type Client_Query struct {
-	Name  []byte
-	Query []byte
-}
-
-func remove_from_client(clients []client, name string) []client {
-	temp_clients := []client{}
+func pingAll(clients []cp.Client, cli cp.ClientListen) {
 	for i := 0; i < len(clients); i++ {
-		if clients[i].name != name {
-			temp_clients = append(temp_clients, clients[i])
-		}
-	}
-	return temp_clients
-}
-
-func ping_all(clients []client, cli client_list) {
-	for i := 0; i < len(clients); i += 1 {
-		encode := json.NewEncoder(clients[i].connection_server) //sending to each online peer
+		encode := json.NewEncoder(clients[i].ConnectionServer) //sending to each online peer
 		encode.Encode(cli)
 	}
 }
 
-func perform_jobs() { // storing each job in a queue in the server and executing it one by one
+func performJobs() { // storing each job in a queue in the server and executing it one by one
 
 	for {
 		if len(jobs) != 0 {
 			mutex.Lock()
-			get_job := jobs[0]
+			// fmt.Println("number of jobs currently are ", len(jobs))
+			getJob := jobs[0]
 			jobs = jobs[1:]
 			mutex.Unlock()
-			handler(get_job.conn, get_job.name, get_job.query)
+			// fmt.Println("number of jobs currently are ", len(jobs))
+			handler(getJob.Conn, getJob.Name, getJob.Query, getJob.ClientListenPort)
 		}
 	}
 }
 
-func handler(c net.Conn, name string, query string) { // handling each connection
+func handler(c net.Conn, name string, query string, ClientListenPort string) { // handling each connection
 
 	if query == "login" {
-		remote_addr := c.RemoteAddr().String()
-		new_client := client{address: remote_addr, name: name, connection_server: c} //making struct
-		cli.Peer_IP[query] = remote_addr                                             //creating the map
-		clients = append(clients, new_client)                                        //append
+
+		remoteAddress := c.RemoteAddr().String()
+		newClient := cp.Client{Address: remoteAddress, Name: name, ConnectionServer: c} //making struct
+		cli.PeerIP[name] = remoteAddress
+		cli.PeerListenPort[name] = ClientListenPort //creating the map
+		clients = append(clients, newClient)        //append
 		cli.List = append(cli.List, name)
-		fmt.Print(cli)
-		go ping_all(clients, cli)
-		// fmt.Print(query)
-	} else if query == "yes" {
-		cli.Peer_IP[query] = ""
+		go pingAll(clients, cli)
+
+	} else if query == "quit" {
+
+		delete(cli.PeerIP, name)
 		var j int
 		for i := 0; i < len(cli.List); i++ {
-			if cli.List[i] == query {
+			if cli.List[i] == name {
 				j = i
 				break
 			}
 		}
 		cli.List = append(cli.List[:j], cli.List[j+1:]...)
-		clients = remove_from_client(clients, query)
-		fmt.Print(cli)
+		clients = sp.RemoveFromClient(clients, name)
 	}
+
+	fmt.Print("Active clients are -> ", cli.List, "\n")
+	fmt.Print("Active clients IPs are -> ", cli.PeerIP, "\n")
+
 }
-func maintain_connection(conn net.Conn, Peer_Keys map[net.Conn]*rsa.PublicKey, pub *rsa.PublicKey, pri *rsa.PrivateKey) { //maintaining the connection between client and server
+
+func maintainConnection(conn net.Conn, PeerKeys map[net.Conn]*rsa.PublicKey,
+	pub *rsa.PublicKey, pri *rsa.PrivateKey) { //maintaining the connection between client and server
 
 	//performing handshake
-	peer_key := &rsa.PublicKey{}
+	peerKey := &rsa.PublicKey{}
 	decoder := json.NewDecoder(conn)
-	decoder.Decode(&peer_key)
+	decoder.Decode(&peerKey)
 	encoder := json.NewEncoder(conn)
 	encoder.Encode(pub)
-	Peer_Keys[conn] = peer_key
-	// fmt.Print(peer_key.N)
+	PeerKeys[conn] = peerKey
+	// fmt.Print(peerKey.N)
 	for {
-		client_query := Client_Query{}
+		clientQuery := cp.ClientQuery{}
 
 		decoder := json.NewDecoder(conn)
+		decoder.Decode(&clientQuery)
 
-		decoder.Decode(&client_query)
-		Name := string(DecryptWithPrivateKey(client_query.Name, pri))
-		Query := string(DecryptWithPrivateKey(client_query.Query, pri))
-		// fmt.Print(Name, Query)
-		job := ClientJob{name: Name, query: Query, conn: conn}
+		Name := string(DecryptWithPrivateKey(clientQuery.Name, pri))
+		Query := string(DecryptWithPrivateKey(clientQuery.Query, pri))
+		ClientListenPort := string(DecryptWithPrivateKey(clientQuery.ClientListenPort, pri))
+		// fmt.Println("name and query are ", Name, Query)
+		job := cp.ClientJob{Name: Name, Query: Query, Conn: conn, ClientListenPort: ClientListenPort}
+		// fmt.Println("current job is ", job.Query)
+
 		mutex.Lock()
-		jobs = append(jobs, job)
+		if job.Query != "" {
+			jobs = append(jobs, job)
+			fmt.Println("appended job is ", job)
+		}
 		mutex.Unlock()
+		if Query == "quit" {
+			break
+		}
 	}
+	conn = nil
 }
 
 // GenerateKeyPair generates a new key pair
@@ -146,18 +139,19 @@ func DecryptWithPrivateKey(ciphertext []byte, priv *rsa.PrivateKey) []byte {
 func main() {
 
 	ln, _ := net.Listen("tcp", ":8081") // making a server
-	fmt.Println("server started on port 8081")
+	fmt.Println(": SERVER STARTED ON PORT 8081  : ")
 
 	PrivateKey, PublicKey := GenerateKeyPair()
 
-	Peer_Keys := make(map[net.Conn]*rsa.PublicKey)
+	PeerKeys := make(map[net.Conn]*rsa.PublicKey)
 
-	cli = client_list{List: []string{}, Peer_IP: make(map[string]string)}
-	go perform_jobs()
+	cli = cp.ClientListen{List: []string{}, PeerIP: make(map[string]string),
+		PeerListenPort: make(map[string]string)}
+	go performJobs()
 
 	for {
 		conn, _ := ln.Accept()
-		go maintain_connection(conn, Peer_Keys, PublicKey, PrivateKey) //accept a new connection and maintain it using the function above
+		go maintainConnection(conn, PeerKeys, PublicKey, PrivateKey) //accept a new connection and maintain it using the function above
 	}
 
 }
