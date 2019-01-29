@@ -59,7 +59,6 @@ func handler(c net.Conn, name string, query string, ClientListenPort string) { /
 		go pingAll(clients, cli)
 
 	} else if query == "quit" {
-
 		delete(cli.PeerIP, name)
 		var j int
 		for i := 0; i < len(cli.List); i++ {
@@ -70,6 +69,25 @@ func handler(c net.Conn, name string, query string, ClientListenPort string) { /
 		}
 		cli.List = append(cli.List[:j], cli.List[j+1:]...)
 		clients = sp.RemoveFromClient(clients, name)
+	 } else if query == ""{
+	 	var name string
+		remoteAddress := c.RemoteAddr().String()
+		for i := 0; i < len(clients); i++ {
+			if clients[i].Address == remoteAddress{
+				name = clients[i].Name
+			}
+		}
+		delete(cli.PeerIP, name)  //TODO : adding the code below in a function
+		var j int
+		for i := 0; i < len(cli.List); i++ {
+			if cli.List[i] == name {
+				j = i
+				break
+			}
+		}
+		cli.List = append(cli.List[:j], cli.List[j+1:]...)
+		clients = sp.RemoveFromClient(clients, name)
+
 	}
 
 	fmt.Print("Active clients are -> ", cli.List, "\n")
@@ -102,12 +120,12 @@ func maintainConnection(conn net.Conn, PeerKeys map[net.Conn]*rsa.PublicKey,
 		// fmt.Println("current job is ", job.Query)
 
 		mutex.Lock()
-		if job.Query != "" {
-			jobs = append(jobs, job)
-			fmt.Println("appended job is ", job)
-		}
+
+		jobs = append(jobs, job)
+		fmt.Println("appended job is ", job)
 		mutex.Unlock()
-		if Query == "quit" {
+		
+		if Query == "quit" || Query == "" {
 			break
 		}
 	}
