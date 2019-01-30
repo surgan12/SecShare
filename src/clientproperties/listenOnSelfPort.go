@@ -43,5 +43,7 @@ func ListenOnSelfPort(ln net.Listener) {
 		}
 
 		fmt.Print(connection)
+		fmt.Println("connected from client")
+
 	}
 }

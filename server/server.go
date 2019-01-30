@@ -8,10 +8,10 @@ import (
 	"crypto/rsa"
 	"crypto/sha512"
 	"crypto/rand"
-	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
-	sp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/serverproperties"
-	// cp "../src/clientproperties"
-	// sp "../src/serverproperties"
+	// cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
+	// sp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/serverproperties"
+	cp "../src/clientproperties"
+	sp "../src/serverproperties"
 )
 
 /* Add relevant Print statements where confused , and comment print statements while pushing */
