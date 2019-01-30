@@ -12,6 +12,7 @@ import (
 	// sp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/serverproperties"
 	cp "../src/clientproperties"
 	sp "../src/serverproperties"
+	en "../src/encryptionproperties"
 )
 
 /* Add relevant Print statements where confused , and comment print statements while pushing */
@@ -97,9 +98,9 @@ func maintainConnection(conn net.Conn, PeerKeys map[net.Conn]*rsa.PublicKey,
 		decoder := json.NewDecoder(conn)
 		decoder.Decode(&clientQuery)
 
-		Name := string(DecryptWithPrivateKey(clientQuery.Name, pri))
-		Query := string(DecryptWithPrivateKey(clientQuery.Query, pri))
-		ClientListenPort := string(DecryptWithPrivateKey(clientQuery.ClientListenPort, pri))
+		Name := string(en.DecryptWithPrivateKey(clientQuery.Name, pri))
+		Query := string(en.DecryptWithPrivateKey(clientQuery.Query, pri))
+		ClientListenPort := string(en.DecryptWithPrivateKey(clientQuery.ClientListenPort, pri))
 		// fmt.Println("name and query are ", Name, Query)
 		job := cp.ClientJob{Name: Name, Query: Query, Conn: conn, ClientListenPort: ClientListenPort}
 		// fmt.Println("current job is ", job.Query)
@@ -117,34 +118,13 @@ func maintainConnection(conn net.Conn, PeerKeys map[net.Conn]*rsa.PublicKey,
 	conn = nil
 }
 
-// GenerateKeyPair generates a new key pair
-func GenerateKeyPair() (*rsa.PrivateKey, *rsa.PublicKey) {
-	privkey, _ := rsa.GenerateKey(rand.Reader, 2048)
-
-	return privkey, &privkey.PublicKey
-}
-
-// EncryptWithPublicKey encrypts data with public key
-func EncryptWithPublicKey(msg []byte, pub *rsa.PublicKey) []byte {
-	hash := sha512.New()
-	ciphertext, _ := rsa.EncryptOAEP(hash, rand.Reader, pub, msg, nil)
-
-	return ciphertext
-}
-
-// DecryptWithPrivateKey decrypts data with private key
-func DecryptWithPrivateKey(ciphertext []byte, priv *rsa.PrivateKey) []byte {
-	hash := sha512.New()
-	plaintext, _ := rsa.DecryptOAEP(hash, rand.Reader, priv, ciphertext, nil)
-	return plaintext
-}
 
 func main() {
 
 	ln, _ := net.Listen("tcp", ":8081") // making a server
 	fmt.Println(": SERVER STARTED ON PORT 8081  : ")
 
-	PrivateKey, PublicKey := GenerateKeyPair()
+	PrivateKey, PublicKey := en.GenerateKeyPair()
 
 	PeerKeys := make(map[net.Conn]*rsa.PublicKey)
 

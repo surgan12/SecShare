@@ -1,18 +1,18 @@
 package clientproperties
 
 import (
+	"../encryptionproperties"
 	"encoding/json"
-	"fmt"
+	// "fmt"
 	"net"
-	"crypto/rand"
-	"crypto/rsa"
-	"crypto/sha512"
 )
+
 //MyPeers list of connections dialed by current client
-type MyPeers struct{
+type MyPeers struct {
 	Conn 	net.Conn
 	PeerName string	
 }
+
 // FileRequest stores the queries and information about requester
 type FileRequest struct {
 	query         string
@@ -24,40 +24,10 @@ type FileRequest struct {
 // sendingToServer function to send queries to server
 func sendingToServer(name []byte, query []byte, conn net.Conn, 
 					 queryType string, listenPort []byte) {
-	objectToSend := cp.ClientQuery{Name: name, Query: query, ClientListenPort: listenPort}
+	objectToSend := ClientQuery{Name: name, Query: query, ClientListenPort: listenPort}
 	encoder := json.NewEncoder(conn)
 	encoder.Encode(objectToSend)
 	if queryType == "quit" {
 		conn.Close()
 	}
-}
-// GenerateKeyPair generates a new key pair
-func GenerateKeyPair() (*rsa.PrivateKey, *rsa.PublicKey) {
-	privkey, _ := rsa.GenerateKey(rand.Reader, 2048)
-
-	return privkey, &privkey.PublicKey
-}
-// PerformHandshake performs handshake with encryption done
-func PerformHandshake(conn net.Conn, pub *rsa.PublicKey) *rsa.PublicKey {
-	encoder := json.NewEncoder(conn)
-	encoder.Encode(pub)
-	serverkeys := &rsa.PublicKey{}
-	decoder := json.NewDecoder(conn)
-	decoder.Decode(&serverkeys)
-	return serverkeys
-}
-
-// EncryptWithPublicKey encrypts data with public key
-func EncryptWithPublicKey(msg []byte, pub *rsa.PublicKey) []byte {
-	hash := sha512.New()
-	ciphertext, _ := rsa.EncryptOAEP(hash, rand.Reader, pub, msg, nil)
-
-	return ciphertext
-}
-
-// DecryptWithPrivateKey decrypts data with private key
-func DecryptWithPrivateKey(ciphertext []byte, priv *rsa.PrivateKey) []byte {
-	hash := sha512.New()
-	plaintext, _ := rsa.DecryptOAEP(hash, rand.Reader, priv, ciphertext, nil)
-	return plaintext
 }
