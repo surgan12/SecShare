@@ -3,7 +3,7 @@ package serverproperties
 import (
 	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
 	// cp "../clientproperties"
-	"fmt"
+	// "fmt"
 )
 
 // RemoveFromClient removes the client who quits from the list
@@ -32,5 +32,5 @@ func QueryDeal(clients *[]cp.Client, cli *cp.ClientListen, name string) {
 
 	cli.List = append(cli.List[:j], cli.List[j+1:]...)
 	*clients = RemoveFromClient(*clients, name)
-	fmt.Print(cli.List, clients)
+	// fmt.Print(cli.List, clients)
 }
