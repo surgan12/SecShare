@@ -1,58 +1,56 @@
 package clientproperties
 
 import (
-	"net"
-	en "../encryptionproperties"
 	"encoding/json"
 	"fmt"
+	"net"
+	// "crypto/rand"
+	// "crypto/rsa"
+	// "crypto/sha512"
 )
 
-func checkPeers (myPeers []MyPeers, checkName string) bool {
-	for i := 0; i < len(myPeers); i++ {
-		if checkName == myPeers[i].PeerName {
-			return true
-		}
-	}
-	return false 
+func sendFileRequestToPeer(connection net.Conn, fileRequest *FileRequest) {
+	someRequest := BaseRequest{RequestType: "receive_from_peer", FileRequest: fileRequest, FilePartInfo: nil}
+	encoder := json.NewEncoder(connection)
+	encoder.Encode(someRequest)
 }
 
 // RequestSomeFile request files from peers on network
-func RequestSomeFile(activeClient ClientListen, name string, myPeers []MyPeers) {
-	_, PublicKeyClient := en.GenerateKeyPair()
+func RequestSomeFile(activeClient *ClientListen, name string) {
+	_, PublicKeyClient = GenerateKeyPair()
 
-	var senderName string // is the person who will send the file
+	var fileSenderName string // is the person who will send the file
 	fmt.Println("Whom do you want to receive the file from ? : ")
-	fmt.Scanln(&senderName)
+	fmt.Scanln(&fileSenderName)
 	var fileName string
 	fmt.Println("What file do you want ? ")
 	fmt.Scanln(&fileName) // file we want to receive
 
-	fileRequest := FileRequest{query: "receive_file", myAddress: activeClient.PeerIP[name],
-		myName: name, requestedFile: "any song"}
+	fileRequest := FileRequest{query: "receive_file", 
+				   myAddress: activeClient.PeerIP[name] + ":" + activeClient.PeerListenPort[name],
+				   myName: name, requestedFile: fileName}	
 
-	fmt.Println("Value of checkPeers array is ", checkPeers(myPeers, senderName))	
+	// if !checkPeers(myPeers, fileSenderName) {
+	// 	connection, err := net.Dial("tcp", ":" + activeClient.PeerListenPort[fileSenderName])
+	// 	for err != nil {
+	// 		fmt.Println("Please enter a valid person name - ")
+	// 		connection1, err1 := net.Dial("tcp", ":" + activeClient.PeerListenPort[fileSenderName])
+	// 		connection = connection1
+	// 		err = err1
+	// 	}
+	// 	currentPeer := MyPeers{conn: connection, PeerName : fileSenderName}
+	// 	myPeers := append(myPeers, currentPeer)
+	// 	connection.Write([]byte(name))
+	// }
 
-	if !checkPeers(myPeers, senderName) {
-
-		connection , err := net.Dial("tcp", ":" + activeClient.PeerListenPort[senderName])
-		for err != nil {
-			fmt.Println("Please enter a valid person name - ")
-			connection1, err1 := net.Dial("tcp", activeClient.PeerListenPort[senderName])
-			connection = connection1
-			err = err1
-		}
-		currentPeer := MyPeers{Conn: connection , PeerName : senderName} 
+	connection, err := net.Dial("tcp", ":" + activeClient.PeerListenPort[fileSenderName])
+	for err != nil {
+		fmt.Println("Please enter a valid person name - ")
+		connection1, err1 := net.Dial("tcp", ":" + activeClient.PeerListenPort[fileSenderName])
+		connection = connection1
+		err = err1
 	}
 
-	serverkeysClient := en.PerformHandshake(connection, PublicKeyClient)
-
-	//Encryptions of file has been done here
-	senderNameQuery := en.EncryptWithPublicKey([]byte(senderName), serverkeysClient)
-	fileNameQuery := en.EncryptWithPublicKey([]byte(fileName), serverkeysClient)
-
-
-	// fmt.Println(err)
-
-	encoder := json.NewEncoder(connection)
-	encoder.Encode(fileRequest)
+	sendFileRequestToPeer(connection, &fileRequest)
+	connection.Close()	// closing connection after one time requestb17e198f6aeb5753c2c193c
 }
