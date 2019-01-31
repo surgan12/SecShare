@@ -1,17 +1,19 @@
 package main
 
 import (
-	"net"
-	"fmt"
-	"sync"
 	"encoding/json"
-	"crypto/rsa"
-	"crypto/sha512"
-	"crypto/rand"
+	"fmt"
+	"net"
+	"sync"
 	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
 	sp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/serverproperties"
+	en "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/encryptionproperties"
+	// "crypto/rsa"
+	// "crypto/sha512"
+	// "crypto/rand"
 	// cp "../src/clientproperties"
 	// sp "../src/serverproperties"
+	// en "../src/encryptionproperties"
 )
 
 /* Add relevant Print statements where confused , and comment print statements while pushing */
@@ -53,26 +55,26 @@ func handler(c net.Conn, name string, query string, ClientListenPort string) { /
 		remoteAddress := c.RemoteAddr().String()
 		newClient := cp.Client{Address: remoteAddress, Name: name, ConnectionServer: c} //making struct
 		cli.PeerIP[name] = remoteAddress
-		cli.PeerListenPort[name] = ClientListenPort                                                //creating the map
-		clients = append(clients, newClient)                                            //append
+		cli.PeerListenPort[name] = ClientListenPort //creating the map
+		clients = append(clients, newClient)        //append
 		cli.List = append(cli.List, name)
 		go pingAll(clients, cli)
 
 	} else if query == "quit" {
-	
-		sp.QueryDeal(&clients, &cli, name)
-		
-	 } else if query == ""{
-	 
-	 	var name string
+
+		sp.QueryDeal(clients, &cli, name)
+
+	} else if query == "" {
+
+		var name string
 		remoteAddress := c.RemoteAddr().String()
 		for i := 0; i < len(clients); i++ {
-			if clients[i].Address == remoteAddress{
+			if clients[i].Address == remoteAddress {
 				name = clients[i].Name
 			}
 		}
-		sp.QueryDeal(&clients, &cli, name)
-		
+		sp.QueryDeal(clients, &cli, name)
+
 	}
 
 	fmt.Print("Active clients are -> ", cli.List, "\n")
@@ -97,19 +99,20 @@ func maintainConnection(conn net.Conn, PeerKeys map[net.Conn]*rsa.PublicKey,
 		decoder := json.NewDecoder(conn)
 		decoder.Decode(&clientQuery)
 
-		Name := string(DecryptWithPrivateKey(clientQuery.Name, pri))
-		Query := string(DecryptWithPrivateKey(clientQuery.Query, pri))
-		ClientListenPort := string(DecryptWithPrivateKey(clientQuery.ClientListenPort, pri))
+		Name := string(en.DecryptWithPrivateKey(clientQuery.Name, pri))
+		Query := string(en.DecryptWithPrivateKey(clientQuery.Query, pri))
+		ClientListenPort := string(en.DecryptWithPrivateKey(clientQuery.ClientListenPort, pri))
 		// fmt.Println("name and query are ", Name, Query)
 		job := cp.ClientJob{Name: Name, Query: Query, Conn: conn, ClientListenPort: ClientListenPort}
 		// fmt.Println("current job is ", job.Query)
 
 		mutex.Lock()
-
-		jobs = append(jobs, job)
-		fmt.Println("appended job is ", job)
+		if job.Query != "" {
+			jobs = append(jobs, job)
+			fmt.Println("appended job is ", job)
+		}
 		mutex.Unlock()
-		
+
 		if Query == "quit" || Query == "" {
 			break
 		}
@@ -117,39 +120,17 @@ func maintainConnection(conn net.Conn, PeerKeys map[net.Conn]*rsa.PublicKey,
 	conn = nil
 }
 
-// GenerateKeyPair generates a new key pair
-func GenerateKeyPair() (*rsa.PrivateKey, *rsa.PublicKey) {
-	privkey, _ := rsa.GenerateKey(rand.Reader, 2048)
-
-	return privkey, &privkey.PublicKey
-}
-
-// EncryptWithPublicKey encrypts data with public key
-func EncryptWithPublicKey(msg []byte, pub *rsa.PublicKey) []byte {
-	hash := sha512.New()
-	ciphertext, _ := rsa.EncryptOAEP(hash, rand.Reader, pub, msg, nil)
-
-	return ciphertext
-}
-
-// DecryptWithPrivateKey decrypts data with private key
-func DecryptWithPrivateKey(ciphertext []byte, priv *rsa.PrivateKey) []byte {
-	hash := sha512.New()
-	plaintext, _ := rsa.DecryptOAEP(hash, rand.Reader, priv, ciphertext, nil)
-	return plaintext
-}
-
 func main() {
 
 	ln, _ := net.Listen("tcp", ":8081") // making a server
 	fmt.Println(": SERVER STARTED ON PORT 8081  : ")
 
-	PrivateKey, PublicKey := GenerateKeyPair()
+	PrivateKey, PublicKey := en.GenerateKeyPair()
 
 	PeerKeys := make(map[net.Conn]*rsa.PublicKey)
 
-	cli = cp.ClientListen{List: []string{}, PeerIP: make(map[string]string), 
-											PeerListenPort: make(map[string]string)}
+	cli = cp.ClientListen{List: []string{}, PeerIP: make(map[string]string),
+		PeerListenPort: make(map[string]string)}
 	go performJobs()
 
 	for {
