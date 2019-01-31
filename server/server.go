@@ -5,22 +5,12 @@ import (
 	"fmt"
 	"net"
 	"sync"
-<<<<<<< HEAD
-	"encoding/json"
-	"crypto/rsa"
-	"crypto/sha512"
-	"crypto/rand"
 	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
 	sp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/serverproperties"
-	enp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/encryptionproperties"
-=======
+	en "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/encryptionproperties"
 	// "crypto/rsa"
 	// "crypto/sha512"
 	// "crypto/rand"
-	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
-	en "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/encryptionproperties"
-	sp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/serverproperties"
->>>>>>> d1ff19b46324c0fb8f30706e86f91ae10c9fc764
 	// cp "../src/clientproperties"
 	// sp "../src/serverproperties"
 	// en "../src/encryptionproperties"
@@ -71,34 +61,20 @@ func handler(c net.Conn, name string, query string, ClientListenPort string) { /
 		go pingAll(clients, cli)
 
 	} else if query == "quit" {
-<<<<<<< HEAD
-	
-		sp.QueryDeal(&clients, &cli, name)
-		
-	 } else if query == ""{
-	 
-	 	var name string
-=======
 
 		sp.QueryDeal(clients, &cli, name)
 
 	} else if query == "" {
 
 		var name string
->>>>>>> d1ff19b46324c0fb8f30706e86f91ae10c9fc764
 		remoteAddress := c.RemoteAddr().String()
 		for i := 0; i < len(clients); i++ {
 			if clients[i].Address == remoteAddress {
 				name = clients[i].Name
 			}
 		}
-<<<<<<< HEAD
-		sp.QueryDeal(&clients, &cli, name)
-		
-=======
 		sp.QueryDeal(clients, &cli, name)
 
->>>>>>> d1ff19b46324c0fb8f30706e86f91ae10c9fc764
 	}
 
 	fmt.Print("Active clients are -> ", cli.List, "\n")

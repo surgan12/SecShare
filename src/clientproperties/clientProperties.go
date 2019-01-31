@@ -45,16 +45,17 @@ type MyPeers struct {
 	Conn     net.Conn
 	PeerName string
 }
-
+//MyReceivedFiles received files
 type MyReceivedFiles struct {
 	MyFileName string
 	MyFile     []FilePartContents
 }
 
+//FilePartContents contents of file in parts
 type FilePartContents struct {
 	Contents []byte
 }
-
+//BaseRequest request for file
 type BaseRequest struct {
 	RequestType string
 	FileRequest
