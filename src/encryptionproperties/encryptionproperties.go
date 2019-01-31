@@ -1,11 +1,11 @@
 package encryptionproperties
 
 import (
-	"net"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha512"
 	"encoding/json"
+	"net"
 )
 
 // GenerateKeyPair generates a new key pair
@@ -14,6 +14,7 @@ func GenerateKeyPair() (*rsa.PrivateKey, *rsa.PublicKey) {
 
 	return privkey, &privkey.PublicKey
 }
+
 // PerformHandshake performs handshake with encryption done
 func PerformHandshake(conn net.Conn, pub *rsa.PublicKey) *rsa.PublicKey {
 	encoder := json.NewEncoder(conn)

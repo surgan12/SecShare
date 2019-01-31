@@ -1,13 +1,14 @@
 package main
 
 import (
-	// cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
-	en "../src/encryptionproperties"
-	cp "../src/clientproperties"
+	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
+	en "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/encryptionproperties"
+	// en "../src/encryptionproperties"
+	// cp "../src/clientproperties"
+	"encoding/json"
 	"fmt"
 	"net"
 	"os"
-	"encoding/json"
 )
 
 //initializing a wait group
@@ -26,7 +27,8 @@ func main() {
 
 	var activeClient cp.ClientListen
 
-	var myPeers []cp.MyPeers
+	// var myPeers []cp.MyPeers
+	myfiles := make(map[string]cp.MyReceivedFiles)
 
 	peers := []string{}
 
@@ -36,24 +38,25 @@ func main() {
 	var listenPort string
 	var flag = false
 
-	_, PublicKey := en.GenerateKeyPair()
+	_, PublicKey := cp.GenerateKeyPair()
 
 	conn, _ := net.Dial("tcp", "127.0.0.1:8081")
 
-	ServerKey := en.PerformHandshake(conn, PublicKey)
+	ServerKey := cp.PerformHandshake(conn, PublicKey)
 	// fmt.Print(ServerKey.N)
 	fmt.Println("The follwing queries are supported - quit, receive_file - <sender_name>")
 	for {
-
 		go gettingPeersFromServer(conn, &peers, &activeClient)
+
 		if flag == false {
+
 			fmt.Print("Enter your credentials : ")
 			fmt.Scanln(&name)
 			flag = true
 			query = "login"
 
-			nameByte := en.EncryptWithPublicKey([]byte(name), ServerKey)
-			queryByte := en.EncryptWithPublicKey([]byte(query), ServerKey)
+			nameByte := cp.EncryptWithPublicKey([]byte(name), ServerKey)
+			queryByte := cp.EncryptWithPublicKey([]byte(query), ServerKey)
 
 			fmt.Println("Which port do you want to listen upon ? : ")
 			fmt.Scanln(&listenPort)
@@ -65,29 +68,30 @@ func main() {
 				ln1, err1 := net.Listen("tcp", listenPort)
 				ln = ln1
 				err = err1
-			} 
+			}
 
-			mylistenport := en.EncryptWithPublicKey([]byte(listenPort), ServerKey)
+			mylistenport := cp.EncryptWithPublicKey([]byte(listenPort), ServerKey)
 			cp.sendingToServer(nameByte, queryByte, conn, query, mylistenport)
-			go cp.ListenOnSelfPort(ln)
+			go cp.ListenOnSelfPort(ln, name, &activeClient, &myfiles)
 			continue
 
 		} else {
-	
+
 			fmt.Print("What do you want to do? : ")
 			fmt.Scanln(&query)
 			// flag = false
 			if query == "quit" {
-				nameByte := en.EncryptWithPublicKey([]byte(name), ServerKey)
-				queryByte := en.EncryptWithPublicKey([]byte(query), ServerKey)
-				mylistenport := en.EncryptWithPublicKey([]byte(listenPort), ServerKey)
+
+				nameByte := cp.EncryptWithPublicKey([]byte(name), ServerKey)
+				queryByte := cp.EncryptWithPublicKey([]byte(query), ServerKey)
+				mylistenport := cp.EncryptWithPublicKey([]byte(listenPort), ServerKey)
 				cp.sendingToServer(nameByte, queryByte, conn, query, mylistenport)
 				os.Exit(2)
 			} else if query == "receive_file" {
-				cp.RequestSomeFile(activeClient, name, myPeers)
+				cp.RequestSomeFile(&activeClient, name, &myfiles)
 			}
-		
+
 		}
-		
+
 	}
 }
