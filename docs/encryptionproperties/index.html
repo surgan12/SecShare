@@ -54,10 +54,16 @@
 			
 			
 				
-				<dd><a href="#QueryDeal">func QueryDeal(clients *[]cp.Client, cli *cp.ClientListen, name string)</a></dd>
+				<dd><a href="#DecryptWithPrivateKey">func DecryptWithPrivateKey(ciphertext []byte, priv *rsa.PrivateKey) []byte</a></dd>
 			
 				
-				<dd><a href="#RemoveFromClient">func RemoveFromClient(clients []cp.Client, name string) []cp.Client</a></dd>
+				<dd><a href="#EncryptWithPublicKey">func EncryptWithPublicKey(msg []byte, pub *rsa.PublicKey) []byte</a></dd>
+			
+				
+				<dd><a href="#GenerateKeyPair">func GenerateKeyPair() (*rsa.PrivateKey, *rsa.PublicKey)</a></dd>
+			
+				
+				<dd><a href="#PerformHandshake">func PerformHandshake(conn net.Conn, pub *rsa.PublicKey) *rsa.PublicKey</a></dd>
 			
 			
 			
@@ -71,7 +77,7 @@
 			<p>
 			<span style="font-size:90%">
 			
-				<a href="/src/ServerUtils.go">ServerUtils.go</a>
+				<a href="/src/encryptionproperties.go">encryptionproperties.go</a>
 			
 			</span>
 			</p>
@@ -121,12 +127,12 @@
 		
 			
 			
-			<h2 id="QueryDeal">func <a href="/src/serverproperties/ServerUtils.go?s=538:609#L10">QueryDeal</a>
-				<a class="permalink" href="#QueryDeal">&#xb6;</a>
+			<h2 id="DecryptWithPrivateKey">func <a href="/src/encryptionproperties/encryptionproperties.go?s=901:975#L27">DecryptWithPrivateKey</a>
+				<a class="permalink" href="#DecryptWithPrivateKey">&#xb6;</a>
 			</h2>
-			<pre>func QueryDeal(clients *[]<a href="/pkg/github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties/">cp</a>.<a href="/pkg/github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties/#Client">Client</a>, cli *<a href="/pkg/github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties/">cp</a>.<a href="/pkg/github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties/#ClientListen">ClientListen</a>, name <a href="/pkg/builtin/#string">string</a>)</pre>
+			<pre>func DecryptWithPrivateKey(ciphertext []<a href="/pkg/builtin/#byte">byte</a>, priv *<a href="/pkg/crypto/rsa/">rsa</a>.<a href="/pkg/crypto/rsa/#PrivateKey">PrivateKey</a>) []<a href="/pkg/builtin/#byte">byte</a></pre>
 			<p>
-QueryDeal upadtes client list and PeerIP table when quit query is passed
+DecryptWithPrivateKey decrypts data with private key
 </p>
 
 			
@@ -135,12 +141,40 @@ QueryDeal upadtes client list and PeerIP table when quit query is passed
 		
 			
 			
-			<h2 id="RemoveFromClient">func <a href="/src/serverproperties/ServerUtils.go?s=215:282#L1">RemoveFromClient</a>
-				<a class="permalink" href="#RemoveFromClient">&#xb6;</a>
+			<h2 id="EncryptWithPublicKey">func <a href="/src/encryptionproperties/encryptionproperties.go?s=665:729#L19">EncryptWithPublicKey</a>
+				<a class="permalink" href="#EncryptWithPublicKey">&#xb6;</a>
 			</h2>
-			<pre>func RemoveFromClient(clients []<a href="/pkg/github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties/">cp</a>.<a href="/pkg/github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties/#Client">Client</a>, name <a href="/pkg/builtin/#string">string</a>) []<a href="/pkg/github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties/">cp</a>.<a href="/pkg/github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties/#Client">Client</a></pre>
+			<pre>func EncryptWithPublicKey(msg []<a href="/pkg/builtin/#byte">byte</a>, pub *<a href="/pkg/crypto/rsa/">rsa</a>.<a href="/pkg/crypto/rsa/#PublicKey">PublicKey</a>) []<a href="/pkg/builtin/#byte">byte</a></pre>
 			<p>
-RemoveFromClient removes the client who quits from the list
+EncryptWithPublicKey encrypts data with public key
+</p>
+
+			
+			
+
+		
+			
+			
+			<h2 id="GenerateKeyPair">func <a href="/src/encryptionproperties/encryptionproperties.go?s=156:212#L2">GenerateKeyPair</a>
+				<a class="permalink" href="#GenerateKeyPair">&#xb6;</a>
+			</h2>
+			<pre>func GenerateKeyPair() (*<a href="/pkg/crypto/rsa/">rsa</a>.<a href="/pkg/crypto/rsa/#PrivateKey">PrivateKey</a>, *<a href="/pkg/crypto/rsa/">rsa</a>.<a href="/pkg/crypto/rsa/#PublicKey">PublicKey</a>)</pre>
+			<p>
+GenerateKeyPair generates a new key pair
+</p>
+
+			
+			
+
+		
+			
+			
+			<h2 id="PerformHandshake">func <a href="/src/encryptionproperties/encryptionproperties.go?s=365:436#L9">PerformHandshake</a>
+				<a class="permalink" href="#PerformHandshake">&#xb6;</a>
+			</h2>
+			<pre>func PerformHandshake(conn <a href="/pkg/net/">net</a>.<a href="/pkg/net/#Conn">Conn</a>, pub *<a href="/pkg/crypto/rsa/">rsa</a>.<a href="/pkg/crypto/rsa/#PublicKey">PublicKey</a>) *<a href="/pkg/crypto/rsa/">rsa</a>.<a href="/pkg/crypto/rsa/#PublicKey">PublicKey</a></pre>
+			<p>
+PerformHandshake performs handshake with encryption done
 </p>
 
 			
