@@ -19,25 +19,27 @@ import (
 
 var mutex = &sync.Mutex{} // Lock and unlock (Mutex)
 
-// func sendFileParts(newfilerequest FileRequest, allfileparts []fp.FilePartInfo, 
-// 				   activeClient *ClientListen, myname string) {
-// 	for i := 0; i < len(activeClient.PeerListenPort); i++ {
-		 
-// 		connection, err := net.Dial("tcp", ":" + activeClient.PeerListenPort[fileSenderName])
-// 		for err != nil {
-// 			fmt.Println("Error in dialing, dialing again ... ")
-// 			connection1, err1 := net.Dial("tcp", ":" + activeClient.PeerListenPort[fileSenderName])
-// 			connection = connection1
-// 			err = err1
-// 		}
-// 	}
-// }
+func sendFileParts(newfilerequest FileRequest, allfileparts []fp.FilePartInfo, 
+				   activeClient ClientListen, myname string) {
+	for names, _ := range activeClient.PeerListenPort {
+		if (names != myname){
+			connection, err := net.Dial("tcp", ":" + activeClient.PeerListenPort[names])
+			for err != nil {
+				fmt.Println("Error in dialing, dialing again ... ")
+				connection1, err1 := net.Dial("tcp", ":" + activeClient.PeerListenPort[names])
+				connection = connection1
+				err = err1
+			}
+			fmt.Println("Connection established to send a file part to connection - ", connection)
+		}
+	}
+}
 
-func handleNewFileSendRequest(newfilerequest *FileRequest, myname string, activeClient *ClientListen) {
+func handleNewFileSendRequest(newfilerequest FileRequest, myname string, activeClient ClientListen) {
 	if newfilerequest.myName == myname {
 		
 		allfileparts := fp.GetSplitFile(newfilerequest.requestedFile)
-		// sendFileParts(newfilerequest, allfileparts, &activeClient, myname)
+		sendFileParts(newfilerequest, allfileparts, activeClient, myname)
 
 	} else {
 
@@ -48,16 +50,16 @@ func handleNewFileSendRequest(newfilerequest *FileRequest, myname string, active
 
 func handleReceivedFile(newrequest *BaseRequest, myfiles map[string]MyReceivedFiles) {
 
-	var TotalFileParts []byte
+	var TotalFileParts int
 	var filePartNum int 
 	requestedFileName := newrequest.FilePartInfo.FileName
-	if val, ok := myfiles[requestedFileName]; ok {
+	if _, ok := myfiles[requestedFileName]; ok {
 		// appending to already created object of this received file
 		TotalFileParts = newrequest.FilePartInfo.TotalParts
 		filePartNum = newrequest.FilePartInfo.PartNumber
     	
     	mutex.Lock()
-    	myfiles[requestedFileName].MyFile[filePartNum] := newrequest.FilePartInfo.FilePartContents
+    	myfiles[requestedFileName].MyFile[filePartNum].Contents = newrequest.FilePartInfo.FilePartContents
     	mutex.Unlock()
 
     	if len(myfiles[requestedFileName].MyFile) == TotalFileParts {
@@ -66,13 +68,12 @@ func handleReceivedFile(newrequest *BaseRequest, myfiles map[string]MyReceivedFi
 
 	} else {
 		// creating new received file object for my own file
-		myfiles[requestedFileName] = make(MyReceivedFiles, 1)
-		myfiles[requestedFileName] = make([]FilePartContents, newrequest.FilePartInfo.TotalParts)
-		myfiles[requestedFileName].MyFileName = newrequest.FilePartInfo.FileName
+		myfiles[requestedFileName] = MyReceivedFiles{}
+		// myfiles[requestedFileName].MyFile := make([]FilePartContents, newrequest.FilePartInfo.TotalParts)
+		// myfiles[requestedFileName].MyFileName = newrequest.FilePartInfo.FileName
 
 		mutex.Lock()
-    	contents := newrequest.FilePartInfo.FilePartContents
-    	myfiles[requestedFileName].MyFile[filePartNum] = contents
+		myfiles[requestedFileName].MyFile[filePartNum].Contents = newrequest.FilePartInfo.FilePartContents
     	mutex.Unlock()
 
     	if len(myfiles[requestedFileName].MyFile) == TotalFileParts {
@@ -81,7 +82,7 @@ func handleReceivedFile(newrequest *BaseRequest, myfiles map[string]MyReceivedFi
 	}
 }
 
-func handleReceivedRequest(connection net.Conn, activeClient *ClientListen, myname string, 
+func handleReceivedRequest(connection net.Conn, activeClient ClientListen, myname string, 
 						   myfiles map[string]MyReceivedFiles) {
 	var newrequest BaseRequest
 	newconn := json.NewDecoder(connection)
@@ -113,8 +114,8 @@ func handleReceivedRequest(connection net.Conn, activeClient *ClientListen, myna
 	}
 }
 
-func handleConnection(connection net.Conn, activeClient *ClientListen, myname string, 
-				      myfiles *map[string]MyReceivedFiles) {
+func handleConnection(connection net.Conn, activeClient ClientListen, myname string, 
+				      myfiles map[string]MyReceivedFiles) {
 
 	var newrequest BaseRequest
 	newconn := json.NewDecoder(connection)
@@ -123,7 +124,7 @@ func handleConnection(connection net.Conn, activeClient *ClientListen, myname st
 	if newrequest.RequestType == "receive_from_peer" {
 
 		fmt.Println("Request to receive a file from peer ")
-		handleNewFileSendRequest(&newrequest.FileRequest, myname, activeClient)
+		handleNewFileSendRequest(newrequest.FileRequest, myname, activeClient)
 
 	} else if newrequest.RequestType == "received_some_file" {
 
@@ -134,8 +135,8 @@ func handleConnection(connection net.Conn, activeClient *ClientListen, myname st
 }
 
 // ListenOnSelfPort listens for clients on network
-func ListenOnSelfPort(ln net.Listener, myname string, activeClient *ClientListen, 
-					   myfiles *map[string]MyReceivedFiles) {
+func ListenOnSelfPort(ln net.Listener, myname string, activeClient ClientListen, 
+					   myfiles map[string]MyReceivedFiles) {
 	for {
 		connection, err := ln.Accept()
 		
@@ -146,6 +147,6 @@ func ListenOnSelfPort(ln net.Listener, myname string, activeClient *ClientListen
 		fmt.Print(connection)
 		fmt.Println("connection received from client")
 
-		go handleConnection(connection, &activeClient, myname, myfiles)
+		go handleConnection(connection, activeClient, myname, myfiles)
 	}
 }

@@ -9,15 +9,16 @@ import (
 	// "crypto/sha512"
 )
 
-func sendFileRequestToPeer(connection net.Conn, fileRequest *FileRequest) {
-	someRequest := BaseRequest{RequestType: "receive_from_peer", FileRequest: fileRequest, FilePartInfo: nil}
+func sendFileRequestToPeer(connection net.Conn, fileRequest FileRequest) {
+	//handle with care, FilePartInfo field for this truct is Nil. Will throw seg fault if accessed
+	someRequest := BaseRequest{RequestType: "receive_from_peer", FileRequest: fileRequest}
 	encoder := json.NewEncoder(connection)
 	encoder.Encode(someRequest)
 }
 
 // RequestSomeFile request files from peers on network
-func RequestSomeFile(activeClient *ClientListen, name string) {
-	_, PublicKeyClient = GenerateKeyPair()
+func RequestSomeFile(activeClient ClientListen, name string) {
+	// _, PublicKeyClient = GenerateKeyPair()
 
 	var fileSenderName string // is the person who will send the file
 	fmt.Println("Whom do you want to receive the file from ? : ")
@@ -51,6 +52,6 @@ func RequestSomeFile(activeClient *ClientListen, name string) {
 		err = err1
 	}
 
-	sendFileRequestToPeer(connection, &fileRequest)
+	sendFileRequestToPeer(connection, fileRequest)
 	connection.Close()	// closing connection after one time requestb17e198f6aeb5753c2c193c
 }

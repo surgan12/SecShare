@@ -71,7 +71,7 @@ type FileRequest struct {
 }
 
 // sendingToServer function to send queries to server
-func sendingToServer(name []byte, query []byte, conn net.Conn,
+func SendingToServer(name []byte, query []byte, conn net.Conn,
 	queryType string, listenPort []byte) {
 
 	objectToSend := ClientQuery{Name: name, Query: query, ClientListenPort: listenPort}
