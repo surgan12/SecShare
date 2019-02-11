@@ -100,7 +100,7 @@ func main() {
 				mylistenport := en.EncryptWithPublicKey([]byte(listenPort), ServerKey)
 				cp.SendingToServer(nameByte, queryByte, conn, query, mylistenport)
 				os.Exit(2)
-			} else if query == "receive_file" {
+			} else if query == "rf" {
 				cp.RequestSomeFile(activeClient, name)
 			}
 

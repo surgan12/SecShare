@@ -58,16 +58,23 @@ type FilePartContents struct {
 //BaseRequest request for file
 type BaseRequest struct {
 	RequestType string
-	FileRequest
-	fp.FilePartInfo
+	FR FileRequestType
+	FPI fp.FilePartInfo
+}
+
+type FileRequestType struct {
+	query         string
+	// myAddress     string
+	// myName        string
+	// requestedFile string
 }
 
 // FileRequest stores the queries and information about requester
 type FileRequest struct {
 	query         string
-	myAddress     string
-	myName        string
-	requestedFile string
+	// myAddress     string
+	// myName        string
+	// requestedFile string
 }
 
 // sendingToServer function to send queries to server
