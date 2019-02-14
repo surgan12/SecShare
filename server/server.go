@@ -5,15 +5,15 @@ import (
 	"fmt"
 	"net"
 	"sync"
-	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
-	sp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/serverproperties"
-	en "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/encryptionproperties"
-	// "crypto/rsa"
+	// cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
+	// sp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/serverproperties"
+	// en "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/encryptionproperties"
+	"crypto/rsa"
 	// "crypto/sha512"
 	// "crypto/rand"
-	// cp "../src/clientproperties"
-	// sp "../src/serverproperties"
-	// en "../src/encryptionproperties"
+	cp "../src/clientproperties"
+	sp "../src/serverproperties"
+	en "../src/encryptionproperties"
 )
 
 /* Add relevant Print statements where confused , and comment print statements while pushing */
@@ -62,7 +62,7 @@ func handler(c net.Conn, name string, query string, ClientListenPort string) { /
 
 	} else if query == "quit" {
 
-		sp.QueryDeal(clients, &cli, name)
+		sp.QueryDeal(clients, cli, name)
 
 	} else if query == "" {
 
@@ -73,7 +73,7 @@ func handler(c net.Conn, name string, query string, ClientListenPort string) { /
 				name = clients[i].Name
 			}
 		}
-		sp.QueryDeal(clients, &cli, name)
+		sp.QueryDeal(clients, cli, name)
 
 	}
 

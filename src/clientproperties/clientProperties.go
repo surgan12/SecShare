@@ -3,11 +3,11 @@ package clientproperties
 import (
 	"encoding/json"
 	// "fmt"
-	// fp "../../fileproperties"
-	"crypto/rand"
-	"crypto/rsa"
-	"crypto/sha512"	
-	fp "github.com/IITH-SBJoshi/concurrency-decentralized-network/fileproperties"
+	fp "../../fileproperties"
+	// "crypto/rand"
+	// "crypto/rsa"
+	// "crypto/sha512"	
+	// fp "github.com/IITH-SBJoshi/concurrency-decentralized-network/fileproperties"
 	"net"
 )
 
@@ -58,20 +58,27 @@ type FilePartContents struct {
 //BaseRequest request for file
 type BaseRequest struct {
 	RequestType string
-	FileRequest
-	fp.FilePartInfo
+	FR FileRequestType
+	FPI fp.FilePartInfo
+}
+
+type FileRequestType struct {
+	query         string
+	// myAddress     string
+	// myName        string
+	// requestedFile string
 }
 
 // FileRequest stores the queries and information about requester
 type FileRequest struct {
 	query         string
-	myAddress     string
-	myName        string
-	requestedFile string
+	// myAddress     string
+	// myName        string
+	// requestedFile string
 }
 
 // sendingToServer function to send queries to server
-func sendingToServer(name []byte, query []byte, conn net.Conn,
+func SendingToServer(name []byte, query []byte, conn net.Conn,
 	queryType string, listenPort []byte) {
 
 	objectToSend := ClientQuery{Name: name, Query: query, ClientListenPort: listenPort}
