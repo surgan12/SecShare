@@ -199,7 +199,7 @@ func ListenOnSelfPort(ln net.Listener, myname string, activeClient *ClientListen
 		if err != nil {
 			panic(err)
 		}
-		fmt.Println("\n")
+		// fmt.Println("\n")
 		fmt.Print(connection)
 		fmt.Println("my name is : " , myname)
 		// fmt.Println(myfiles)
