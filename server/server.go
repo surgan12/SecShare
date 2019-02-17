@@ -62,7 +62,7 @@ func handler(c net.Conn, name string, query string, ClientListenPort string) { /
 
 	} else if query == "quit" {
 
-		sp.QueryDeal(clients, cli, name)
+		sp.QueryDeal(&clients, &cli, name)
 	} else if query == "" {
 
 		var name string
@@ -73,7 +73,7 @@ func handler(c net.Conn, name string, query string, ClientListenPort string) { /
 			}
 		}
 
-		sp.QueryDeal(clients, cli, name)
+		sp.QueryDeal(&clients, &cli, name)
 	}
 
 	fmt.Print("Active clients are -> ", cli.List, "\n")
