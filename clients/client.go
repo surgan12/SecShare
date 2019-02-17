@@ -38,11 +38,24 @@ func main() {
 	var listenPort string
 	var flag = false
 
-	_, PublicKey := cp.GenerateKeyPair()
+	_, PublicKey := en.GenerateKeyPair()
 
-	conn, _ := net.Dial("tcp", "127.0.0.1:8081")
+	conn, err := net.Dial("tcp", "127.0.0.1:8081")
+	
+	dialCount := 0
+	for err != nil {
+		fmt.Println("error in connecting to server, dialing again")
+		conn1, err1 := net.Dial("tcp", "127.0.0.1:8081")
+		conn = conn1
+		err = err1
+		dialCount++
+		if (dialCount > 10){
+			fmt.Println("Apparantly server's port is not open...")
+			os.Exit(1)
+		}
+	}
 
-	ServerKey := cp.PerformHandshake(conn, PublicKey)
+	ServerKey := en.PerformHandshake(conn, PublicKey)
 	// fmt.Print(ServerKey.N)
 	fmt.Println("The follwing queries are supported - quit, receive_file - <sender_name>")
 	for {
@@ -55,8 +68,8 @@ func main() {
 			flag = true
 			query = "login"
 
-			nameByte := cp.EncryptWithPublicKey([]byte(name), ServerKey)
-			queryByte := cp.EncryptWithPublicKey([]byte(query), ServerKey)
+			nameByte := en.EncryptWithPublicKey([]byte(name), ServerKey)
+			queryByte := en.EncryptWithPublicKey([]byte(query), ServerKey)
 
 			fmt.Println("Which port do you want to listen upon ? : ")
 			fmt.Scanln(&listenPort)
@@ -70,9 +83,9 @@ func main() {
 				err = err1
 			}
 
-			mylistenport := cp.EncryptWithPublicKey([]byte(listenPort), ServerKey)
-			cp.sendingToServer(nameByte, queryByte, conn, query, mylistenport)
-			go cp.ListenOnSelfPort(ln, name, &activeClient, &myfiles)
+			mylistenport := en.EncryptWithPublicKey([]byte(listenPort), ServerKey)
+			cp.SendingToServer(nameByte, queryByte, conn, query, mylistenport)
+			go cp.ListenOnSelfPort(ln, name, &activeClient, myfiles)
 			continue
 
 		} else {
@@ -82,13 +95,13 @@ func main() {
 			// flag = false
 			if query == "quit" {
 
-				nameByte := cp.EncryptWithPublicKey([]byte(name), ServerKey)
-				queryByte := cp.EncryptWithPublicKey([]byte(query), ServerKey)
-				mylistenport := cp.EncryptWithPublicKey([]byte(listenPort), ServerKey)
-				cp.sendingToServer(nameByte, queryByte, conn, query, mylistenport)
+				nameByte := en.EncryptWithPublicKey([]byte(name), ServerKey)
+				queryByte := en.EncryptWithPublicKey([]byte(query), ServerKey)
+				mylistenport := en.EncryptWithPublicKey([]byte(listenPort), ServerKey)
+				cp.SendingToServer(nameByte, queryByte, conn, query, mylistenport)
 				os.Exit(2)
 			} else if query == "receive_file" {
-				cp.RequestSomeFile(&activeClient, name, &myfiles)
+				cp.RequestSomeFile(&activeClient, name)
 			}
 
 		}

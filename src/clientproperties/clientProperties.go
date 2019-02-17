@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	// "fmt"
 	// fp "../../fileproperties"
-	"crypto/rand"
-	"crypto/rsa"
-	"crypto/sha512"	
+	// "crypto/rand"
+	// "crypto/rsa"
+	// "crypto/sha512"	
 	fp "github.com/IITH-SBJoshi/concurrency-decentralized-network/fileproperties"
 	"net"
 )
@@ -49,6 +49,7 @@ type MyPeers struct {
 type MyReceivedFiles struct {
 	MyFileName string
 	MyFile     []FilePartContents
+	FilePartInfo fp.FilePartInfo
 }
 
 //FilePartContents contents of file in parts
@@ -58,20 +59,20 @@ type FilePartContents struct {
 //BaseRequest request for file
 type BaseRequest struct {
 	RequestType string
-	FileRequest
-	fp.FilePartInfo
+	FileRequest 
+	FilePartInfo fp.FilePartInfo
 }
 
 // FileRequest stores the queries and information about requester
 type FileRequest struct {
-	query         string
-	myAddress     string
-	myName        string
-	requestedFile string
+	Query         string
+	MyAddress     string
+	MyName        string
+	RequestedFile string
 }
 
-// sendingToServer function to send queries to server
-func sendingToServer(name []byte, query []byte, conn net.Conn,
+//SendingToServer function to send queries to server
+func SendingToServer(name []byte, query []byte, conn net.Conn,
 	queryType string, listenPort []byte) {
 
 	objectToSend := ClientQuery{Name: name, Query: query, ClientListenPort: listenPort}
