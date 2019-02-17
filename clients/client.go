@@ -85,7 +85,7 @@ func main() {
 
 			mylistenport := en.EncryptWithPublicKey([]byte(listenPort), ServerKey)
 			cp.SendingToServer(nameByte, queryByte, conn, query, mylistenport)
-			go cp.ListenOnSelfPort(ln, name, activeClient, myfiles)
+			go cp.ListenOnSelfPort(ln, name, &activeClient, myfiles)
 			continue
 
 		} else {
@@ -101,7 +101,7 @@ func main() {
 				cp.SendingToServer(nameByte, queryByte, conn, query, mylistenport)
 				os.Exit(2)
 			} else if query == "receive_file" {
-				cp.RequestSomeFile(activeClient, name)
+				cp.RequestSomeFile(&activeClient, name)
 			}
 
 		}
