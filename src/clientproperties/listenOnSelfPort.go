@@ -202,7 +202,6 @@ func ListenOnSelfPort(ln net.Listener, myname string, activeClient *ClientListen
 		}
 		fmt.Println("\n")
 		fmt.Print(connection)
-
 		fmt.Println("my name is : " , myname)
 		// fmt.Println(myfiles)
 		// var newrequest BaseRequest
