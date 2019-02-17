@@ -73,7 +73,6 @@ type FileRequest struct {
 }
 
 //SendingToServer function to send queries to server
-
 func SendingToServer(name []byte, query []byte, conn net.Conn,
 	queryType string, listenPort []byte) {
 

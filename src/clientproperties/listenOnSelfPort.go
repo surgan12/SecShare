@@ -192,7 +192,6 @@ func handleConnection(connection net.Conn, activeClient *ClientListen, myname st
 }
 
 // ListenOnSelfPort listens for clients on network
-
 func ListenOnSelfPort(ln net.Listener, myname string, activeClient *ClientListen, 
 					   myfiles map[string]MyReceivedFiles) {
 	for {
