@@ -24,11 +24,15 @@ func concatFiles(i int, allFiles []byte, filePartContent FilePartContents) {
 
 func concatenateFileParts (file MyReceivedFiles) {
 
+	var byteSizeLength int
 	fileName := file.MyFileName
 	fileParts := file.MyFile
-
+	for i := 0; i < len(fileParts); i++ {
+		byteSizeLength += len(fileParts[i].Contents)
+	}
 	//TODO : calculate file size from file parts
-	allFiles := make([]byte, 1)
+	fmt.Println(byteSizeLength)
+	allFiles := make([]byte, byteSizeLength)
 	
 	startTme := time.Now()
 	
@@ -41,7 +45,25 @@ func concatenateFileParts (file MyReceivedFiles) {
 	endTime := time.Now()
 	fmt.Println("Time to concatenate all parts is ", endTime.Sub(startTme))
 
-	currentfilename := fileName
+	currentfilename := fileName + ".jpg"
+	fmt.Println("check")
 	ioutil.WriteFile(currentfilename, allFiles, os.ModeAppend)
+	// currentfilename = os.Chmod(currentfilename, 0777)
+
+	// Test File existence.
+	_, err := os.Stat(currentfilename)
+	if err != nil {
+		if os.IsNotExist(err) {
+			// log.Fatal("File does not exist.")
+			fmt.Println("file doesn't exist")
+		}
+	}
+	fmt.Println("File exist.")
+ 
+	// Change permissions Linux.
+	err = os.Chmod(currentfilename, 0777)
+	if err != nil {
+		fmt.Println(err)
+	}
 	fmt.Println("Received file : ", currentfilename)
 }

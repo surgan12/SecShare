@@ -1,10 +1,10 @@
 package main
 
 import (
-	// cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
-	// en "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/encryptionproperties"
-	en "../src/encryptionproperties"
-	cp "../src/clientproperties"
+	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
+	en "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/encryptionproperties"
+	//en "../src/encryptionproperties"
+	//cp "../src/clientproperties"
 	"encoding/json"
 	"fmt"
 	"net"
@@ -42,14 +42,16 @@ func main() {
 
 	conn, err := net.Dial("tcp", "127.0.0.1:8081")
 	
-	dial_count := 0
+
+	dialCount := 0
 	for err != nil {
 		fmt.Println("error in connecting to server, dialing again")
 		conn1, err1 := net.Dial("tcp", "127.0.0.1:8081")
 		conn = conn1
 		err = err1
-		dial_count++
-		if (dial_count > 10){
+
+		dialCount++
+		if (dialCount > 10){
 			fmt.Println("Apparantly server's port is not open...")
 			os.Exit(1)
 		}
@@ -85,7 +87,8 @@ func main() {
 
 			mylistenport := en.EncryptWithPublicKey([]byte(listenPort), ServerKey)
 			cp.SendingToServer(nameByte, queryByte, conn, query, mylistenport)
-			go cp.ListenOnSelfPort(ln, name, activeClient, myfiles)
+
+			go cp.ListenOnSelfPort(ln, name, &activeClient, myfiles)
 			continue
 
 		} else {
@@ -100,8 +103,9 @@ func main() {
 				mylistenport := en.EncryptWithPublicKey([]byte(listenPort), ServerKey)
 				cp.SendingToServer(nameByte, queryByte, conn, query, mylistenport)
 				os.Exit(2)
-			} else if query == "rf" {
-				cp.RequestSomeFile(activeClient, name)
+
+			} else if query == "receive_file" {
+				cp.RequestSomeFile(&activeClient, name)
 			}
 
 		}
