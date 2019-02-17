@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"encoding/json"
 	"net"
-	fp "../../fileproperties"
+	// fp "../../fileproperties"
+	fp "github.com/IITH-SBJoshi/concurrency-decentralized-network/fileproperties"
 	"sync"
 )
 
@@ -23,7 +24,7 @@ func sendFileParts(newfilerequest FileRequest, allfileparts []fp.FilePartInfo,
 				   activeClient *ClientListen, myname string) {
 	fmt.Println("send file parst m")
 	fmt.Println(activeClient.PeerListenPort)
-	for names, _ := range activeClient.PeerListenPort {
+	for names := range activeClient.PeerListenPort {
 		fmt.Println("cureent names : ", names)
 		if (names != myname){
 			fmt.Println("cureent names : ", names)

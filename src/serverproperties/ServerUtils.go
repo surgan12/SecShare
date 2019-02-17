@@ -1,8 +1,8 @@
 package serverproperties
 
 import (
-	// cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
-	cp "../clientproperties"
+	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
+	// cp "../clientproperties"
 )
 
 // RemoveFromClient removes the client who quits from the list

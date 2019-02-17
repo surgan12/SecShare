@@ -13,7 +13,7 @@ import (
 var wgSplit sync.WaitGroup
 
 var mutex = &sync.Mutex{} // Lock and unlock (Mutex)
-
+//FilePartInfo for information regarding files
 type FilePartInfo struct {
 	FileName         string
 	TotalParts       int
@@ -22,6 +22,7 @@ type FilePartInfo struct {
 	FilePartContents []byte
 }
 
+//getFileParts ..
 func getFileParts(completefilename string, partSize uint64, filesize int64, i uint64, fileContents []byte,
 	allFileParts []FilePartInfo) {
 	fmt.Println("Writing part ", i, " from file")
@@ -56,6 +57,7 @@ func getFileParts(completefilename string, partSize uint64, filesize int64, i ui
 
 }
 
+//GetSplitFile fuction to split files 
 func GetSplitFile(filename string) []FilePartInfo {
 	fileDirectory := "../files"
 	file, err := os.Open(fileDirectory + "/image.jpg")

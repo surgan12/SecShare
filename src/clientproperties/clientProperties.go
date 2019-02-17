@@ -3,11 +3,11 @@ package clientproperties
 import (
 	"encoding/json"
 	// "fmt"
-	fp "../../fileproperties"
+	// fp "../../fileproperties"
 	// "crypto/rand"
 	// "crypto/rsa"
 	// "crypto/sha512"	
-	// fp "github.com/IITH-SBJoshi/concurrency-decentralized-network/fileproperties"
+	fp "github.com/IITH-SBJoshi/concurrency-decentralized-network/fileproperties"
 	"net"
 )
 
@@ -71,7 +71,7 @@ type FileRequest struct {
 	RequestedFile string
 }
 
-// sendingToServer function to send queries to server
+//SendingToServer function to send queries to server
 func SendingToServer(name []byte, query []byte, conn net.Conn,
 	queryType string, listenPort []byte) {
 
