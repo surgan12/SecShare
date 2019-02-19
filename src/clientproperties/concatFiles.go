@@ -1,7 +1,7 @@
 package clientproperties
 
 import (
-	"time"
+	// "time"
 	"fmt"
 	"os"
 	"io/ioutil"
@@ -30,10 +30,10 @@ func concatenateFileParts (file MyReceivedFiles) {
 		byteSizeLength += len(fileParts[i].Contents)
 	}
 	//TODO : calculate file size from file parts
-	fmt.Println(byteSizeLength)
+	// fmt.Println(byteSizeLength)
 	allFiles := make([]byte, byteSizeLength)
 	
-	startTme := time.Now()
+	// startTme := time.Now()
 	
 	for i := int(0); i < 1; i++ {
 		wgConcat.Add(1)
@@ -41,11 +41,11 @@ func concatenateFileParts (file MyReceivedFiles) {
 	}
 
 	wgConcat.Wait()
-	endTime := time.Now()
-	fmt.Println("Time to concatenate all parts is ", endTime.Sub(startTme))
+	// endTime := time.Now()
+	// fmt.Println("Time to concatenate all parts is ", endTime.Sub(startTme))
 
-	currentfilename := fileName + ".jpg"
-	fmt.Println("check")
+	currentfilename := fileName
+	// fmt.Println("check")
 	ioutil.WriteFile(currentfilename, allFiles, os.ModeAppend)
 	// currentfilename = os.Chmod(currentfilename, 0777)
 
@@ -57,7 +57,7 @@ func concatenateFileParts (file MyReceivedFiles) {
 			fmt.Println("file doesn't exist")
 		}
 	}
-	fmt.Println("File exist.")
+	// fmt.Println("File exist.")
  
 	// Change permissions Linux.
 	err = os.Chmod(currentfilename, 0777)

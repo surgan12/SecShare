@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
+	"strings"
 )
 
 func sendFileRequestToPeer(connection net.Conn, fileRequest FileRequest) {
@@ -15,28 +16,41 @@ func sendFileRequestToPeer(connection net.Conn, fileRequest FileRequest) {
 }
 
 // RequestSomeFile request files from peers on network
-func RequestSomeFile(activeClient *ClientListen, name string) {
+func RequestSomeFile(activeClient *ClientListen, name string, directoryFiles *ClientFiles) {
 	// _, PublicKeyClient = GenerateKeyPair()
-	fmt.Print(len(activeClient.List))
+	var fileExist bool
+	// fmt.Print(len(activeClient.List))
 	var fileSenderName string // is the person who will send the file
 	fmt.Print("Whom do you want to receive the file from ? : ")
 	fmt.Scanln(&fileSenderName)
 	var fileName string
 	fmt.Print("What file do you want ? ")
 	fmt.Scanln(&fileName) // file we want to receive
+	for _, file := range directoryFiles.FilesInDir {
 
-	fileRequest := FileRequest{Query: "receive_file", 
-				   MyAddress: activeClient.PeerIP[name],
-				   MyName: name, RequestedFile: fileName}	
-
-	connection, err := net.Dial("tcp", ":" + activeClient.PeerListenPort[fileSenderName])
-	for err != nil {
-		fmt.Println("Please enter a valid person name - ")
-		connection1, err1 := net.Dial("tcp", ":" + activeClient.PeerListenPort[fileSenderName])
-		connection = connection1
-		err = err1
+		if(strings.Compare(file, fileName) == 0){
+			fileExist = true;
+		}
 	}
 
-	sendFileRequestToPeer(connection, fileRequest)
+	if(fileExist == true){
+
+		fileRequest := FileRequest{Query: "receive_file", 
+				   		MyAddress: activeClient.PeerIP[name],
+				   		MyName: name, RequestedFile: fileName}
+
+		connection, err := net.Dial("tcp", ":" + activeClient.PeerListenPort[fileSenderName])
+		for err != nil {
+			fmt.Println("Please enter a valid person name - ")
+			connection1, err1 := net.Dial("tcp", ":" + activeClient.PeerListenPort[fileSenderName])
+			connection = connection1
+			err = err1
+		}
+
+		sendFileRequestToPeer(connection, fileRequest)
+	} else {
+		fmt.Println("files does not exist")
+	}	
+
 	// connection.Close()	// closing connection after one time requestb17e198f6aeb5753c2c193c
 }

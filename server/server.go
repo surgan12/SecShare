@@ -6,12 +6,12 @@ import (
 	"net"
 	"sync"
 	"crypto/rsa"
-	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
-	sp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/serverproperties"
-	en "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/encryptionproperties"
-	// cp "../src/clientproperties"
-	// sp "../src/serverproperties"
-	// en "../src/encryptionproperties"
+	// cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
+	// sp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/serverproperties"
+	// en "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/encryptionproperties"
+	cp "../src/clientproperties"
+	sp "../src/serverproperties"
+	en "../src/encryptionproperties"
 )
 
 /* Add relevant Print statements where confused , and comment print statements while pushing */

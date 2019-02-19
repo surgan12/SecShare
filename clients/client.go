@@ -1,14 +1,15 @@
 package main
 
 import (
-	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
-	en "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/encryptionproperties"
-	// en "../src/encryptionproperties"
-	// cp "../src/clientproperties"
+	// cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
+	// en "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/encryptionproperties"
+	en "../src/encryptionproperties"
+	cp "../src/clientproperties"
 	"encoding/json"
 	"fmt"
 	"net"
 	"os"
+	"path/filepath"
 )
 
 //initializing a wait group
@@ -26,6 +27,8 @@ func gettingPeersFromServer(c net.Conn, peers *[]string, msg *cp.ClientListen) {
 func main() {
 
 	var activeClient cp.ClientListen
+	var directoryFiles cp.ClientFiles
+	fileDirectory := "../files"
 
 	// var myPeers []cp.MyPeers
 	myfiles := make(map[string]cp.MyReceivedFiles)
@@ -82,6 +85,21 @@ func main() {
 				ln = ln1
 				err = err1
 			}
+			//adds files in directory to a clientFiles
+			error1 := filepath.Walk(fileDirectory, func(path string, info os.FileInfo, err error) error {
+				if info.IsDir() {
+					return nil
+				}
+        		directoryFiles.FilesInDir = append(directoryFiles.FilesInDir, info.Name())
+        		return nil
+    		})
+    		if error1 != nil {
+        		panic(error1)
+    		}
+    		//for printing files in the directory
+    		// for _, file := range directoryFiles.FilesInDir {
+      //   		fmt.Println(file)
+    		// }
 
 			mylistenport := en.EncryptWithPublicKey([]byte(listenPort), ServerKey)
 			cp.SendingToServer(nameByte, queryByte, conn, query, mylistenport)
@@ -101,7 +119,7 @@ func main() {
 				cp.SendingToServer(nameByte, queryByte, conn, query, mylistenport)
 				os.Exit(2)
 			} else if query == "receive_file" {
-				cp.RequestSomeFile(&activeClient, name)
+				cp.RequestSomeFile(&activeClient, name, &directoryFiles)
 			}
 
 		}
