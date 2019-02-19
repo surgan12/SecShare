@@ -30,7 +30,6 @@ func getFileParts(completefilename string, partSize uint64, filesize int64, i ui
 
 	currentpart := FilePartInfo{FileName: completefilename, TotalParts: 1, PartName: "part_" + strconv.FormatUint(i, 10),
 		PartNumber: int(i), FilePartContents: make([]byte, currentSize)}
-	// currentBuffer := make([]byte, currentSize)
 
 	for j := int(i * partSize); j < int(i*partSize)+int(currentSize); j++ {
 		currentpart.FilePartContents[j-int(i*partSize)] = fileContents[j]
@@ -42,23 +41,11 @@ func getFileParts(completefilename string, partSize uint64, filesize int64, i ui
 	mutex.Unlock()
 
 	defer wgSplit.Done()
-
-	// currentfilename := "part_" + strconv.FormatUint(i, 10)
-
-	// _, err := os.Create(currentfilename)
-
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	os.Exit(1)
-	// }
-
-	// Writing form byte array to current file part
-	// ioutil.WriteFile(currentfilename, currentBuffer, os.ModeAppend)
-
+	fmt.Print("hello")
 }
 
 //GetSplitFile fuction to split files 
-func GetSplitFile(filename string) []FilePartInfo {
+func GetSplitFile(filename string, numberOfActiveClient int) []FilePartInfo {
 	fileDirectory := "../files"
 	file, err := os.Open(fileDirectory + "/image.jpg")
 	// file, err := os.Open(filename)
@@ -83,20 +70,20 @@ func GetSplitFile(filename string) []FilePartInfo {
 	var partSize = uint64(math.Ceil(float64(filesize) / float64(1)))
 
 	fileContents, err := ioutil.ReadFile(fileDirectory + "/image.jpg")
-	// fileContents, err := ioutil.ReadFile(filename)
 
 	startTime := time.Now()
 
-	allFileParts := make([]FilePartInfo, 1)
+	allFileParts := make([]FilePartInfo, numberOfActiveClient - 1)
 
 	for i := uint64(0); i < 1; i++ {
-		wgSplit.Add(1)
+		wgSplit.Add(numberOfActiveClient - 1)
 		go getFileParts(filename, partSize, filesize, i, fileContents, allFileParts)
 	}
 
-	wgSplit.Wait() // waiting for all routines to finish
+	// wgSplit.Wait() // waiting for all routines to finish
 	endTime := time.Now()
 	fmt.Println("Time taken to split the file ", endTime.Sub(startTime))
+	fmt.Print("file splitting done")
 
 	return allFileParts
 

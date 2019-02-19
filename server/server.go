@@ -5,12 +5,10 @@ import (
 	"fmt"
 	"net"
 	"sync"
+	"crypto/rsa"
 	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
 	sp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/serverproperties"
 	en "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/encryptionproperties"
-	"crypto/rsa"
-	// "crypto/sha512"
-	// "crypto/rand"
 	// cp "../src/clientproperties"
 	// sp "../src/serverproperties"
 	// en "../src/encryptionproperties"
@@ -63,7 +61,6 @@ func handler(c net.Conn, name string, query string, ClientListenPort string) { /
 	} else if query == "quit" {
 
 		cli = sp.QueryDeal(&clients, cli, name)
-
 	} else if query == "" {
 
 		var name string
@@ -73,10 +70,10 @@ func handler(c net.Conn, name string, query string, ClientListenPort string) { /
 				name = clients[i].Name
 			}
 		}
+
 		cli = sp.QueryDeal(&clients, cli, name)
-
 	}
-
+	fmt.Print("no of active clients are : ", len(cli.List))
 	fmt.Print("Active clients are -> ", cli.List, "\n")
 	fmt.Print("Active clients IPs are -> ", cli.PeerIP, "\n")
 

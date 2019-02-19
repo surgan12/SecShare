@@ -28,6 +28,7 @@ func QueryDeal(clients *[]cp.Client, cli cp.ClientListen, name string) cp.Client
 	}
 
 	cli.List = append(cli.List[:j], cli.List[j+1:]...)
+
 	*clients = RemoveFromClient(*clients, name)
 	return cli
 	// fmt.Print(cli.List, clients)
