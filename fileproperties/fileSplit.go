@@ -25,7 +25,7 @@ type FilePartInfo struct {
 //getFileParts ..
 func getFileParts(completefilename string, partSize uint64, filesize int64, i uint64, fileContents []byte,
 	allFileParts []FilePartInfo) {
-	fmt.Println("Writing part ", i, " from file")
+	// fmt.Println("Writing part ", i, " from file")
 	currentSize := int(math.Min(float64(partSize), float64((filesize)-int64(i*partSize))))
 
 	currentpart := FilePartInfo{FileName: completefilename, TotalParts: 1, PartName: "part_" + strconv.FormatUint(i, 10),
@@ -37,11 +37,10 @@ func getFileParts(completefilename string, partSize uint64, filesize int64, i ui
 
 	mutex.Lock()
 	allFileParts[i] = currentpart
-	fmt.Println("done")
+	// fmt.Println("done")
 	mutex.Unlock()
 
 	defer wgSplit.Done()
-	fmt.Print("hello")
 }
 
 //GetSplitFile fuction to split files 
@@ -64,7 +63,7 @@ func GetSplitFile(filename string, numberOfActiveClient int) []FilePartInfo {
 		os.Exit(1)
 	}
 	var filesize = fileInfo.Size()
-	fmt.Println("Size of file is -> ", filesize)
+	// fmt.Println("Size of file is -> ", filesize)
 
 	// Currently sending to one peer only
 	var partSize = uint64(math.Ceil(float64(filesize) / float64(1)))
@@ -83,7 +82,6 @@ func GetSplitFile(filename string, numberOfActiveClient int) []FilePartInfo {
 	// wgSplit.Wait() // waiting for all routines to finish
 	endTime := time.Now()
 	fmt.Println("Time taken to split the file ", endTime.Sub(startTime))
-	fmt.Print("file splitting done")
 
 	return allFileParts
 
