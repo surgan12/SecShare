@@ -42,14 +42,12 @@ func main() {
 
 	conn, err := net.Dial("tcp", "127.0.0.1:8081")
 	
-
 	dialCount := 0
 	for err != nil {
 		fmt.Println("error in connecting to server, dialing again")
 		conn1, err1 := net.Dial("tcp", "127.0.0.1:8081")
 		conn = conn1
 		err = err1
-
 		dialCount++
 		if (dialCount > 10){
 			fmt.Println("Apparantly server's port is not open...")
@@ -87,7 +85,6 @@ func main() {
 
 			mylistenport := en.EncryptWithPublicKey([]byte(listenPort), ServerKey)
 			cp.SendingToServer(nameByte, queryByte, conn, query, mylistenport)
-
 			go cp.ListenOnSelfPort(ln, name, &activeClient, myfiles)
 			continue
 

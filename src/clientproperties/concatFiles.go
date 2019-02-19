@@ -23,7 +23,6 @@ func concatFiles(i int, allFiles []byte, filePartContent FilePartContents) {
 }
 
 func concatenateFileParts (file MyReceivedFiles) {
-
 	var byteSizeLength int
 	fileName := file.MyFileName
 	fileParts := file.MyFile

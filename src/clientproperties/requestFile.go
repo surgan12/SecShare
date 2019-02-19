@@ -9,7 +9,6 @@ import (
 	// "crypto/sha512"
 )
 
-
 func sendFileRequestToPeer(connection net.Conn, fileRequest FileRequest) {
 	//handle with care, FilePartInfo field for this truct is Nil. Will throw seg fault if accessed
 	// fmt.Println("file properties testing")

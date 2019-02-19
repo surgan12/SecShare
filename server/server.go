@@ -63,7 +63,7 @@ func handler(c net.Conn, name string, query string, ClientListenPort string) { /
 
 	} else if query == "quit" {
 
-		sp.QueryDeal(clients, cli, name)
+		sp.QueryDeal(&clients, &cli, name)
 
 	} else if query == "" {
 
@@ -74,7 +74,7 @@ func handler(c net.Conn, name string, query string, ClientListenPort string) { /
 				name = clients[i].Name
 			}
 		}
-		sp.QueryDeal(clients, cli, name)
+		sp.QueryDeal(&clients, &cli, name)
 
 	}
 
@@ -88,6 +88,7 @@ func maintainConnection(conn net.Conn, PeerKeys map[net.Conn]*rsa.PublicKey,
 
 	//performing handshake
 	peerKey := &rsa.PublicKey{}
+
 	decoder := json.NewDecoder(conn)
 	decoder.Decode(&peerKey)
 	encoder := json.NewEncoder(conn)

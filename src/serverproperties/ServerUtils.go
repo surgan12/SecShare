@@ -1,5 +1,4 @@
 package serverproperties
-
 import (
 	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
 	//cp "../clientproperties"
