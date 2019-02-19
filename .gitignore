@@ -1,0 +1,19 @@
+# ignore a single file
+--------------------
+#name of file
+--------------------
+
+# ignore an entire directory
+----------------------------
+#/name of directory/
+----------------------------
+
+# ignore a file type
+-------------------------
+# *.extension
+*.png
+-----------------------------
+# add an exception (using !) to the preceding rule to track a specific file
+---------------------------------
+# !filename
+---------------------------------
