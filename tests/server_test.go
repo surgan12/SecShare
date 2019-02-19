@@ -4,11 +4,11 @@ import "testing"
 
 import cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
 
-// import cp "../src/clientproperties"
+//import cp "../src/clientproperties"
 
 import sp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/serverproperties"
 
-// import sp "../src/serverproperties"
+//import sp "../src/serverproperties"
 
 func TestRemoveFromClient(t *testing.T) {
 
@@ -30,7 +30,7 @@ func TestQueryDeal(t *testing.T) {
 	cli := cp.ClientListen{List: list, PeerIP: TestMap}
 	clt := cp.Client{Name: name, Address: ":8087"}
 	var clients = []cp.Client{clt}
-	sp.QueryDeal(clients, cli, name)
+	cli = sp.QueryDeal(&clients, cli, name)
 	if len(clients) > 0 || len(cli.List) > 0 || cli.PeerIP[name] != "" {
 		t.Fatal("QueryDeal in the serverproperties not working correctly")
 	}

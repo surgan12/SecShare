@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	// "fmt"
 
-	// fp "../../fileproperties"
+	//fp "../../fileproperties"
 	// "crypto/rand"
 	// "crypto/rsa"
 	// "crypto/sha512"	
