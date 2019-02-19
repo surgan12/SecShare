@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"encoding/json"
 	"net"
-	//fp "../../fileproperties"
+	// fp "../../fileproperties"
 	fp "github.com/IITH-SBJoshi/concurrency-decentralized-network/fileproperties"
 	"sync"
 )
@@ -199,6 +199,7 @@ func ListenOnSelfPort(ln net.Listener, myname string, activeClient *ClientListen
 		if err != nil {
 			panic(err)
 		}
+		fmt.Println("\n")
 		fmt.Print(connection)
 		fmt.Println("my name is : " , myname)
 		// fmt.Println(myfiles)
