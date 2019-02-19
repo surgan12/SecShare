@@ -32,7 +32,6 @@ func RequestSomeFile(activeClient *ClientListen, name string, directoryFiles *Cl
 			fileExist = true;
 		}
 	}
-
 	if(fileExist == true){
 
 		fileRequest := FileRequest{Query: "receive_file", 

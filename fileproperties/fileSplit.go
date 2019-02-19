@@ -41,7 +41,6 @@ func getFileParts(completefilename string, partSize uint64, filesize int64, i ui
 	mutex.Unlock()
 
 	defer wgSplit.Done()
-	// fmt.Print("hello")
 }
 
 //GetSplitFile fuction to split files 
@@ -80,10 +79,9 @@ func GetSplitFile(filename string, numberOfActiveClient int) []FilePartInfo {
 		go getFileParts(filename, partSize, filesize, i, fileContents, allFileParts)
 	}
 
-	wgSplit.Wait() // waiting for all routines to finish
+	// wgSplit.Wait() // waiting for all routines to finish
 	endTime := time.Now()
 	fmt.Println("Time taken to split the file ", endTime.Sub(startTime))
-	// fmt.Print("file splitting done")
 
 	return allFileParts
 

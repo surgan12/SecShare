@@ -1,10 +1,10 @@
 package main
 
 import (
-	// cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
-	// en "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/encryptionproperties"
-	en "../src/encryptionproperties"
-	cp "../src/clientproperties"
+	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
+	en "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/encryptionproperties"
+	// en "../src/encryptionproperties"
+	// cp "../src/clientproperties"
 	"encoding/json"
 	"fmt"
 	"net"
