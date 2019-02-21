@@ -120,6 +120,8 @@ func main() {
 				os.Exit(2)
 			} else if query == "receive_file" {
 				cp.RequestSomeFile(&activeClient, name, &directoryFiles)
+			} else if query == "send_message" {
+				cp.RequestChatting(&activeClient, name)
 			}
 
 		}
