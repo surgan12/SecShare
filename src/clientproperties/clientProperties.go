@@ -61,6 +61,7 @@ type BaseRequest struct {
 	RequestType string
 	FileRequest 
 	FilePartInfo fp.FilePartInfo
+	MessageRequest
 }
 
 // FileRequest stores the queries and information about requester
@@ -71,6 +72,13 @@ type FileRequest struct {
 	RequestedFile string
 }
 
+//MessageRequest stores the query and information about requester
+type MessageRequest struct {
+	SenderQuery 	string
+	SenderAddress	string
+	SenderName 		string
+	Message 	string
+}
 //ClientFiles stores the files of client has
 type ClientFiles struct {
 	FilesInDir [] string

@@ -116,7 +116,8 @@ func handleConnection(connection net.Conn, activeClient *ClientListen, myname st
 	var newrequest BaseRequest
 	newconn := json.NewDecoder(connection)
 	newconn.Decode(&newrequest)
-
+	// fmt.Println(newrequest.MessageRequest.Message)
+	// fmt.Println(newrequest.MessageRequest.Message)
 	if newrequest.RequestType == "receive_from_peer" {
 
 		fmt.Println("Request to receive a file from peer ")
@@ -126,6 +127,9 @@ func handleConnection(connection net.Conn, activeClient *ClientListen, myname st
 
 		fmt.Println("Received some file part ")
 		handleReceivedRequest(connection, activeClient, myname, myfiles, newrequest)
+	} else if newrequest.RequestType == "receive_message"{
+		fmt.Print("{ ",newrequest.MessageRequest.SenderName, " sent you a message : '",
+								newrequest.MessageRequest.Message,"' } ")
 	}
 
 }
