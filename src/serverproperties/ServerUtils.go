@@ -1,7 +1,8 @@
 package serverproperties
+
 import (
-	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
-	// cp "../clientproperties"
+	// cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
+	cp "../clientproperties"
 )
 
 // RemoveFromClient removes the client who quits from the list
@@ -16,7 +17,7 @@ func RemoveFromClient(clients []cp.Client, name string) []cp.Client {
 }
 
 // QueryDeal upadtes client list and PeerIP table when quit query is passed
-func QueryDeal(clients *[]cp.Client, cli cp.ClientListen, name string) cp.ClientListen{
+func QueryDeal(clients *[]cp.Client, cli cp.ClientListen, name string) cp.ClientListen {
 
 	delete(cli.PeerIP, name)
 	var j int
