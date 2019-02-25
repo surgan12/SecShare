@@ -1,17 +1,17 @@
 package main
 
 import (
+	"crypto/rsa"
 	"encoding/json"
 	"fmt"
 	"net"
 	"sync"
-	"crypto/rsa"
 	// cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
 	// sp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/serverproperties"
 	// en "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/encryptionproperties"
 	cp "../src/clientproperties"
-	sp "../src/serverproperties"
 	en "../src/encryptionproperties"
+	sp "../src/serverproperties"
 )
 
 /* Add relevant Print statements where confused , and comment print statements while pushing */

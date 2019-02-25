@@ -6,7 +6,7 @@ import (
 	fp "../../fileproperties"
 	// "crypto/rand"
 	// "crypto/rsa"
-	// "crypto/sha512"	
+	// "crypto/sha512"
 	// fp "github.com/IITH-SBJoshi/concurrency-decentralized-network/fileproperties"
 	"net"
 )
@@ -45,10 +45,11 @@ type MyPeers struct {
 	Conn     net.Conn
 	PeerName string
 }
+
 //MyReceivedFiles received files
 type MyReceivedFiles struct {
-	MyFileName string
-	MyFile     []FilePartContents
+	MyFileName   string
+	MyFile       []FilePartContents
 	FilePartInfo fp.FilePartInfo
 }
 
@@ -56,10 +57,11 @@ type MyReceivedFiles struct {
 type FilePartContents struct {
 	Contents []byte
 }
+
 //BaseRequest request for file
 type BaseRequest struct {
 	RequestType string
-	FileRequest 
+	FileRequest
 	FilePartInfo fp.FilePartInfo
 	MessageRequest
 }
@@ -75,15 +77,17 @@ type FileRequest struct {
 
 //MessageRequest stores the query and information about requester
 type MessageRequest struct {
-	SenderQuery 	string
-	SenderAddress	string
-	SenderName 		string
-	Message 	string
+	SenderQuery   string
+	SenderAddress string
+	SenderName    string
+	Message       string
 }
+
 //ClientFiles stores the files of client has
 type ClientFiles struct {
-	FilesInDir [] string
+	FilesInDir []string
 }
+
 //SendingToServer function to send queries to server
 func SendingToServer(name []byte, query []byte, conn net.Conn,
 	queryType string, listenPort []byte) {
@@ -95,4 +99,3 @@ func SendingToServer(name []byte, query []byte, conn net.Conn,
 		conn.Close()
 	}
 }
-

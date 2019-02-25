@@ -1,14 +1,12 @@
 package main
 
-import "testing"
-// import "fmt"
-// import cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
-
-import cp "../src/clientproperties"
-
-// import sp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/serverproperties"
-
-import sp "../src/serverproperties"
+import (
+	cp "../src/clientproperties"
+	sp "../src/serverproperties"
+	"testing"
+	// cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
+	// sp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/serverproperties"
+)
 
 func TestRemoveFromClient(t *testing.T) {
 
