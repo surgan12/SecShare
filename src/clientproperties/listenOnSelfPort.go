@@ -31,6 +31,7 @@ func sendFileParts(newfilerequest FileRequest, allfileparts []fp.FilePartInfo,
 			encoder.Encode(&baseRequest)
 
 		}
+		
 	}
 }
 
@@ -39,7 +40,6 @@ func handleNewFileSendRequest(newfilerequest FileRequest, myname string, activeC
 	// fmt.Println(myname)
 
 	allfileparts := fp.GetSplitFile(newfilerequest.RequestedFile, len(activeClient.List))
-	// fmt.Println("received file from Happy")
 	sendFileParts(newfilerequest, allfileparts, activeClient, myname)
 
 }
@@ -50,9 +50,6 @@ func handleReceivedFile(newrequest BaseRequest, myfiles map[string]MyReceivedFil
 	var filePartNum int
 	// fmt.Println("testing : 2")
 	requestedFileName := newrequest.FilePartInfo.FileName
-	// fmt.Println(newrequest.FilePartInfo.TotalParts)
-	// fmt.Println(newrequest.FilePartInfo.PartNumber)
-	// fmt.Println(requestedFileName)
 
 	TotalFileParts = newrequest.FilePartInfo.TotalParts
 	filePartNum = newrequest.FilePartInfo.PartNumber

@@ -135,6 +135,8 @@ func main() {
 
 			} else if query == "send_message" {
 				cp.RequestChatting(&activeClient, name)
+			} else if query == "down" {
+				cp.Download()
 			}
 		}
 	}

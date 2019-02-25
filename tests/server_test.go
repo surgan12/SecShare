@@ -28,7 +28,8 @@ func TestQueryDeal(t *testing.T) {
 	cli := cp.ClientListen{List: list, PeerIP: TestMap}
 	clt := cp.Client{Name: name, Address: ":8087"}
 	var clients = []cp.Client{clt}
-	cli = sp.QueryDeal(&clients, cli, name)
+	sp.QueryDeal(&clients, &cli, name)
+
 	if len(clients) > 0 || len(cli.List) > 0 || cli.PeerIP[name] != "" {
 		t.Fatal("QueryDeal in the serverproperties not working correctly")
 	}
