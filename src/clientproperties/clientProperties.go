@@ -3,11 +3,11 @@ package clientproperties
 import (
 	"encoding/json"
 	// "fmt"
-	// fp "../../fileproperties"
+	fp "../../fileproperties"
 	// "crypto/rand"
 	// "crypto/rsa"
 	// "crypto/sha512"	
-	fp "github.com/IITH-SBJoshi/concurrency-decentralized-network/fileproperties"
+	// fp "github.com/IITH-SBJoshi/concurrency-decentralized-network/fileproperties"
 	"net"
 )
 
@@ -63,6 +63,7 @@ type BaseRequest struct {
 	FilePartInfo fp.FilePartInfo
 	MessageRequest
 }
+
 
 // FileRequest stores the queries and information about requester
 type FileRequest struct {

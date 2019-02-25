@@ -43,7 +43,7 @@ func getFileParts(completefilename string, partSize uint64, filesize int64, i ui
 	defer wgSplit.Done()
 }
 
-//GetSplitFile fuction to split files 
+//GetSplitFile function to split files 
 func GetSplitFile(filename string, numberOfActiveClient int) []FilePartInfo {
 	fileDirectory := "../files"
 	file, err := os.Open(fileDirectory + "/image.jpg")

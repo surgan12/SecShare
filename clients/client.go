@@ -1,10 +1,10 @@
 package main
 
 import (
-	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
-	en "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/encryptionproperties"
-	// en "../src/encryptionproperties"
-	// cp "../src/clientproperties"
+	// cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
+	// en "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/encryptionproperties"
+	en "../src/encryptionproperties"
+	cp "../src/clientproperties"
 	"encoding/json"
 	"fmt"
 	"net"
@@ -53,7 +53,7 @@ func main() {
 		err = err1
 		dialCount++
 		if (dialCount > 10){
-			fmt.Println("Apparantly server's port is not open...")
+			fmt.Println("Apparently server's port is not open...")
 			os.Exit(1)
 		}
 	}
@@ -122,6 +122,8 @@ func main() {
 				cp.RequestSomeFile(&activeClient, name, &directoryFiles)
 			} else if query == "send_message" {
 				cp.RequestChatting(&activeClient, name)
+			} else if query == "down" {
+				cp.Download()
 			}
 
 		}
