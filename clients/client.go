@@ -136,7 +136,10 @@ func main() {
 			} else if query == "send_message" {
 				cp.RequestChatting(&activeClient, name)
 			} else if query == "down" {
-				cp.Download()
+				var url string
+				fmt.Print("URL for downloading: ")
+				fmt.Scanln(&url)
+				go cp.Download(url)
 			}
 		}
 	}
