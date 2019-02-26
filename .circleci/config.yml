@@ -1,0 +1,16 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/golang:1.9
+    working_directory: /go/src/github.com/IITH-SBJoshi/concurrency-decentralized-network
+      - master
+
+    steps:
+      -checkout
+      -run: go get -u github.com/golang/lint/golint
+      -run: go get -u github.com/GeertJohan/fgt
+      -run:
+        name: run tests
+        command: |
+          go test ./...
