@@ -54,7 +54,7 @@ func main() {
 
 	ServerKey := en.PerformHandshake(conn, PublicKey)
 
-	fmt.Println("The follwing queries are supported - quit, receive_file - <sender_name>, send_message, display_recent_messages, down for donwload")
+	fmt.Println("The follwing queries are supported - quit, receive_file - <sender_name>, send_message, display_recent_messages, down for Download")
 
 	for {
 		go gettingPeersFromServer(conn, &peers, &activeClient)
@@ -151,12 +151,16 @@ func main() {
 
 			} else if query == "display_recent_messages" {
 
-        cp.DisplayRecentMessages(mymessages)
+        		cp.DisplayRecentMessages(mymessages)
 				messageReceiverName, message := cp.MessageReceiverCredentials()
-				cp.RequestChatting(&activeClient, name, messageReceiverName, message)
+				cp.RequestMessage(&activeClient, name, messageReceiverName, message)
 
 			} else if query == "down" {
-				cp.Download()
+				var url string
+				fmt.Print("URL for downloading: ")
+				fmt.Scanln(&url)
+				go cp.Download(url)
+
 			}
 		}
 	}
