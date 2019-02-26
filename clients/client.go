@@ -12,15 +12,10 @@ import (
 	"path/filepath"
 )
 
-//initializing a wait group
-// var wg sync.WaitGroup
-
 func gettingPeersFromServer(c net.Conn, peers *[]string, msg *cp.ClientListen) {
 	for {
 		d := json.NewDecoder(c)
 		d.Decode(msg)
-		// fmt.Println("Current active peers are -> ")
-		// fmt.Println(msg)
 	}
 }
 
@@ -30,12 +25,11 @@ func main() {
 	var directoryFiles cp.ClientFiles
 	fileDirectory := "../files"
 
-	// var myPeers []cp.MyPeers
 	myfiles := make(map[string]cp.MyReceivedFiles)
+	mymessages := cp.MyReceivedMessages{Counter: -1} // No messages received yet
 
 	peers := []string{}
 
-	// var myname string
 	var name string
 	var query string
 	var listenPort string
@@ -59,8 +53,9 @@ func main() {
 	}
 
 	ServerKey := en.PerformHandshake(conn, PublicKey)
-	// fmt.Print(ServerKey.N)
-	fmt.Println("The follwing queries are supported - quit, receive_file - <sender_name>")
+
+	fmt.Println("The follwing queries are supported - quit, receive_file - <sender_name>, send_message, display_recent_messages, down for donwload")
+
 	for {
 		go gettingPeersFromServer(conn, &peers, &activeClient)
 
@@ -81,10 +76,11 @@ func main() {
 			for err != nil {
 				fmt.Println("Cant listen on this port, choose another : ")
 				fmt.Scanln(&listenPort)
-				ln1, err1 := net.Listen("tcp", listenPort)
+				ln1, err1 := net.Listen("tcp", ":"+listenPort)
 				ln = ln1
 				err = err1
 			}
+
 			//adds files in directory to a clientFiles
 			error1 := filepath.Walk(fileDirectory, func(path string, info os.FileInfo, err error) error {
 				if info.IsDir() {
@@ -93,6 +89,7 @@ func main() {
 				directoryFiles.FilesInDir = append(directoryFiles.FilesInDir, info.Name())
 				return nil
 			})
+
 			if error1 != nil {
 				panic(error1)
 			}
@@ -103,14 +100,14 @@ func main() {
 
 			mylistenport := en.EncryptWithPublicKey([]byte(listenPort), ServerKey)
 			cp.SendingToServer(nameByte, queryByte, conn, query, mylistenport)
-			go cp.ListenOnSelfPort(ln, name, &activeClient, myfiles)
+			go cp.ListenOnSelfPort(ln, name, &activeClient, myfiles, &mymessages)
 			continue
 
 		} else {
 
 			fmt.Print("What do you want to do? : ")
 			fmt.Scanln(&query)
-			// flag = false
+
 			if query == "quit" {
 
 				nameByte := en.EncryptWithPublicKey([]byte(name), ServerKey)
@@ -130,8 +127,34 @@ func main() {
 				}
 
 			} else if query == "send_message" {
+
+				messaging := true
+				fmt.Println("Currently in messaging mode..")
+
+				for messaging == true {
+					messageReceiverName, message := cp.MessageReceiverCredentials()
+					message_status := cp.RequestMessage(&activeClient, name, messageReceiverName, message)
+					if message_status == "sent" {
+						fmt.Println("Message sent")
+					} else {
+						fmt.Println("Message not sent properly")
+					}
+
+					var query_message string
+					fmt.Println("Do you want to send more messages? If Yes type Y, else N")
+					fmt.Scanln(&query_message)
+					if query_message == "N" {
+						fmt.Println("Exiting messaging mode...")
+						break
+					}
+				}
+
+			} else if query == "display_recent_messages" {
+
+        cp.DisplayRecentMessages(mymessages)
 				messageReceiverName, message := cp.MessageReceiverCredentials()
 				cp.RequestChatting(&activeClient, name, messageReceiverName, message)
+
 			} else if query == "down" {
 				cp.Download()
 			}

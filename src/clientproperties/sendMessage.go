@@ -9,12 +9,16 @@ import (
 )
 
 //sendMessageRequestToPeer encodes the baserequest
-func sendMessageRequestToPeer(connection net.Conn, messageRequest MessageRequest) {
+func sendMessageToPeer(connection net.Conn, messageRequest MessageRequest) {
 	baseRequest := BaseRequest{RequestType: "receive_message", MessageRequest: messageRequest}
 	encoder1 := json.NewEncoder(connection)
 	encoder1.Encode(&baseRequest)
 	connection.Close()
 }
+
+// RequestMessage takes message from client and dials to receiver
+func RequestMessage(activeClient *ClientListen, name string, messageReceiverName string,
+	message string) string {
 
 // RequestChatting takes message from client and dials to receiver
 func RequestChatting(activeClient *ClientListen, name string, messageSenderName string, 
@@ -25,14 +29,35 @@ func RequestChatting(activeClient *ClientListen, name string, messageSenderName 
 		SenderQuery: "message_request", SenderName: name,
 		SenderAddress: activeClient.PeerIP[name], Message: message}
 
-	connection, err := net.Dial("tcp", ":"+activeClient.PeerListenPort[messageSenderName])
+	connection, err := net.Dial("tcp", ":"+activeClient.PeerListenPort[messageReceiverName])
 	for err != nil {
 		fmt.Println("Please enter a valid person name - ")
-		connection1, err1 := net.Dial("tcp", ":"+activeClient.PeerListenPort[messageSenderName])
+		connection1, err1 := net.Dial("tcp", ":"+activeClient.PeerListenPort[messageReceiverName])
 		connection = connection1
 		err = err1
 	}
-	sendMessageRequestToPeer(connection, messageRequest)
+	sendMessageToPeer(connection, messageRequest)
+	message_status := "sent"
+	return message_status
+}
+
+func MessageReceiverCredentials() (string, string) {
+
+	var messageSenderName string
+	var message string
+	// fmt.Print(name)
+	in := bufio.NewReader(os.Stdin)
+	fmt.Print("Message (Person's name) : ")
+	fmt.Scanln(&messageSenderName)
+	fmt.Print("Message to send : ")
+	// fmt.Scanln(&message)
+	message, err := in.ReadString('\n')
+
+	if err != nil {
+		panic(err)
+	}
+
+	return messageSenderName, message
 }
 
 func MessageReceiverCredentials() (string, string) {
