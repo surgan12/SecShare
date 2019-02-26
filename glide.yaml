@@ -1,5 +1,6 @@
 package: github.com/IITH-SBJoshi/concurrency-decentralized-network
-import: []
+import: 
+- package: github.com/andlabs/ui
 
 owners:
   - name: Jatin Chauhan
