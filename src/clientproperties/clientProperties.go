@@ -1,9 +1,10 @@
 package clientproperties
 
 import (
-	"encoding/json"
-	// "fmt"
 	fp "../../fileproperties"
+	"encoding/json"
+	"fmt"
+	"sync"
 	// "crypto/rand"
 	// "crypto/rsa"
 	// "crypto/sha512"
@@ -53,6 +54,11 @@ type MyReceivedFiles struct {
 	FilePartInfo fp.FilePartInfo
 }
 
+type MyReceivedMessages struct {
+	Counter    int
+	MyMessages []MessageRequest
+}
+
 //FilePartContents contents of file in parts
 type FilePartContents struct {
 	Contents []byte
@@ -98,4 +104,16 @@ func SendingToServer(name []byte, query []byte, conn net.Conn,
 	if queryType == "quit" {
 		conn.Close()
 	}
+}
+
+func DisplayRecentMessages(mymessages MyReceivedMessages) {
+	var mutex = &sync.Mutex{} // Lock and unlock (Mutex)
+	mutex.Lock()
+	// print recent messages here
+	// fmt.Println("mymessages struct before priting is ", mymessages)
+	for i := mymessages.Counter; i < len(mymessages.MyMessages); i++ {
+		fmt.Println("{ ", mymessages.MyMessages[i].SenderName, " sent you a message : '", mymessages.MyMessages[i].Message, "' } ")
+	}
+	fmt.Println('\n')
+	mutex.Unlock()
 }

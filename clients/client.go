@@ -12,15 +12,10 @@ import (
 	"path/filepath"
 )
 
-//initializing a wait group
-// var wg sync.WaitGroup
-
 func gettingPeersFromServer(c net.Conn, peers *[]string, msg *cp.ClientListen) {
 	for {
 		d := json.NewDecoder(c)
 		d.Decode(msg)
-		// fmt.Println("Current active peers are -> ")
-		// fmt.Println(msg)
 	}
 }
 
@@ -30,12 +25,11 @@ func main() {
 	var directoryFiles cp.ClientFiles
 	fileDirectory := "../files"
 
-	// var myPeers []cp.MyPeers
 	myfiles := make(map[string]cp.MyReceivedFiles)
+	mymessages := cp.MyReceivedMessages{Counter: -1} // No messages received yet
 
 	peers := []string{}
 
-	// var myname string
 	var name string
 	var query string
 	var listenPort string
@@ -53,14 +47,15 @@ func main() {
 		err = err1
 		dialCount++
 		if dialCount > 10 {
-			fmt.Println("Apparantly server's port is not open...")
+			fmt.Println("Apparently server's port is not open...")
 			os.Exit(1)
 		}
 	}
 
 	ServerKey := en.PerformHandshake(conn, PublicKey)
-	// fmt.Print(ServerKey.N)
-	fmt.Println("The follwing queries are supported - quit, receive_file - <sender_name>")
+
+	fmt.Println("The follwing queries are supported - quit, receive_file - <sender_name>, send_message, display_recent_messages, down for donwload")
+
 	for {
 		go gettingPeersFromServer(conn, &peers, &activeClient)
 
@@ -81,10 +76,11 @@ func main() {
 			for err != nil {
 				fmt.Println("Cant listen on this port, choose another : ")
 				fmt.Scanln(&listenPort)
-				ln1, err1 := net.Listen("tcp", listenPort)
+				ln1, err1 := net.Listen("tcp", ":"+listenPort)
 				ln = ln1
 				err = err1
 			}
+
 			//adds files in directory to a clientFiles
 			error1 := filepath.Walk(fileDirectory, func(path string, info os.FileInfo, err error) error {
 				if info.IsDir() {
@@ -93,6 +89,7 @@ func main() {
 				directoryFiles.FilesInDir = append(directoryFiles.FilesInDir, info.Name())
 				return nil
 			})
+
 			if error1 != nil {
 				panic(error1)
 			}
@@ -103,14 +100,14 @@ func main() {
 
 			mylistenport := en.EncryptWithPublicKey([]byte(listenPort), ServerKey)
 			cp.SendingToServer(nameByte, queryByte, conn, query, mylistenport)
-			go cp.ListenOnSelfPort(ln, name, &activeClient, myfiles)
+			go cp.ListenOnSelfPort(ln, name, &activeClient, myfiles, &mymessages)
 			continue
 
 		} else {
 
 			fmt.Print("What do you want to do? : ")
 			fmt.Scanln(&query)
-			// flag = false
+
 			if query == "quit" {
 
 				nameByte := en.EncryptWithPublicKey([]byte(name), ServerKey)
@@ -118,14 +115,10 @@ func main() {
 				mylistenport := en.EncryptWithPublicKey([]byte(listenPort), ServerKey)
 				cp.SendingToServer(nameByte, queryByte, conn, query, mylistenport)
 				os.Exit(2)
-			} else if query == "receive_file" {
-				var fileSenderName string // is the person who will send the file
-				fmt.Print("Whom do you want to receive the file from ? : ")
-				fmt.Scanln(&fileSenderName)
-				var fileName string
-				fmt.Print("What file do you want ? ")
-				fmt.Scanln(&fileName) // file we want to receive
 
+			} else if query == "receive_file" {
+
+				fileSenderName, fileName := cp.FileSenderCredentials()
 				request_status := cp.RequestSomeFile(&activeClient, name, &directoryFiles, fileSenderName, fileName)
 				if request_status == "completed" {
 					fmt.Println("Request sent")
@@ -134,12 +127,36 @@ func main() {
 				}
 
 			} else if query == "send_message" {
-				cp.RequestChatting(&activeClient, name)
+
+				messaging := true
+				fmt.Println("Currently in messaging mode..")
+
+				for messaging == true {
+					messageReceiverName, message := cp.MessageReceiverCredentials()
+					message_status := cp.RequestMessage(&activeClient, name, messageReceiverName, message)
+					if message_status == "sent" {
+						fmt.Println("Message sent")
+					} else {
+						fmt.Println("Message not sent properly")
+					}
+
+					var query_message string
+					fmt.Println("Do you want to send more messages? If Yes type Y, else N")
+					fmt.Scanln(&query_message)
+					if query_message == "N" {
+						fmt.Println("Exiting messaging mode...")
+						break
+					}
+				}
+
+			} else if query == "display_recent_messages" {
+
+        cp.DisplayRecentMessages(mymessages)
+				messageReceiverName, message := cp.MessageReceiverCredentials()
+				cp.RequestChatting(&activeClient, name, messageReceiverName, message)
+
 			} else if query == "down" {
-				var url string
-				fmt.Print("URL for downloading: ")
-				fmt.Scanln(&url)
-				go cp.Download(url)
+				cp.Download()
 			}
 		}
 	}
