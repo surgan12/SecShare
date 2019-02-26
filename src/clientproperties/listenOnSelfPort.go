@@ -31,7 +31,7 @@ func sendFileParts(newfilerequest FileRequest, allfileparts []fp.FilePartInfo,
 			encoder.Encode(&baseRequest)
 
 		}
-		
+
 	}
 }
 

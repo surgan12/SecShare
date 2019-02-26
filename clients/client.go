@@ -53,7 +53,7 @@ func main() {
 		err = err1
 		dialCount++
 		if dialCount > 10 {
-			fmt.Println("Apparantly server's port is not open...")
+			fmt.Println("Apparently server's port is not open...")
 			os.Exit(1)
 		}
 	}
@@ -118,14 +118,10 @@ func main() {
 				mylistenport := en.EncryptWithPublicKey([]byte(listenPort), ServerKey)
 				cp.SendingToServer(nameByte, queryByte, conn, query, mylistenport)
 				os.Exit(2)
-			} else if query == "receive_file" {
-				var fileSenderName string // is the person who will send the file
-				fmt.Print("Whom do you want to receive the file from ? : ")
-				fmt.Scanln(&fileSenderName)
-				var fileName string
-				fmt.Print("What file do you want ? ")
-				fmt.Scanln(&fileName) // file we want to receive
 
+			} else if query == "receive_file" {
+
+				fileSenderName, fileName := cp.FileSenderCredentials()
 				request_status := cp.RequestSomeFile(&activeClient, name, &directoryFiles, fileSenderName, fileName)
 				if request_status == "completed" {
 					fmt.Println("Request sent")
@@ -134,7 +130,8 @@ func main() {
 				}
 
 			} else if query == "send_message" {
-				cp.RequestChatting(&activeClient, name)
+				messageReceiverName, message := cp.MessageReceiverCredentials()
+				cp.RequestChatting(&activeClient, name, messageReceiverName, message)
 			} else if query == "down" {
 				cp.Download()
 			}

@@ -10,8 +10,6 @@ import (
 	"time"
 )
 
-var wgSplit sync.WaitGroup
-
 var mutex = &sync.Mutex{} // Lock and unlock (Mutex)
 //FilePartInfo for information regarding files
 type FilePartInfo struct {
@@ -24,7 +22,7 @@ type FilePartInfo struct {
 
 //getFileParts ..
 func GetFileParts(completefilename string, partSize uint64, filesize int64, i uint64, fileContents []byte,
-	allFileParts []FilePartInfo) {
+	allFileParts []FilePartInfo, wgSplit *sync.WaitGroup) {
 	// fmt.Println("Writing part ", i, " from file")
 	currentSize := int(math.Min(float64(partSize), float64((filesize)-int64(i*partSize))))
 
@@ -66,7 +64,7 @@ func GetSplitFile(filename string, numberOfActiveClient int) []FilePartInfo {
 	// fmt.Println("Size of file is -> ", filesize)
 
 	// Currently sending to one peer only
-	var partSize = uint64(math.Ceil(float64(filesize) / float64(1)))
+	var partSize = uint64(math.Ceil(float64(filesize) / float64(numberOfActiveClient-1)))
 
 	fileContents, err := ioutil.ReadFile(fileDirectory + "/image.jpg")
 
@@ -74,9 +72,11 @@ func GetSplitFile(filename string, numberOfActiveClient int) []FilePartInfo {
 
 	allFileParts := make([]FilePartInfo, numberOfActiveClient-1)
 
-	for i := uint64(0); i < 1; i++ {
+	var wgSplit sync.WaitGroup
+
+	for i := uint64(0); i < uint64(numberOfActiveClient-1); i++ {
 		wgSplit.Add(1)
-		go GetFileParts(filename, partSize, filesize, i, fileContents, allFileParts)
+		go GetFileParts(filename, partSize, filesize, i, fileContents, allFileParts, &wgSplit)
 	}
 
 	wgSplit.Wait() // waiting for all routines to finish
@@ -84,5 +84,4 @@ func GetSplitFile(filename string, numberOfActiveClient int) []FilePartInfo {
 	fmt.Println("Time taken to split the file ", endTime.Sub(startTime))
 
 	return allFileParts
-
 }

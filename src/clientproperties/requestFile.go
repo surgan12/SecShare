@@ -34,6 +34,8 @@ func RequestSomeFile(activeClient *ClientListen, name string, directoryFiles *Cl
 			MyAddress: activeClient.PeerIP[name],
 			MyName:    name, RequestedFile: fileName}
 
+		// _, PublicKey := en.GenerateKeyPair()
+
 		connection, err := net.Dial("tcp", ":"+activeClient.PeerListenPort[fileSenderName])
 		for err != nil {
 			fmt.Println("Please enter a valid person name - ")
@@ -41,6 +43,7 @@ func RequestSomeFile(activeClient *ClientListen, name string, directoryFiles *Cl
 			connection = connection1
 			err = err1
 		}
+		// ConnectionKey := en.PerformHandshake(conn, PublicKey)
 
 		SendFileRequestToPeer(connection, fileRequest)
 		request_status := "completed"
@@ -53,4 +56,16 @@ func RequestSomeFile(activeClient *ClientListen, name string, directoryFiles *Cl
 	}
 
 	// connection.Close()	// closing connection after one time requestb17e198f6aeb5753c2c193c
+}
+
+func FileSenderCredentials() (string, string) {
+
+	var fileSenderName string // is the person who will send the file
+	fmt.Print("Whom do you want to receive the file from ? : ")
+	fmt.Scanln(&fileSenderName)
+	var fileName string
+	fmt.Print("What file do you want ? ")
+	fmt.Scanln(&fileName) // file we want to receive
+
+	return fileSenderName, fileName
 }

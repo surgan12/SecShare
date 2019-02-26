@@ -13,19 +13,13 @@ func sendMessageRequestToPeer(connection net.Conn, messageRequest MessageRequest
 	baseRequest := BaseRequest{RequestType: "receive_message", MessageRequest: messageRequest}
 	encoder1 := json.NewEncoder(connection)
 	encoder1.Encode(&baseRequest)
+	connection.Close()
 }
 
 // RequestChatting takes message from client and dials to receiver
-func RequestChatting(activeClient *ClientListen, name string) {
-	var messageSenderName string
-	var message string
-	// fmt.Print(name)
-	in := bufio.NewReader(os.Stdin)
-	fmt.Print("Whom do you want to chat to : ")
-	fmt.Scanln(&messageSenderName)
-	fmt.Print("What message do you want to send : ")
-	// fmt.Scanln(&message)
-	message, err := in.ReadString('\n')
+func RequestChatting(activeClient *ClientListen, name string, messageSenderName string, 
+	message string) {
+	
 	// fmt.Println(message)
 	messageRequest := MessageRequest{
 		SenderQuery: "message_request", SenderName: name,
@@ -39,4 +33,23 @@ func RequestChatting(activeClient *ClientListen, name string) {
 		err = err1
 	}
 	sendMessageRequestToPeer(connection, messageRequest)
+}
+
+func MessageReceiverCredentials() (string, string) {
+	
+	var messageSenderName string
+	var message string
+	// fmt.Print(name)
+	in := bufio.NewReader(os.Stdin)
+	fmt.Print("Whom do you want to chat to : ")
+	fmt.Scanln(&messageSenderName)
+	fmt.Print("What message do you want to send : ")
+	// fmt.Scanln(&message)
+	message, err := in.ReadString('\n')
+	
+	if err != nil {
+		panic(err)
+	}
+
+	return messageSenderName, message
 }

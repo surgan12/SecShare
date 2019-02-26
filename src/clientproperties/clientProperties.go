@@ -66,7 +66,6 @@ type BaseRequest struct {
 	MessageRequest
 }
 
-
 // FileRequest stores the queries and information about requester
 type FileRequest struct {
 	Query         string
