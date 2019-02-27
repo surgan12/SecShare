@@ -12,9 +12,9 @@ jobs:
           name: gtk install
           command: |
             sudo apt-get install libgtk-3-dev
-      - run : go get -u github.com/andlabs/ui
-      - run: go get -u github.com/golang/lint/golint
-      - run: go get -u github.com/GeertJohan/fgt
+      - run : go get github.com/andlabs/ui
+      - run: go get github.com/golang/lint/golint
+      - run: go get github.com/GeertJohan/fgt
       - run:
          name: run tests
          command: |
