@@ -12,7 +12,7 @@ import "io/ioutil"
 import (
   	"time" 
     "github.com/andlabs/ui"
-    "github.com/andlabs/ui/winmanifest"
+    _ "github.com/andlabs/ui/winmanifest"
 )
 
 // var mainwin *ui.Window
