@@ -12,12 +12,9 @@ jobs:
           name: gtk install
           command: |
             sudo apt-get install libgtk-3-dev
-      - run: go get -u -v -t github.com/Masterminds/glide
-      - run: glide install -v
-      # - run : go get -u github.com/andlabs/ui
       - run: go get -u github.com/golang/lint/golint
       - run: go get -u github.com/GeertJohan/fgt
       - run:
          name: run tests
          command: |
-          go test $(glide nv)
+          go test ./...
