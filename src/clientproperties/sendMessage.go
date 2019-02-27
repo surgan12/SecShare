@@ -20,22 +20,26 @@ func sendMessageToPeer(connection net.Conn, messageRequest MessageRequest) {
 func RequestMessage(activeClient *ClientListen, name string, messageReceiverName string,
 	message string) string {
 
-// // RequestChatting takes message from client and dials to receiver
-// func RequestChatting(activeClient *ClientListen, name string, messageSenderName string, 
-// 	message string) {
-	
-	// fmt.Println(message)
 	messageRequest := MessageRequest{
 		SenderQuery: "message_request", SenderName: name,
 		SenderAddress: activeClient.PeerIP[name], Message: message}
 
 	connection, err := net.Dial("tcp", ":"+activeClient.PeerListenPort[messageReceiverName])
+
+	count := 0
 	for err != nil {
-		fmt.Println("Please enter a valid person name - ")
+		fmt.Println("Error in dialing to: ", messageReceiverName, " dialing again...")
 		connection1, err1 := net.Dial("tcp", ":"+activeClient.PeerListenPort[messageReceiverName])
 		connection = connection1
 		err = err1
+		count++
+		if count > 10 {
+			message_status := "not sent"
+			return message_status
+			break
+		}
 	}
+
 	sendMessageToPeer(connection, messageRequest)
 	message_status := "sent"
 	return message_status
@@ -43,12 +47,12 @@ func RequestMessage(activeClient *ClientListen, name string, messageReceiverName
 
 func MessageReceiverCredentials() (string, string) {
 
-	var messageSenderName string
-	var message string
-	// fmt.Print(name)
+	// getting credentials of the person to send message to
+	var messageReceiverName string
+	var message string // what message to send?
 	in := bufio.NewReader(os.Stdin)
 	fmt.Print("Message (Person's name) : ")
-	fmt.Scanln(&messageSenderName)
+	fmt.Scanln(&messageReceiverName)
 	fmt.Print("Message to send : ")
 	// fmt.Scanln(&message)
 	message, err := in.ReadString('\n')
@@ -57,24 +61,5 @@ func MessageReceiverCredentials() (string, string) {
 		panic(err)
 	}
 
-	return messageSenderName, message
+	return messageReceiverName, message
 }
-
-// func MessageReceiverCredentials() (string, string) {
-	
-// 	var messageSenderName string
-// 	var message string
-// 	// fmt.Print(name)
-// 	in := bufio.NewReader(os.Stdin)
-// 	fmt.Print("Whom do you want to chat to : ")
-// 	fmt.Scanln(&messageSenderName)
-// 	fmt.Print("What message do you want to send : ")
-// 	// fmt.Scanln(&message)
-// 	message, err := in.ReadString('\n')
-	
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// 	return messageSenderName, message
-// }

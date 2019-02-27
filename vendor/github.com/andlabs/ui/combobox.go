@@ -14,8 +14,8 @@ import "C"
 // users can type values into, see EditableCombobox.
 type Combobox struct {
 	ControlBase
-	c	*C.uiCombobox
-	onSelected		func(*Combobox)
+	c          *C.uiCombobox
+	onSelected func(*Combobox)
 }
 
 // NewCombobox creates a new Combobox.

@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
+	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
 	"net"
 	"testing"
-	// cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
-	cp "../src/clientproperties"
+	// cp "../src/clientproperties"
 )
 
 func TestRequestMessage(t *testing.T) {

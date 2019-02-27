@@ -7,6 +7,7 @@ jobs:
       
     steps:
       - checkout
+      - run: go get -u github.com/andlabs/ui
       - run: go get -u github.com/golang/lint/golint
       - run: go get -u github.com/GeertJohan/fgt
       - run:

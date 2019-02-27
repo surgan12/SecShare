@@ -1,39 +1,41 @@
 package clientproperties
 
 import (
-	fp "../../fileproperties"
+	// fp "../../fileproperties"
 	"encoding/json"
 	"fmt"
 	"sync"
 	// "crypto/rand"
 	// "crypto/rsa"
 	// "crypto/sha512"
-	// fp "github.com/IITH-SBJoshi/concurrency-decentralized-network/fileproperties"
+	fp "github.com/IITH-SBJoshi/concurrency-decentralized-network/fileproperties"
 	"net"
 )
 
-// Client properties as stored in the server
+// Struct to store details of specific client
 type Client struct {
 	Address          string
 	Name             string
 	ConnectionServer net.Conn
 }
 
-// ClientListen stores list of clients and map of their IP
+// Store - all client names,
+//		   IP to name mapping of all clients
+//		   Port at which all those clients are listening for P2P requests
 type ClientListen struct {
 	List           []string
 	PeerIP         map[string]string
 	PeerListenPort map[string]string
 }
 
-// ClientQuery stores name and query of clients
+// To store name and query of a client
 type ClientQuery struct {
 	Name             []byte
 	Query            []byte
 	ClientListenPort []byte
 }
 
-// ClientJob stores the names, jobs and connection
+// Stores the names, jobs, query and connection
 type ClientJob struct {
 	Name             string
 	Query            string
@@ -41,37 +43,37 @@ type ClientJob struct {
 	ClientListenPort string
 }
 
-//MyPeers list of connections dialed by current client
+// List of peers to which a clinet dials
 type MyPeers struct {
 	Conn     net.Conn
 	PeerName string
 }
 
-//MyReceivedFiles received files
+// To store the information of files received by client
 type MyReceivedFiles struct {
-	MyFileName   string
-	MyFile       []FilePartContents
-	FilePartInfo fp.FilePartInfo
+	MyFileName   string             // name of file
+	MyFile       []FilePartContents // Contents of the file
+	FilePartInfo fp.FilePartInfo    // Information of various file parts
 }
 
+// To store the information of the messages receievd
 type MyReceivedMessages struct {
-	Counter    int
-	MyMessages []MessageRequest
+	Counter    int              // The counter from which client has to start reading the messages
+	MyMessages []MessageRequest // slice of structs of type MessageRequest to store all message requests
 }
 
-//FilePartContents contents of file in parts
+// Contents of a part of file
 type FilePartContents struct {
 	Contents []byte
 }
 
-//BaseRequest request for file
+// A base request which is used as a generic request for all types of P2P queries
 type BaseRequest struct {
-	RequestType string
-	FileRequest
-	FilePartInfo fp.FilePartInfo
-	MessageRequest
+	RequestType    string          // type of request
+	FileRequest                    // Information about File requseter if its a file request
+	FilePartInfo   fp.FilePartInfo // Information about file parts if its a file request
+	MessageRequest                 // Details of message is its a message request
 }
-
 
 // FileRequest stores the queries and information about requester
 type FileRequest struct {
@@ -81,7 +83,7 @@ type FileRequest struct {
 	RequestedFile string
 }
 
-//MessageRequest stores the query and information about requester
+// Stores the information about requester, who is sending the message (for the receiver to reply back)
 type MessageRequest struct {
 	SenderQuery   string
 	SenderAddress string
@@ -89,12 +91,12 @@ type MessageRequest struct {
 	Message       string
 }
 
-//ClientFiles stores the files of client has
+// ClientFiles stores the files in the "files" directory of client
 type ClientFiles struct {
 	FilesInDir []string
 }
 
-//SendingToServer function to send queries to server
+// SendingToServer - to send queries to server
 func SendingToServer(name []byte, query []byte, conn net.Conn,
 	queryType string, listenPort []byte) {
 
@@ -106,14 +108,42 @@ func SendingToServer(name []byte, query []byte, conn net.Conn,
 	}
 }
 
-func DisplayRecentMessages(mymessages MyReceivedMessages) {
-	var mutex = &sync.Mutex{} // Lock and unlock (Mutex)
-	mutex.Lock()
-	// print recent messages here
-	// fmt.Println("mymessages struct before priting is ", mymessages)
+// To display the most recent messages which haven't been seen yet
+func DisplayRecentUnseenMessages(mymessages *MyReceivedMessages) {
+	// locking it, so that new messages can't be written at the current moment
+	var mutex = &sync.Mutex{}
+	mutex.Lock() // locking
 	for i := mymessages.Counter; i < len(mymessages.MyMessages); i++ {
 		fmt.Println("{ ", mymessages.MyMessages[i].SenderName, " sent you a message : '", mymessages.MyMessages[i].Message, "' } ")
 	}
+	mymessages.Counter = len(mymessages.MyMessages) // incrementing the counter to latest count, as we have read all recent messages
 	fmt.Println('\n')
 	mutex.Unlock()
+}
+
+// To display Num recent messages
+func DisplayNumRecentMessages(mymessages *MyReceivedMessages, recentCount int) {
+	// locking it, so that new messages can't be written at the current moment
+	var mutex = &sync.Mutex{}
+
+	// if contain more than recentCount number of messages
+	if len(mymessages.MyMessages)-recentCount >= 0 {
+		mutex.Lock() // locking
+		for i := len(mymessages.MyMessages) - recentCount; i < len(mymessages.MyMessages); i++ {
+			fmt.Println("{ ", mymessages.MyMessages[i].SenderName, " sent you a message : '", mymessages.MyMessages[i].Message, "' } ")
+		}
+		fmt.Println('\n')
+		mutex.Unlock()
+
+	} else {
+		// if contains less than recentCount number of messages
+		fmt.Println("Displaying all messages!")
+		mutex.Lock() // locking
+		for i := 0; i < len(mymessages.MyMessages); i++ {
+			fmt.Println("{ ", mymessages.MyMessages[i].SenderName, " sent you a message : '", mymessages.MyMessages[i].Message, "' } ")
+		}
+		fmt.Println('\n')
+		mutex.Unlock()
+	}
+
 }

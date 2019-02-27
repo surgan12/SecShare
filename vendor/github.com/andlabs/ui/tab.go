@@ -14,8 +14,8 @@ import "C"
 // pages. Individual pages can also have margins.
 type Tab struct {
 	ControlBase
-	t	*C.uiTab
-	children	[]Control
+	t        *C.uiTab
+	children []Control
 }
 
 // NewTab creates a new Tab.
@@ -54,17 +54,17 @@ func (t *Tab) InsertAt(name string, n int, child Control) {
 	cname := C.CString(name)
 	C.uiTabInsertAt(t.t, cname, C.int(n), c)
 	freestr(cname)
-	ch := make([]Control, len(t.children) + 1)
+	ch := make([]Control, len(t.children)+1)
 	// and insert into t.children at the right place
 	copy(ch[:n], t.children[:n])
 	ch[n] = child
-	copy(ch[n + 1:], t.children[n:])
+	copy(ch[n+1:], t.children[n:])
 	t.children = ch
 }
 
 // Delete deletes the nth page of the Tab.
 func (t *Tab) Delete(n int) {
-	t.children = append(t.children[:n], t.children[n + 1:]...)
+	t.children = append(t.children[:n], t.children[n+1:]...)
 	C.uiTabDelete(t.t, C.int(n))
 }
 

@@ -27,12 +27,13 @@ import "C"
 // https://developer.gnome.org/gtk3/unstable/ch28s02.html.
 type Grid struct {
 	ControlBase
-	g	*C.uiGrid
-	children	[]Control
+	g        *C.uiGrid
+	children []Control
 }
 
 // Align represents the alignment of a Control in its cell of a Grid.
 type Align int
+
 const (
 	AlignFill Align = iota
 	AlignStart
@@ -42,6 +43,7 @@ const (
 
 // At represents a side of a Control to add other Controls to a Grid to.
 type At int
+
 const (
 	Leading At = iota
 	Top

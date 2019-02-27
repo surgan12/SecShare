@@ -13,8 +13,8 @@ import "C"
 // buttons from which exactly one may be chosen by the user.
 type RadioButtons struct {
 	ControlBase
-	r	*C.uiRadioButtons
-	onSelected	func(*RadioButtons)
+	r          *C.uiRadioButtons
+	onSelected func(*RadioButtons)
 }
 
 // NewRadioButtons creates a new RadioButtons.

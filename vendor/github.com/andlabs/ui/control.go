@@ -14,7 +14,7 @@ var controls = make(map[*C.uiControl]Control)
 
 // Control represents a GUI control. It provdes methods
 // common to all Controls.
-// 
+//
 // The preferred way to create new Controls is to use
 // ControlBase; see ControlBase below.
 type Control interface {
@@ -57,12 +57,12 @@ type Control interface {
 // all the methods that Control requires. To use it, embed a
 // ControlBase (not a *ControlBase) into your structure, then
 // assign the result of NewControlBase to that field:
-// 
+//
 // 	type MyControl struct {
 // 		ui.ControlBase
 // 		c *C.MyControl
 // 	}
-// 	
+//
 // 	func NewMyControl() *MyControl {
 // 		m := &NewMyControl{
 // 			c: C.newMyControl(),
@@ -71,8 +71,8 @@ type Control interface {
 // 		return m
 // 	}
 type ControlBase struct {
-	iface		Control
-	c		*C.uiControl
+	iface Control
+	c     *C.uiControl
 }
 
 // NewControlBase creates a new ControlBase. See the
@@ -80,8 +80,8 @@ type ControlBase struct {
 // NewControl should only be called once per instance of Control.
 func NewControlBase(iface Control, c uintptr) ControlBase {
 	b := ControlBase{
-		iface:	iface,
-		c:		(*C.uiControl)(unsafe.Pointer(c)),
+		iface: iface,
+		c:     (*C.uiControl)(unsafe.Pointer(c)),
 	}
 	controls[b.c] = b.iface
 	return b
