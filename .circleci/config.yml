@@ -20,4 +20,4 @@ jobs:
       - run:
          name: run tests
          command: |
-           go test -v ./...
+           go test -v github.com/IITH-SBJoshi/concurrency-decentralized-network
