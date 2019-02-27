@@ -16,7 +16,7 @@ var mutexMessages = &sync.Mutex{} // Lock and unlock (mutexFiles)
 
 // send various file parts to peers
 func sendFileParts(newfilerequest FileRequest, allfileparts []fp.FilePartInfo,
-	activeClient *ClientListen, myname string) {
+	activeClient *ClientListen, myname string) int {
 
 	countSent := 0
 	for names := range activeClient.PeerListenPort {
@@ -45,13 +45,14 @@ func sendFileParts(newfilerequest FileRequest, allfileparts []fp.FilePartInfo,
 		}
 
 	}
+	return countSent
 }
 
 // Handle request to send some file to a peer
 func handleNewFileSendRequest(newfilerequest FileRequest, myname string, activeClient *ClientListen) {
 	// getting all splits of file
 	allfileparts := fp.GetSplitFile(newfilerequest.RequestedFile, len(activeClient.List))
-	sendFileParts(newfilerequest, allfileparts, activeClient, myname)
+	countSent := sendFileParts(newfilerequest, allfileparts, activeClient, myname)
 
 }
 
