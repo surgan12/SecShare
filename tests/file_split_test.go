@@ -1,9 +1,9 @@
 package main
 
 import (
+	fp "github.com/IITH-SBJoshi/concurrency-decentralized-network/fileproperties"
 	"testing"
-	// fp "github.com/IITH-SBJoshi/concurrency-decentralized-network/fileproperties"
-	fp "../fileproperties"
+	// fp "../fileproperties"
 )
 
 func TestFileSplit(t *testing.T) {

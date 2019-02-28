@@ -1,4 +1,15 @@
-hash: 2b0c4757b293d8c785b35b16e502bf86c63e182a1c32a8b72ae32aecbef0b841
-updated: 2019-02-06T20:02:46.169612625+05:30
-imports: []
+hash: 1a0fa5a5aea15869c3cd25aa099d60932929e35ae5fb74624884f2c370b5ac99
+updated: 2019-02-28T12:18:59.524796661+05:30
+imports:
+- name: github.com/andlabs/ui
+  version: 867a9e5a498d85e2722730ed88c5f00560c7c354
+  subpackages:
+  - winmanifest
+- name: github.com/IITH-SBJoshi/concurrency-decentralized-network
+  version: 9d5a7ac5ceb0b4d45330508e9b714bf062b15a14
+  subpackages:
+  - fileproperties
+  - src/clientproperties
+  - src/encryptionproperties
+  - src/serverproperties
 testImports: []

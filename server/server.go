@@ -4,14 +4,14 @@ import (
 	"crypto/rsa"
 	"encoding/json"
 	"fmt"
+	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
+	en "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/encryptionproperties"
+	sp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/serverproperties"
 	"net"
 	"sync"
-	// cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
-	// sp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/serverproperties"
-	// en "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/encryptionproperties"
-	cp "../src/clientproperties"
-	en "../src/encryptionproperties"
-	sp "../src/serverproperties"
+	// cp "../src/clientproperties"
+	// en "../src/encryptionproperties"
+	// sp "../src/serverproperties"
 )
 
 /* Add relevant Print statements where confused , and comment print statements while pushing */

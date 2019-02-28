@@ -1,11 +1,11 @@
 package main
 
 import (
-	cp "../src/clientproperties"
-	sp "../src/serverproperties"
+	// cp "../src/clientproperties"
+	// sp "../src/serverproperties"
+	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
+	sp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/serverproperties"
 	"testing"
-	// cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
-	// sp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/serverproperties"
 )
 
 func TestRemoveFromClient(t *testing.T) {
@@ -28,8 +28,9 @@ func TestQueryDeal(t *testing.T) {
 	cli := cp.ClientListen{List: list, PeerIP: TestMap}
 	clt := cp.Client{Name: name, Address: ":8087"}
 	var clients = []cp.Client{clt}
-	cli = sp.QueryDeal(&clients, cli, name)
-	if len(clients) > 0 || len(cli.List) > 0 || cli.PeerIP[name] != "" {
+	cli_ := sp.QueryDeal(&clients, cli, name)
+
+	if len(clients) > 0 || len(cli_.List) > 0 || cli.PeerIP[name] != "" {
 		t.Fatal("QueryDeal in the serverproperties not working correctly")
 	}
 

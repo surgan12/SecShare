@@ -1,151 +1,200 @@
 package clientproperties
 
 import (
-	fp "../../fileproperties"
+	// fp "../../fileproperties"
 	"encoding/json"
 	"fmt"
+	fp "github.com/IITH-SBJoshi/concurrency-decentralized-network/fileproperties"
 	"net"
-	// fp "github.com/IITH-SBJoshi/concurrency-decentralized-network/fileproperties"
+	"strings"
 	"sync"
 )
 
-var mutex = &sync.Mutex{} // Lock and unlock (Mutex)
+// creating locks for messages and files array
+var mutexFiles = &sync.Mutex{}    // Lock and unlock (mutexFiles)
+var mutexMessages = &sync.Mutex{} // Lock and unlock (mutexFiles)
 
-func sendFileParts(newfilerequest FileRequest, allfileparts []fp.FilePartInfo,
-	activeClient *ClientListen, myname string) {
+// send various file parts to peers
+func SendFileParts(newfilerequest FileRequest, allfileparts []fp.FilePartInfo,
+	activeClient *ClientListen, myname string) int {
+
+	countSent := 0
 	for names := range activeClient.PeerListenPort {
-		// fmt.Println("cureent names : ", names)
 		if names != myname {
-			// fmt.Println("cureent names : ", names)
+
+			count := 0
 			connection, err := net.Dial("tcp", ":"+activeClient.PeerListenPort[names])
 			for err != nil {
-				fmt.Println("Error in dialing, dialing again ... ")
+				fmt.Println("Error in dialing to: ", names, " dialing again...")
 				connection1, err1 := net.Dial("tcp", ":"+activeClient.PeerListenPort[names])
 				connection = connection1
 				err = err1
+				count++
+				if count > 100 {
+					fmt.Println("Error in sending current file part - ", err)
+				}
 			}
-			fmt.Println("Connection established to send a file part to connection - ", connection)
+
+			// sending the file part corresponding to this peer
+			// fmt.Println("Connection established to send a file part to connection - ", connection)
 			baseRequest := BaseRequest{RequestType: "received_some_file", FileRequest: newfilerequest,
-				FilePartInfo: allfileparts[0]}
+				FilePartInfo: allfileparts[countSent]}
 			encoder := json.NewEncoder(connection)
 			encoder.Encode(&baseRequest)
-
+			countSent++
 		}
+
 	}
+	return countSent
 }
 
+// Handle request to send some file to a peer
 func handleNewFileSendRequest(newfilerequest FileRequest, myname string, activeClient *ClientListen) {
-	// fmt.Println(newfilerequest.MyName)
-	// fmt.Println(myname)
-
+	// getting all splits of file
 	allfileparts := fp.GetSplitFile(newfilerequest.RequestedFile, len(activeClient.List))
-	// fmt.Println("received file from Happy")
-	sendFileParts(newfilerequest, allfileparts, activeClient, myname)
+	_ = SendFileParts(newfilerequest, allfileparts, activeClient, myname)
 
 }
 
+// Handle some received file part for myself
 func handleReceivedFile(newrequest BaseRequest, myfiles map[string]MyReceivedFiles) {
 
 	var TotalFileParts int
 	var filePartNum int
-	// fmt.Println("testing : 2")
+
 	requestedFileName := newrequest.FilePartInfo.FileName
-	// fmt.Println(newrequest.FilePartInfo.TotalParts)
-	// fmt.Println(newrequest.FilePartInfo.PartNumber)
-	// fmt.Println(requestedFileName)
 
 	TotalFileParts = newrequest.FilePartInfo.TotalParts
 	filePartNum = newrequest.FilePartInfo.PartNumber
+
+	// If already exists in myfies, append the current part to corresponding file struct
 	if _, ok := myfiles[requestedFileName]; ok {
 
+		mutexFiles.Lock()
+		// fmt.Println("file part number is : ", filePartNum)
+		var x = myfiles[requestedFileName]
+		x.PartsReceived++
+		myfiles[requestedFileName] = x
 		myfiles[requestedFileName].MyFile[filePartNum].Contents = newrequest.FilePartInfo.FilePartContents
-		// mutex.Unlock()
-		// fmt.Println("1")
-		if len(myfiles[requestedFileName].MyFile) == TotalFileParts {
+		mutexFiles.Unlock()
+		// if all parts have been received, concatenate it and create new file
+		if myfiles[requestedFileName].PartsReceived == TotalFileParts {
 			concatenateFileParts(myfiles[requestedFileName])
 		}
-		// fmt.Println("1")
+
 	} else {
 		// creating new received file object for my own file
-		myfiles[requestedFileName] = MyReceivedFiles{newrequest.FilePartInfo.FileName,
+		myfiles[requestedFileName] = MyReceivedFiles{0, newrequest.FilePartInfo.FileName,
 			make([]FilePartContents, newrequest.FilePartInfo.TotalParts),
 			newrequest.FilePartInfo}
-		mutex.Lock()
+
+		// locking
+		mutexFiles.Lock()
+		// fmt.Println("file part number is : ", filePartNum)
+		var x = myfiles[requestedFileName]
+		x.PartsReceived++
+		myfiles[requestedFileName] = x
 		myfiles[requestedFileName].MyFile[filePartNum].Contents = newrequest.FilePartInfo.FilePartContents
-		mutex.Unlock()
-		fmt.Println(myfiles[requestedFileName].MyFileName)
-		fmt.Println(len(myfiles[requestedFileName].MyFile))
-		if len(myfiles[requestedFileName].MyFile) == TotalFileParts {
+		mutexFiles.Unlock()
+
+		// if all parts have been received, concatenate it and create new file
+		if myfiles[requestedFileName].PartsReceived == TotalFileParts {
 			concatenateFileParts(myfiles[requestedFileName])
 		}
 	}
 }
 
+// Handle a request
 func handleReceivedRequest(connection net.Conn, activeClient *ClientListen, myname string,
 	myfiles map[string]MyReceivedFiles, newrequest BaseRequest) {
+
+	// If the file receievd is for me
 	if newrequest.FileRequest.MyName == myname {
-
-		fmt.Println("Received some file part for myself ")
-
 		handleReceivedFile(newrequest, myfiles)
 
 	} else {
-
-		fmt.Println("Forwarding some received file part ")
-
-		// myAddress is address of person asking for the file
-		receiverAddress := newrequest.FileRequest.MyAddress
-		forwardConnection, forwardConnErr := net.Dial("tcp", receiverAddress)
-		for forwardConnErr != nil {
-			fmt.Println("Error in dialing, dialing again ... ")
-			connection1, err1 := net.Dial("tcp", receiverAddress)
-			forwardConnection = connection1
-			forwardConnErr = err1
+		// if file is received to be forwarded to some other peer
+		
+		count := 0
+		connection, err := net.Dial("tcp", ":"+activeClient.PeerListenPort[newrequest.FileRequest.MyName])
+		for err != nil {
+			fmt.Println("Error in dialing to: ", newrequest.FileRequest.MyName, " dialing again...")
+			connection1, err1 := net.Dial("tcp", ":"+activeClient.PeerListenPort[newrequest.FileRequest.MyName])
+			connection = connection1
+			err = err1
+			count++
+			if count > 100 {
+				fmt.Println("Error in forwarding file part - ", err)
+			}
 		}
 
+		// sending the request further
 		newSendRequest := newrequest
-		newconn := json.NewEncoder(forwardConnection)
+		newconn := json.NewEncoder(connection)
 		newconn.Encode(&newSendRequest)
+		// fmt.Println("forwarded to ", newrequest.FileRequest.MyName, "\n")
 
 	}
 }
 
+// checking existence of file to send it to some peer
+func CheckFileExistence(request FileRequest, directoryFiles *ClientFiles) bool {
+	// if the file exists
+	for _, file := range directoryFiles.FilesInDir {
+
+		if strings.Compare(file, request.RequestedFile) == 0 {
+			return true
+		}
+	}
+	return false
+}
+
 func handleConnection(connection net.Conn, activeClient *ClientListen, myname string,
-	myfiles map[string]MyReceivedFiles) {
+	myfiles map[string]MyReceivedFiles, mymessages *MyReceivedMessages, directoryFiles *ClientFiles) {
 
 	var newrequest BaseRequest
 	newconn := json.NewDecoder(connection)
 	newconn.Decode(&newrequest)
-	// fmt.Println(newrequest.MessageRequest.Message)
-	// fmt.Println(newrequest.MessageRequest.Message)
-	if newrequest.RequestType == "receive_from_peer" {
 
-		fmt.Println("Request to receive a file from peer ")
+	// If peer is asking for a file, send the existence status of the file in my directory
+	if newrequest.RequestType == "ask_for_file" {
+
+		exists := CheckFileExistence(newrequest.FileRequest, directoryFiles)
+		if exists {
+			_ = RequestMessage(activeClient, myname, newrequest.FileRequest.MyName, "have the file you requested")
+		} else {
+			_ = RequestMessage(activeClient, myname, newrequest.FileRequest.MyName, "doesn't have the file you requested")
+		}
+
+		// if peer is asking me to send some file
+	} else if newrequest.RequestType == "receive_from_peer" {
+
 		handleNewFileSendRequest(newrequest.FileRequest, myname, activeClient)
 
+		// if received some file part
 	} else if newrequest.RequestType == "received_some_file" {
 
-		fmt.Println("Received some file part ")
 		handleReceivedRequest(connection, activeClient, myname, myfiles, newrequest)
-	} else if newrequest.RequestType == "receive_message"{
-		fmt.Print("{ ",newrequest.MessageRequest.SenderName, " sent you a message : '",
-								newrequest.MessageRequest.Message,"' } ")
+
+		// If recereceive_fileievd some message
+	} else if newrequest.RequestType == "receive_message" {
+		mutexMessages.Lock()
+		mymessages.MyMessages = append(mymessages.MyMessages, newrequest.MessageRequest)
+		mutexMessages.Unlock()
 	}
 
 }
 
 // ListenOnSelfPort listens for clients on network
-func ListenOnSelfPort(ln net.Listener, myname string, activeClient *ClientListen,
-	myfiles map[string]MyReceivedFiles) {
+func ListenOnSelfPort(ln net.Listener, myname string, activeClient *ClientListen, myfiles map[string]MyReceivedFiles,
+	mymessages *MyReceivedMessages, directoryFiles *ClientFiles) {
 	for {
 		connection, err := ln.Accept()
 
 		if err != nil {
 			panic(err)
 		}
-		// fmt.Print(connection)
-		// fmt.Println(activeClient.PeerListenPort)
-		// fmt.Println(activeClient.List)
-		go handleConnection(connection, activeClient, myname, myfiles)
+		// Hanling the received connection
+		go handleConnection(connection, activeClient, myname, myfiles, mymessages, directoryFiles)
 	}
 }

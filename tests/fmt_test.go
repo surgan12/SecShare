@@ -12,7 +12,7 @@ func TestGoFmt(t *testing.T) {
 		}
 	} else {
 		if len(out) > 0 {
-			t.Fatal("You need to run go fmt")
+			t.Fatal("You need to run gofmt")
 		}
 	}
 }
