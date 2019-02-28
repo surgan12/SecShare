@@ -1,8 +1,11 @@
 package main
 
-import "testing"
-import "os/exec"
+import (
+	"testing"
+	"ox/exec"
+)
 
+//TestGoFmt test for format errors
 func TestGoFmt(t *testing.T) {
 	cmd := exec.Command("gofmt", "-l", ".")
 

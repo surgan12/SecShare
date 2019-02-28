@@ -8,6 +8,7 @@ import (
 	// cp "../src/clientproperties"
 )
 
+//TestRequestSomeFile file request testing
 func TestRequestSomeFile(t *testing.T) {
 	ln, err := net.Listen("tcp", ":50000")
 	if err != nil {

@@ -142,8 +142,8 @@ func main() {
 			} else if query == "ask_for_file" {
 				// broadcasting request for receiving some file
 				_, fileName := cp.FileSenderCredentials(true)
-				request_status := cp.RequestSomeFile(&activeClient, name, fileName)
-				if request_status == "completed" {
+				requestStatus := cp.RequestSomeFile(&activeClient, name, fileName)
+				if requestStatus == "completed" {
 					fmt.Println("Request broadcasted properly")
 				} else {
 					fmt.Println("Request not broadcasted properly")
@@ -152,19 +152,17 @@ func main() {
 				cp.DisplayRecentUnseenMessages(&mymessages)
 
 			} else if query == "receive_file" {
-
 				// Receiving file from specific peer
 				// getting credentials of the person from whom to receive the file
 				fileSenderName, fileName := cp.FileSenderCredentials(false)
 				// sending the request to receive some file
 				// status of the request, whether or not the request is sent properly
-				request_status := cp.GetRequestedFile(&activeClient, name, fileSenderName, fileName)
-				if request_status == "completed" {
+				requestStatus := cp.GetRequestedFile(&activeClient, name, fileSenderName, fileName)
+				if requestStatus == "completed" {
 					fmt.Println("Request sent")
 				} else {
 					fmt.Println("Request not sent properly")
 				}
-
 			} else if query == "send_message" {
 				// query to send messages to others
 				// activating the message send mode
@@ -183,10 +181,10 @@ func main() {
 					}
 
 					// whether I want to exit the message mode
-					var query_message string
+					var queryMessage string
 					fmt.Println("Do you want to send more messages? If Yes type Y, else N")
-					fmt.Scanln(&query_message)
-					if query_message == "N" {
+					fmt.Scanln(&queryMessage)
+					if queryMessage == "N" {
 						fmt.Println("Exiting messaging mode...")
 						break
 					}
@@ -196,11 +194,11 @@ func main() {
 				// to display recent messages, which haven't been seen yet
 				fmt.Println("Display recent unseen messages - (type) 1")
 				fmt.Println("Display recent Num messages - (type) 2")
-				var query_message string
-				fmt.Scanln(&query_message)
+				var queryMessage string
+				fmt.Scanln(&queryMessage)
 
 				// Display recently unseen messages
-				if query_message == "1" {
+				if queryMessage == "1" {
 					cp.DisplayRecentUnseenMessages(&mymessages)
 				} else {
 					// display N recent messages

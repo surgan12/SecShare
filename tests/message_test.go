@@ -8,6 +8,7 @@ import (
 	// cp "../src/clientproperties"
 )
 
+//TestRequestMessage message request testing
 func TestRequestMessage(t *testing.T) {
 
 	ln, err := net.Listen("tcp", ":40000")

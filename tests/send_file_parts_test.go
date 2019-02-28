@@ -10,6 +10,7 @@ import (
 	"net"
 )
 
+//TestSendFileParts testing send file parts
 func TestSendFileParts(t *testing.T) {
 	filename := "SomeImage"
 	allFileParts := fp.GetSplitFile(filename, 2)

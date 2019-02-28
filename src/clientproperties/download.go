@@ -1,21 +1,24 @@
 package clientproperties
 
-import "fmt"
-import "bytes"
-import "net/http"
-import "io"
-import "strings"
-import "sync"
-import "os"
-import "strconv"
-import "io/ioutil"
 import (
+	"fmt"
+	"bytes"
+	"net/http"
+	"io"
+	"strings"
+	"sync"
+	"os"
+	"strconv"
+	"io/ioutil"
 	"github.com/andlabs/ui"
 	"time"
+
+	// "github.com/IITH-SBJoshi/concurrency-decentralized-network/vendor/github.com/andlabs/ui"
+	// _ "github.com/andlabs/ui/winmanifest"
 )
 
 // var mainwin *ui.Window
-
+//WriteCounter 
 type WriteCounter struct {
 	Total uint64
 }
@@ -29,12 +32,13 @@ func (wc *WriteCounter) Write(p []byte) (int, error) {
 	return n, nil
 }
 
-var help_map = map[string]*WriteCounter{}
-var len_map = map[string]int{}
+var helpMap = map[string]*WriteCounter{}
+var lenMap = map[string]int{}
 var mainwin = map[string]*ui.Window{}
 var prog = map[string]*ui.ProgressBar{}
 var name string
 
+//AsyncDownloader downloader function
 func AsyncDownloader(wg *sync.WaitGroup, client *http.Client, start int64, end int, i int, size int, url string, f *os.File) {
 
 	if end > size {
@@ -52,7 +56,7 @@ func AsyncDownloader(wg *sync.WaitGroup, client *http.Client, start int64, end i
 
 	f.Seek(start, 0)
 	var buf bytes.Buffer
-	io.Copy(&buf, io.TeeReader(res.Body, help_map[fname]))
+	io.Copy(&buf, io.TeeReader(res.Body, helpMap[fname]))
 	// io.Copy(&buf, res.Body)
 	var buffer []byte
 	buffer = buf.Bytes()
@@ -61,13 +65,14 @@ func AsyncDownloader(wg *sync.WaitGroup, client *http.Client, start int64, end i
 	wg.Done()
 }
 
+
 func set(ip *ui.ProgressBar) {
 	var fname string
 	fname = name
-	lenth := len_map[fname]
-	for int(help_map[fname].Total)+1 < lenth {
+	lenth := lenMap[fname]
+	for int(helpMap[fname].Total)+1 < lenth {
 
-		g := int(help_map[fname].Total) * 100
+		g := int(helpMap[fname].Total) * 100
 		val := int(g / lenth)
 		time.Sleep(200 * time.Millisecond)
 		// fmt.Print(val)
@@ -79,31 +84,32 @@ func set(ip *ui.ProgressBar) {
 	}
 
 }
+//Download ..
 func Download(args string) {
 
 	s := strings.Split(args, " ")
     url := s[0]
     // fmt.Println(s)
-    temp_split := strings.Split(url,"/")
-	flen := len(temp_split)
-	name = temp_split[flen-1]
+    tempSplit := strings.Split(url,"/")
+	flen := len(tempSplit)
+	name = tempSplit[flen-1]
 	var fname string
 	fname = name
     path := s[1] + "/" + name
-	help_map[fname] = &WriteCounter{}
+	helpMap[fname] = &WriteCounter{}
 	client := &http.Client{}
 	resp, _ := http.Head(url)
 	length := resp.Header.Get("content-length")
 	lenh, _ := strconv.Atoi(length)
-	len_map[fname] = lenh
+	lenMap[fname] = lenh
 	dummy := make([]byte, lenh)
 	ioutil.WriteFile(fmt.Sprintf(path), dummy, 0644)
 	f, _ := os.OpenFile(path, os.O_RDWR, 0666)
 	var start int64
 	start = 0
 	end := 0
-	part_length := int(lenh / 4)
-	end = part_length
+	partLength := int(lenh / 4)
+	end = partLength
 	var wg sync.WaitGroup
 	wg.Add(4)
 	// for testing use http://file-examples.com/wp-content/uploads/2017/11/file_example_MP3_1MG.mp3
@@ -111,7 +117,7 @@ func Download(args string) {
 
 		go AsyncDownloader(&wg, client, start, end, i, lenh, url, f)
 		start = int64(end) + 1
-		end = end + part_length
+		end = end + partLength
 
 	}
 	go ui.Main(setupUI)

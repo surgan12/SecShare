@@ -63,8 +63,6 @@ func GetSplitFile(filename string, numberOfActiveClient int) []FilePartInfo {
 	// contents of the whole file as a byte array
 	fileContents, err := ioutil.ReadFile(fileDirectory + "/image.jpg")
 
-	// startTime := time.Now()
-
 	// slice of size numberOfActiveClient-1, to store all parts' structs
 	allFileParts := make([]FilePartInfo, numberOfActiveClient-1)
 
@@ -79,7 +77,6 @@ func GetSplitFile(filename string, numberOfActiveClient int) []FilePartInfo {
 	wgSplit.Wait() // waiting for all routines to finish
 	// endTime := time.Now()
 	// fmt.Println("Time taken to split the file ", endTime.Sub(startTime))
-
 	// closing the file
 	defer file.Close()
 
