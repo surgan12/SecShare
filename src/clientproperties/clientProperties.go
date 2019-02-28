@@ -22,7 +22,6 @@ type Client struct {
 //ClientListen  Store - all client names,
 //		   IP to name mapping of all clients
 //		   Port at which all those clients are listening for P2P requests
-// : above explained
 type ClientListen struct {
 	List           []string
 	PeerIP         map[string]string
