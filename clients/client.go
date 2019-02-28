@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"time"
 	"path/filepath"
 )
 
@@ -147,6 +148,8 @@ func main() {
 				} else {
 					fmt.Println("Request not broadcasted properly")
 				}
+				// waiting for others to respond to request
+				time.Sleep(2 * time.Second)
 				// display the status of file existence from all clients
 				cp.DisplayRecentUnseenMessages(&mymessages)
 

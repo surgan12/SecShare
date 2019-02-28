@@ -7,11 +7,11 @@ import (
 )
 
 // To send the request to corresponding peer
-func SendFileRequestToPeer(connection net.Conn, fileRequest FileRequest) {
+func SendFileRequestToPeer(connection net.Conn, fileRequest FileRequest, requestType string) {
 	//handle with care, FilePartInfo field for this struct is Nil. Will throw seg fault if accessed
 
 	// encoding as a baseRequest
-	someRequest := BaseRequest{RequestType: "receive_from_peer", FileRequest: fileRequest}
+	someRequest := BaseRequest{RequestType: requestType, FileRequest: fileRequest}
 	// encoding the request over json
 	encoder1 := json.NewEncoder(connection)
 	encoder1.Encode(&someRequest)
@@ -44,7 +44,7 @@ func RequestSomeFile(activeClient *ClientListen, myname string, fileName string)
 				}
 			}
 			// sending the request
-			SendFileRequestToPeer(connection, fileRequest)
+			SendFileRequestToPeer(connection, fileRequest, "ask_for_file")
 		}
 	}
 	// ConnectionKey := en.PerformHandshake(conn, PublicKey)
@@ -75,7 +75,7 @@ func GetRequestedFile(activeClient *ClientListen, myname string, fileSenderName 
 		}
 	}
 
-	SendFileRequestToPeer(connection, fileRequest)
+	SendFileRequestToPeer(connection, fileRequest, "receive_from_peer")
 	request_status := "completed"
 	return request_status
 

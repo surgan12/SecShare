@@ -7,7 +7,7 @@ import (
 	"os"
 	"strconv"
 	"sync"
-	"time"
+	// "time"
 )
 
 //FilePartInfo for information regarding files
@@ -21,11 +21,11 @@ type FilePartInfo struct {
 
 // GetFileParts - goroutine to get all the parts of file to be sent over the network
 func GetFileParts(completefilename string, partSize uint64, filesize int64, i uint64, fileContents []byte,
-	allFileParts []FilePartInfo, wgSplit *sync.WaitGroup) {
+	allFileParts []FilePartInfo, wgSplit *sync.WaitGroup, totalParts int) {
 	// size of the current part to be sent
 	currentSize := int(math.Min(float64(partSize), float64((filesize)-int64(i*partSize))))
 	// struct containing additional information alongside the byte contents
-	currentpart := FilePartInfo{FileName: completefilename, TotalParts: 1, PartName: "part_" + strconv.FormatUint(i, 10),
+	currentpart := FilePartInfo{FileName: completefilename, TotalParts: totalParts, PartName: "part_" + strconv.FormatUint(i, 10),
 		PartNumber: int(i), FilePartContents: make([]byte, currentSize)}
 
 	for j := int(i * partSize); j < int(i*partSize)+int(currentSize); j++ {
@@ -63,7 +63,7 @@ func GetSplitFile(filename string, numberOfActiveClient int) []FilePartInfo {
 	// contents of the whole file as a byte array
 	fileContents, err := ioutil.ReadFile(fileDirectory + "/image.jpg")
 
-	startTime := time.Now()
+	// startTime := time.Now()
 
 	// slice of size numberOfActiveClient-1, to store all parts' structs
 	allFileParts := make([]FilePartInfo, numberOfActiveClient-1)
@@ -73,12 +73,12 @@ func GetSplitFile(filename string, numberOfActiveClient int) []FilePartInfo {
 
 	for i := uint64(0); i < uint64(numberOfActiveClient-1); i++ {
 		wgSplit.Add(1) // incrementing the count of waitgroup, for another goroutine is run
-		go GetFileParts(filename, partSize, filesize, i, fileContents, allFileParts, &wgSplit)
+		go GetFileParts(filename, partSize, filesize, i, fileContents, allFileParts, &wgSplit, int(numberOfActiveClient-1))
 	}
 
 	wgSplit.Wait() // waiting for all routines to finish
-	endTime := time.Now()
-	fmt.Println("Time taken to split the file ", endTime.Sub(startTime))
+	// endTime := time.Now()
+	// fmt.Println("Time taken to split the file ", endTime.Sub(startTime))
 
 	// closing the file
 	defer file.Close()

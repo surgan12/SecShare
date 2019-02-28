@@ -71,26 +71,34 @@ func handleReceivedFile(newrequest BaseRequest, myfiles map[string]MyReceivedFil
 	if _, ok := myfiles[requestedFileName]; ok {
 
 		mutexFiles.Lock()
+		// fmt.Println("file part number is : ", filePartNum)
+		var x = myfiles[requestedFileName]
+		x.PartsReceived++
+		myfiles[requestedFileName] = x
 		myfiles[requestedFileName].MyFile[filePartNum].Contents = newrequest.FilePartInfo.FilePartContents
 		mutexFiles.Unlock()
 		// if all parts have been received, concatenate it and create new file
-		if len(myfiles[requestedFileName].MyFile) == TotalFileParts {
+		if myfiles[requestedFileName].PartsReceived == TotalFileParts {
 			concatenateFileParts(myfiles[requestedFileName])
 		}
 
 	} else {
 		// creating new received file object for my own file
-		myfiles[requestedFileName] = MyReceivedFiles{newrequest.FilePartInfo.FileName,
+		myfiles[requestedFileName] = MyReceivedFiles{0, newrequest.FilePartInfo.FileName,
 			make([]FilePartContents, newrequest.FilePartInfo.TotalParts),
 			newrequest.FilePartInfo}
 
 		// locking
 		mutexFiles.Lock()
+		// fmt.Println("file part number is : ", filePartNum)
+		var x = myfiles[requestedFileName]
+		x.PartsReceived++
+		myfiles[requestedFileName] = x
 		myfiles[requestedFileName].MyFile[filePartNum].Contents = newrequest.FilePartInfo.FilePartContents
 		mutexFiles.Unlock()
 
 		// if all parts have been received, concatenate it and create new file
-		if len(myfiles[requestedFileName].MyFile) == TotalFileParts {
+		if myfiles[requestedFileName].PartsReceived == TotalFileParts {
 			concatenateFileParts(myfiles[requestedFileName])
 		}
 	}
@@ -106,19 +114,25 @@ func handleReceivedRequest(connection net.Conn, activeClient *ClientListen, myna
 
 	} else {
 		// if file is received to be forwarded to some other peer
-		receiverAddress := newrequest.FileRequest.MyAddress
-		forwardConnection, forwardConnErr := net.Dial("tcp", receiverAddress)
-		for forwardConnErr != nil {
-			fmt.Println("Error in dialing, dialing again ... ")
-			connection1, err1 := net.Dial("tcp", receiverAddress)
-			forwardConnection = connection1
-			forwardConnErr = err1
+		
+		count := 0
+		connection, err := net.Dial("tcp", ":"+activeClient.PeerListenPort[newrequest.FileRequest.MyName])
+		for err != nil {
+			fmt.Println("Error in dialing to: ", newrequest.FileRequest.MyName, " dialing again...")
+			connection1, err1 := net.Dial("tcp", ":"+activeClient.PeerListenPort[newrequest.FileRequest.MyName])
+			connection = connection1
+			err = err1
+			count++
+			if count > 100 {
+				fmt.Println("Error in forwarding file part - ", err)
+			}
 		}
 
 		// sending the request further
 		newSendRequest := newrequest
-		newconn := json.NewEncoder(forwardConnection)
+		newconn := json.NewEncoder(connection)
 		newconn.Encode(&newSendRequest)
+		// fmt.Println("forwarded to ", newrequest.FileRequest.MyName, "\n")
 
 	}
 }
@@ -162,7 +176,7 @@ func handleConnection(connection net.Conn, activeClient *ClientListen, myname st
 
 		handleReceivedRequest(connection, activeClient, myname, myfiles, newrequest)
 
-		// If receievd some message
+		// If recereceive_fileievd some message
 	} else if newrequest.RequestType == "receive_message" {
 		mutexMessages.Lock()
 		mymessages.MyMessages = append(mymessages.MyMessages, newrequest.MessageRequest)

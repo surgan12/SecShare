@@ -51,6 +51,7 @@ type MyPeers struct {
 
 // To store the information of files received by client
 type MyReceivedFiles struct {
+	PartsReceived int
 	MyFileName   string             // name of file
 	MyFile       []FilePartContents // Contents of the file
 	FilePartInfo fp.FilePartInfo    // Information of various file parts
@@ -113,10 +114,16 @@ func DisplayRecentUnseenMessages(mymessages *MyReceivedMessages) {
 	// locking it, so that new messages can't be written at the current moment
 	var mutex = &sync.Mutex{}
 	mutex.Lock() // locking
-	for i := mymessages.Counter; i < len(mymessages.MyMessages); i++ {
-		fmt.Println("{ ", mymessages.MyMessages[i].SenderName, " sent you a message : '", mymessages.MyMessages[i].Message, "' } ")
+	
+	if mymessages.Counter == len(mymessages.MyMessages) {
+		fmt.Println("No Recent Unseen messages!!")
+	} else {
+		for i := mymessages.Counter; i < len(mymessages.MyMessages); i++ {
+			fmt.Println(mymessages.MyMessages[i].SenderName, " - sent you a message : ", mymessages.MyMessages[i].Message)
+		}
+		mymessages.Counter = len(mymessages.MyMessages) // incrementing the counter to latest count, as we have read all recent messages
 	}
-	mymessages.Counter = len(mymessages.MyMessages) // incrementing the counter to latest count, as we have read all recent messages
+	
 	fmt.Println('\n')
 	mutex.Unlock()
 }
@@ -130,7 +137,7 @@ func DisplayNumRecentMessages(mymessages *MyReceivedMessages, recentCount int) {
 	if len(mymessages.MyMessages)-recentCount >= 0 {
 		mutex.Lock() // locking
 		for i := len(mymessages.MyMessages) - recentCount; i < len(mymessages.MyMessages); i++ {
-			fmt.Println("{ ", mymessages.MyMessages[i].SenderName, " sent you a message : '", mymessages.MyMessages[i].Message, "' } ")
+			fmt.Println(mymessages.MyMessages[i].SenderName, " - sent you a message : ", mymessages.MyMessages[i].Message)
 		}
 		fmt.Println('\n')
 		mutex.Unlock()
@@ -140,7 +147,7 @@ func DisplayNumRecentMessages(mymessages *MyReceivedMessages, recentCount int) {
 		fmt.Println("Displaying all messages!")
 		mutex.Lock() // locking
 		for i := 0; i < len(mymessages.MyMessages); i++ {
-			fmt.Println("{ ", mymessages.MyMessages[i].SenderName, " sent you a message : '", mymessages.MyMessages[i].Message, "' } ")
+			fmt.Println(mymessages.MyMessages[i].SenderName, " - sent you a message : ", mymessages.MyMessages[i].Message)
 		}
 		fmt.Println('\n')
 		mutex.Unlock()

@@ -1,8 +1,0 @@
-hash: 1a0fa5a5aea15869c3cd25aa099d60932929e35ae5fb74624884f2c370b5ac99
-updated: 2019-02-28T00:44:22.814023265+05:30
-imports:
-- name: github.com/andlabs/ui
-  version: 867a9e5a498d85e2722730ed88c5f00560c7c354
-  subpackages:
-  - winmanifest
-testImports: []
