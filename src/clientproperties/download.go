@@ -16,11 +16,7 @@ import (
 	// _ "github.com/andlabs/ui/winmanifest"
 )
 
-<<<<<<< HEAD
-//WriteCounter 
-=======
 // WriteCounter - Count of writer
->>>>>>> 0d59c4d6de6487b50190bfa067f3d58a126a17e2
 type WriteCounter struct {
 	Total uint64
 }
