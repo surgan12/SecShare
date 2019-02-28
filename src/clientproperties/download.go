@@ -11,8 +11,6 @@ import "strconv"
 import "io/ioutil"
 import (
 	"github.com/andlabs/ui"
-	// "github.com/IITH-SBJoshi/concurrency-decentralized-network/vendor/github.com/andlabs/ui"
-	// _ "github.com/andlabs/ui/winmanifest"
 	"time"
 )
 
@@ -81,13 +79,17 @@ func set(ip *ui.ProgressBar) {
 	}
 
 }
-func Download(url string) {
+func Download(args string) {
 
-	s := strings.Split(url, "/")
-	flen := len(s)
-	name = s[flen-1]
+	s := strings.Split(args, " ")
+    url := s[0]
+    // fmt.Println(s)
+    temp_split := strings.Split(url,"/")
+	flen := len(temp_split)
+	name = temp_split[flen-1]
 	var fname string
 	fname = name
+    path := s[1] + "/" + name
 	help_map[fname] = &WriteCounter{}
 	client := &http.Client{}
 	resp, _ := http.Head(url)
@@ -95,8 +97,8 @@ func Download(url string) {
 	lenh, _ := strconv.Atoi(length)
 	len_map[fname] = lenh
 	dummy := make([]byte, lenh)
-	ioutil.WriteFile(fmt.Sprintf(name), dummy, 0644)
-	f, _ := os.OpenFile(name, os.O_RDWR, 0666)
+	ioutil.WriteFile(fmt.Sprintf(path), dummy, 0644)
+	f, _ := os.OpenFile(path, os.O_RDWR, 0666)
 	var start int64
 	start = 0
 	end := 0
@@ -130,9 +132,8 @@ func makeBasicControlsPage() ui.Control {
 	prog[fname] = ui.NewProgressBar()
 	hbox.Append(prog[fname], false)
 	go set(prog[fname])
-	// ip.SetValue(10)
-
-	return vbox
+	
+    return vbox
 }
 
 func setupUI() {

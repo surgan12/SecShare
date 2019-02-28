@@ -7,9 +7,9 @@ import (
 	// en "../src/encryptionproperties"
 	"encoding/json"
 	"fmt"
+	"bufio"
 	"net"
 	"os"
-	"time"
 	"path/filepath"
 )
 
@@ -148,8 +148,6 @@ func main() {
 				} else {
 					fmt.Println("Request not broadcasted properly")
 				}
-				// waiting for others to respond to request
-				time.Sleep(2 * time.Second)
 				// display the status of file existence from all clients
 				cp.DisplayRecentUnseenMessages(&mymessages)
 
@@ -214,9 +212,11 @@ func main() {
 
 			} else if query == "down" {
 				// to download files, support within file concurrency and can donwload muliple files simultaneously
-				var url string
 				fmt.Print("URL for downloading: ") // url string
-				fmt.Scanln(&url)
+				var url string
+				scanner := bufio.NewScanner(os.Stdin)
+    			scanner.Scan() // use `for scanner.Scan()` to keep reading
+    			url = scanner.Text()
 				go cp.Download(url)
 
 			}
