@@ -1,17 +1,20 @@
 package clientproperties
 
 import (
-	// "time"
+	"time"
 	"fmt"
 	"io/ioutil"
 	"os"
+	"github.com/andlabs/ui"
 	// "strconv"
 	"sync"
 )
 
+var popwin = map[string]*ui.Window{}
+
 // creating waitgroup to wait for all goroutines to finish
 var wgConcat sync.WaitGroup
-
+var curr string
 // func to write the filepart details to all Files byte slice
 func concatFiles(i int, allFiles []byte, filePartContent FilePartContents) {
 	defer wgConcat.Done()
@@ -63,6 +66,36 @@ func concatenateFileParts(file MyReceivedFiles) {
 	if err != nil {
 		fmt.Println(err)
 	}
+	curr = fileName
+	go ui.Main(setupPop)
+	time.Sleep(4000*time.Millisecond)
+	popwin[curr].Destroy()
+	
+}
 
-	fmt.Println("\nReceived file : ", currentfilename, "\n")
+func setupPop() {
+	var fname string
+	fname = curr
+	popwin[fname] = ui.NewWindow("Downloading"+fname, 300, 150, true)
+
+	tab := ui.NewTab()
+	popwin[fname].SetChild(tab)
+	popwin[fname].SetMargined(true)
+
+	tab.Append("Received ", makePopup())
+	tab.SetMargined(0, true)
+	
+	popwin[fname].Show()
+}
+func makePopup() ui.Control {
+	vbox := ui.NewVerticalBox()
+	vbox.SetPadded(true)
+	hbox := ui.NewHorizontalBox()
+	hbox.SetPadded(true)
+	vbox.Append(hbox, false)
+	text := ui.NewEntry()
+	text.SetReadOnly(true)
+	text.SetText("Received" + curr)
+	hbox.Append(text, false)
+	return vbox
 }
