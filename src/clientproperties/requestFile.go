@@ -102,5 +102,4 @@ func FileSenderCredentials(broadcast bool) (string, string) {
 	fmt.Scanln(&fileName) // file we want to receive
 
 	return "None", fileName
-
 }

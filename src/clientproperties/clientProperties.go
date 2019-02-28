@@ -14,7 +14,9 @@ type Client struct {
 	ConnectionServer net.Conn
 }
 
-// ClientListen - Details of clients on Network
+//ClientListen  Store - all client names,
+//		   IP to name mapping of all clients
+//		   Port at which all those clients are listening for P2P requests
 type ClientListen struct {
 	List           []string          // names of all clients
 	PeerIP         map[string]string // IP to name mapping of all clients
