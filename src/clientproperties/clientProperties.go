@@ -12,7 +12,7 @@ import (
 	"net"
 )
 
-// Struct to store details of specific client
+// Client:  Struct to store details of specific client
 type Client struct {
 	Address          string
 	Name             string
@@ -22,20 +22,21 @@ type Client struct {
 // Store - all client names,
 //		   IP to name mapping of all clients
 //		   Port at which all those clients are listening for P2P requests
+//ClientListen : above explained
 type ClientListen struct {
 	List           []string
 	PeerIP         map[string]string
 	PeerListenPort map[string]string
 }
 
-// To store name and query of a client
+// ClientQuery :  To store name and query of a client
 type ClientQuery struct {
 	Name             []byte
 	Query            []byte
 	ClientListenPort []byte
 }
 
-// Stores the names, jobs, query and connection
+// ClientJob :  Stores the names, jobs, query and connection
 type ClientJob struct {
 	Name             string
 	Query            string
@@ -43,13 +44,13 @@ type ClientJob struct {
 	ClientListenPort string
 }
 
-// List of peers to which a clinet dials
+//MyPeers : List of peers to which a clinet dials
 type MyPeers struct {
 	Conn     net.Conn
 	PeerName string
 }
 
-// To store the information of files received by client
+//MyReceivedFiles :  To store the information of files received by client
 type MyReceivedFiles struct {
 	PartsReceived int
 	MyFileName   string             // name of file
@@ -57,18 +58,18 @@ type MyReceivedFiles struct {
 	FilePartInfo fp.FilePartInfo    // Information of various file parts
 }
 
-// To store the information of the messages receievd
+//MyReceivedMessages To store the information of the messages receievd
 type MyReceivedMessages struct {
 	Counter    int              // The counter from which client has to start reading the messages
 	MyMessages []MessageRequest // slice of structs of type MessageRequest to store all message requests
 }
 
-// Contents of a part of file
+//FilePartContents Contents of a part of file
 type FilePartContents struct {
 	Contents []byte
 }
 
-// A base request which is used as a generic request for all types of P2P queries
+//BaseRequest : A base request which is used as a generic request for all types of P2P queries
 type BaseRequest struct {
 	RequestType    string          // type of request
 	FileRequest                    // Information about File requseter if its a file request
@@ -84,19 +85,15 @@ type FileRequest struct {
 	RequestedFile string
 }
 
-// Stores the information about requester, who is sending the message (for the receiver to reply back)
+//MessageRequest Stores the information about requester, who is sending the message (for the receiver to reply back)
 type MessageRequest struct {
 	SenderQuery 	string
 	SenderAddress	string
 	SenderName 		string
 	Message 		string
 }
-<<<<<<< HEAD
-//ClientFiles stores the files of client has
-=======
 
 // ClientFiles stores the files in the "files" directory of client
->>>>>>> bfd456380a69669f0debc61a676fc629bc24c355
 type ClientFiles struct {
 	FilesInDir []string
 }
@@ -113,7 +110,7 @@ func SendingToServer(name []byte, query []byte, conn net.Conn,
 	}
 }
 
-// To display the most recent messages which haven't been seen yet
+//DisplayRecentUnseenMessages  To display the most recent messages which haven't been seen yet
 func DisplayRecentUnseenMessages(mymessages *MyReceivedMessages) {
 	// locking it, so that new messages can't be written at the current moment
 	var mutex = &sync.Mutex{}
@@ -132,7 +129,7 @@ func DisplayRecentUnseenMessages(mymessages *MyReceivedMessages) {
 	mutex.Unlock()
 }
 
-// To display Num recent messages
+//DisplayNumRecentMessages To display Num recent messages
 func DisplayNumRecentMessages(mymessages *MyReceivedMessages, recentCount int) {
 	// locking it, so that new messages can't be written at the current moment
 	var mutex = &sync.Mutex{}

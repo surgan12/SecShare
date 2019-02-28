@@ -6,6 +6,7 @@ import (
 	// fp "../fileproperties"
 )
 
+//TestFileSplit test file split
 func TestFileSplit(t *testing.T) {
 
 	filename := "SomeImage"

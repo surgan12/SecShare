@@ -14,7 +14,7 @@ import (
 var mutexFiles = &sync.Mutex{}    // Lock and unlock (mutexFiles)
 var mutexMessages = &sync.Mutex{} // Lock and unlock (mutexFiles)
 
-// send various file parts to peers
+//SendFileParts send various file parts to peers
 func SendFileParts(newfilerequest FileRequest, allfileparts []fp.FilePartInfo,
 	activeClient *ClientListen, myname string) int {
 
@@ -137,7 +137,7 @@ func handleReceivedRequest(connection net.Conn, activeClient *ClientListen, myna
 	}
 }
 
-// checking existence of file to send it to some peer
+//CheckFileExistence checking existence of file to send it to some peer
 func CheckFileExistence(request FileRequest, directoryFiles *ClientFiles) bool {
 	// if the file exists
 	for _, file := range directoryFiles.FilesInDir {

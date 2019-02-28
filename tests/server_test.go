@@ -8,6 +8,7 @@ import (
 	"testing"
 )
 
+//TestRemoveFromClient test if client is deleted or not
 func TestRemoveFromClient(t *testing.T) {
 
 	clientList := []cp.Client{}
@@ -19,6 +20,7 @@ func TestRemoveFromClient(t *testing.T) {
 	}
 }
 
+// TestQueryDeal check client query is working or not
 func TestQueryDeal(t *testing.T) {
 	name := "user"
 	TestMap := make(map[string]string)
@@ -28,9 +30,9 @@ func TestQueryDeal(t *testing.T) {
 	cli := cp.ClientListen{List: list, PeerIP: TestMap}
 	clt := cp.Client{Name: name, Address: ":8087"}
 	var clients = []cp.Client{clt}
-	cli_ := sp.QueryDeal(&clients, cli, name)
+	Client := sp.QueryDeal(&clients, cli, name)
 
-	if len(clients) > 0 || len(cli_.List) > 0 || cli.PeerIP[name] != "" {
+	if len(clients) > 0 || len(Client.List) > 0 || cli.PeerIP[name] != "" {
 		t.Fatal("QueryDeal in the serverproperties not working correctly")
 	}
 

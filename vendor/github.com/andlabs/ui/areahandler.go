@@ -152,7 +152,7 @@ func pkguiDoAreaHandlerDraw(uah *C.uiAreaHandler, ua *C.uiArea, udp *C.uiAreaDra
 	ah.Draw(a, dp)
 }
 
-// TODO document all these
+//AreaMouseEvent  document all these
 // 
 // TODO note that in the case of a drag, X and Y can be out of bounds, or in the event of a scrolling area, in places that are not visible
 type AreaMouseEvent struct {
@@ -219,8 +219,7 @@ func pkguiDoAreaHandlerDragBroken(uah *C.uiAreaHandler, ua *C.uiArea) {
 	a := ControlFromLibui(uintptr(unsafe.Pointer(ua))).(*Area)
 	ah.DragBroken(a)
 }
-
-// TODO document all these
+//AreaKeyEvent 
 type AreaKeyEvent struct {
 	Key		rune
 	ExtKey	ExtKey
@@ -243,22 +242,25 @@ func pkguiDoAreaHandlerKeyEvent(uah *C.uiAreaHandler, ua *C.uiArea, uke *C.uiAre
 	return frombool(ah.KeyEvent(a, ke))
 }
 
-// TODO document
+//Modifiers  TODO document
 // 
 // Note: these must be numerically identical to their libui equivalents.
 type Modifiers uint
+// Ctrl 
 const (
+	//Ctrl ..
 	Ctrl Modifiers = 1 << iota
 	Alt
 	Shift
 	Super
 )
 
-// TODO document
+// ExtKey document
 // 
 // Note: these must be numerically identical to their libui equivalents.
 type ExtKey int
 const (
+	//Excape ..
 	Escape ExtKey = iota + 1
 	Insert			// equivalent to "Help" on Apple keyboards
 	Delete

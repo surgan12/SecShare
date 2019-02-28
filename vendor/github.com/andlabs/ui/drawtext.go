@@ -63,6 +63,7 @@ func (s TextSize) toLibui() *C.uiAttribute {
 // TextWeightBlack.
 type TextWeight int
 const (
+	//TextWeightMinimum ..
 	TextWeightMinimum TextWeight = 0
 	TextWeightThin TextWeight = 100
 	TextWeightUltraLight TextWeight = 200
@@ -89,11 +90,13 @@ func (w TextWeight) toLibui() *C.uiAttribute {
 // usually have one or the other.
 type TextItalic int
 const (
+	//TextItalicNormal ...
 	TextItalicNormal TextItalic = iota
 	TextItalicOblique
 	TextItalicItalic
 )
 
+//toLibui..
 func (i TextItalic) toLibui() *C.uiAttribute {
 	return C.uiNewItalicAttribute(C.uiTextItalic(i))
 }
@@ -110,6 +113,7 @@ func (i TextItalic) toLibui() *C.uiAttribute {
 // stretch TextStretchCondensed.
 type TextStretch int
 const (
+	//TextStretchUltraCondensed ..
 	TextStretchUltraCondensed TextStretch = iota
 	TextStretchExtraCondensed
 	TextStretchCondensed
@@ -155,6 +159,7 @@ func (b TextBackground) toLibui() *C.uiAttribute {
 // on text.
 type Underline int
 const (
+	//UnderlineNone ..
 	UnderlineNone Underline = iota
 	UnderlineSingle
 	UnderlineDouble
@@ -181,6 +186,7 @@ func (u Underline) toLibui() *C.uiAttribute {
 // attribute is ignored, but not removed from the uiAttributedString.
 type UnderlineColor int
 const (
+	//UnderlineColorSpelling ..
 	UnderlineColorSpelling UnderlineColor = iota + 1
 	UnderlineColorGrammar
 	UnderlineColorAuxiliary		// for instance, the color used by smart replacements on macOS or in Microsoft Office
@@ -468,6 +474,7 @@ type DrawTextLayout struct {
 // TODO should this really have Draw in the name?
 type DrawTextAlign int
 const (
+	//DrawTextAlignLeft ..
 	DrawTextAlignLeft DrawTextAlign = iota
 	DrawTextAlignCenter
 	DrawTextAlignRight
@@ -484,7 +491,7 @@ type DrawTextLayoutParams struct {
 	Align		DrawTextAlign
 }
 
-// DrawNewTextLayout() creates a new DrawTextLayout from
+// DrawNewTextLayout   creates a new DrawTextLayout from
 // the given parameters.
 func DrawNewTextLayout(p *DrawTextLayoutParams) *DrawTextLayout {
 	dp := C.pkguiNewDrawTextLayoutParams()

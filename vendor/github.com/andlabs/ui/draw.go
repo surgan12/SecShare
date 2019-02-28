@@ -33,18 +33,19 @@ import "C"
 // 	// ...
 // 	p.Free() // when done with the path
 // 
-// A DrawPath also defines its fill mode. (This should ideally be a fill
+//DrawPath also defines its fill mode. (This should ideally be a fill
 // parameter, but some implementations prevent it.)
 // TODO talk about fill modes
 type DrawPath struct {
 	p	*C.uiDrawPath
 }
 
-// TODO
+// DrawFillMode TODO
 // 
 // TODO disclaimer
 type DrawFillMode uint
 const (
+	//DrawFillModeWinding ..
 	DrawFillModeWinding DrawFillMode = iota
 	DrawFillModeAlternate
 )
@@ -162,37 +163,40 @@ type DrawContext struct {
 // TODO disclaimer
 type DrawBrushType int
 const (
+	//DrawBrushTypeSolid ..
 	DrawBrushTypeSolid DrawBrushType = iota
 	DrawBrushTypeLinearGradient
 	DrawBrushTypeRadialGradient
 	DrawBrushTypeImage		// presently unimplemented
 )
 
-// TODO
+// DrawLineCap
 // 
 // TODO disclaimer
 // TODO rename these to put LineCap at the beginning? or just Cap?
 type DrawLineCap int
 const (
+	//DrawLineCapFlat ..
 	DrawLineCapFlat DrawLineCap = iota
 	DrawLineCapRound
 	DrawLineCapSquare
 )
 
-// TODO
+// DrawLineJoin
 // 
 // TODO disclaimer
 type DrawLineJoin int
 const (
+	//DrawLineJoinMiter ..
 	DrawLineJoinMiter DrawLineJoin = iota
 	DrawLineJoinRound
 	DrawLineJoinBevel
 )
 
-// TODO document
+//DrawDefaultMiterLimit TODO document
 const DrawDefaultMiterLimit = 10.0
 
-// TODO
+//DrawBrush TODO
 type DrawBrush struct {
 	Type		DrawBrushType
 
@@ -213,7 +217,7 @@ type DrawBrush struct {
 	Stops		[]DrawGradientStop
 }
 
-// TODO
+//DrawGradientStop  TODO
 type DrawGradientStop struct {
 	Pos	float64		// between 0 and 1 inclusive
 	R	float64
@@ -222,6 +226,7 @@ type DrawGradientStop struct {
 	A	float64
 }
 
+//toLibui ..
 func (b *DrawBrush) toLibui() *C.uiDrawBrush {
 	cb := C.pkguiAllocBrush()
 	cb.Type = C.uiDrawBrushType(b.Type)
@@ -262,7 +267,7 @@ func freeBrush(cb *C.uiDrawBrush) {
 	C.pkguiFreeBrush(cb)
 }
 
-// TODO
+//DrawStrokeParams TODO
 type DrawStrokeParams struct {
 	Cap			DrawLineCap
 	Join			DrawLineJoin
@@ -297,7 +302,7 @@ func freeStrokeParams(csp *C.uiDrawStrokeParams) {
 	C.pkguiFreeStrokeParams(csp)
 }
 
-// TODO
+//Stroke TODO
 func (c *DrawContext) Stroke(p *DrawPath, b *DrawBrush, sp *DrawStrokeParams) {
 	cb := b.toLibui()
 	defer freeBrush(cb)
@@ -306,14 +311,14 @@ func (c *DrawContext) Stroke(p *DrawPath, b *DrawBrush, sp *DrawStrokeParams) {
 	C.uiDrawStroke(c.c, p.p, cb, csp)
 }
 
-// TODO
+//Fill TODO
 func (c *DrawContext) Fill(p *DrawPath, b *DrawBrush) {
 	cb := b.toLibui()
 	defer freeBrush(cb)
 	C.uiDrawFill(c.c, p.p, cb)
 }
 
-// TODO
+//DrawMatrix TODO
 // TODO should the methods of these return self for chaining?
 type DrawMatrix struct {
 	M11		float64
@@ -324,14 +329,14 @@ type DrawMatrix struct {
 	M32		float64
 }
 
-// TODO identity matrix
+//DrawNewMatrix TODO identity matrix
 func DrawNewMatrix() *DrawMatrix {
 	m := new(DrawMatrix)
 	m.SetIdentity()
 	return m
 }
 
-// TODO
+//SetIdentity TODO
 func (m *DrawMatrix) SetIdentity() {
 	m.M11 = 1
 	m.M12 = 0
@@ -340,7 +345,7 @@ func (m *DrawMatrix) SetIdentity() {
 	m.M31 = 0
 	m.M32 = 0
 }
-
+//toLibui ..
 func (m *DrawMatrix) toLibui() *C.uiDrawMatrix {
 	cm := C.pkguiAllocMatrix()
 	cm.M11 = C.double(m.M11)
@@ -352,6 +357,7 @@ func (m *DrawMatrix) toLibui() *C.uiDrawMatrix {
 	return cm
 }
 
+//fromLibui ..
 func (m *DrawMatrix) fromLibui(cm *C.uiDrawMatrix) {
 	m.M11 = float64(cm.M11)
 	m.M12 = float64(cm.M12)
@@ -362,14 +368,14 @@ func (m *DrawMatrix) fromLibui(cm *C.uiDrawMatrix) {
 	C.pkguiFreeMatrix(cm)
 }
 
-// TODO
+//Translate TODO
 func (m *DrawMatrix) Translate(x float64, y float64) {
 	cm := m.toLibui()
 	C.uiDrawMatrixTranslate(cm, C.double(x), C.double(y))
 	m.fromLibui(cm)
 }
 
-// TODO
+//Scale TODO
 func (m *DrawMatrix) Scale(xCenter float64, yCenter float64, x float64, y float64) {
 	cm := m.toLibui()
 	C.uiDrawMatrixScale(cm,
@@ -378,14 +384,14 @@ func (m *DrawMatrix) Scale(xCenter float64, yCenter float64, x float64, y float6
 	m.fromLibui(cm)
 }
 
-// TODO
+//Rotate TODO
 func (m *DrawMatrix) Rotate(x float64, y float64, amount float64) {
 	cm := m.toLibui()
 	C.uiDrawMatrixRotate(cm, C.double(x), C.double(y), C.double(amount))
 	m.fromLibui(cm)
 }
 
-// TODO
+//Skew TODO
 func (m *DrawMatrix) Skew(x float64, y float64, xamount float64, yamount float64) {
 	cm := m.toLibui()
 	C.uiDrawMatrixSkew(cm,
@@ -394,7 +400,7 @@ func (m *DrawMatrix) Skew(x float64, y float64, xamount float64, yamount float64
 	m.fromLibui(cm)
 }
 
-// TODO
+//Multiply TODO
 func (m *DrawMatrix) Multiply(m2 *DrawMatrix) {
 	cm := m.toLibui()
 	cm2 := m2.toLibui()
@@ -403,7 +409,7 @@ func (m *DrawMatrix) Multiply(m2 *DrawMatrix) {
 	m.fromLibui(cm)
 }
 
-// TODO
+//Invertible TODO
 func (m *DrawMatrix) Invertible() bool {
 	cm := m.toLibui()
 	res := C.uiDrawMatrixInvertible(cm)
@@ -411,7 +417,7 @@ func (m *DrawMatrix) Invertible() bool {
 	return tobool(res)
 }
 
-// TODO
+//Invert TODO
 // 
 // If m is not invertible, false is returned and m is left unchanged.
 func (m *DrawMatrix) Invert() bool {
@@ -421,34 +427,34 @@ func (m *DrawMatrix) Invert() bool {
 	return tobool(res)
 }
 
-// TODO unimplemented
+//TransformPoint TODO unimplemented
 func (m *DrawMatrix) TransformPoint(x float64, y float64) (xout float64, yout float64) {
 	panic("TODO")
 }
 
-// TODO unimplemented
+//TransformSize TODO unimplemented
 func (m *DrawMatrix) TransformSize(x float64, y float64) (xout float64, yout float64) {
 	panic("TODO")
 }
 
-// TODO
+//Transform TODO
 func (c *DrawContext) Transform(m *DrawMatrix) {
 	cm := m.toLibui()
 	C.uiDrawTransform(c.c, cm)
 	C.pkguiFreeMatrix(cm)
 }
 
-// TODO
+//Clip TODO
 func (c *DrawContext) Clip(p *DrawPath) {
 	C.uiDrawClip(c.c, p.p)
 }
 
-// TODO
+//Save TODO
 func (c *DrawContext) Save() {
 	C.uiDrawSave(c.c)
 }
 
-// TODO
+//Restore TODO
 func (c *DrawContext) Restore() {
 	C.uiDrawRestore(c.c)
 }

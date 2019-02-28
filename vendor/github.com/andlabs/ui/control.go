@@ -87,39 +87,48 @@ func NewControlBase(iface Control, c uintptr) ControlBase {
 	return b
 }
 
+//LibuiControl 
 func (c *ControlBase) LibuiControl() uintptr {
 	return uintptr(unsafe.Pointer(c.c))
 }
 
+//Destroy  
 func (c *ControlBase) Destroy() {
 	delete(controls, c.c)
 	C.uiControlDestroy(c.c)
 }
 
+//Handle ..
 func (c *ControlBase) Handle() uintptr {
 	return uintptr(C.uiControlHandle(c.c))
 }
 
+//Visible ..
 func (c *ControlBase) Visible() bool {
 	return tobool(C.uiControlVisible(c.c))
 }
 
+//Show ..
 func (c *ControlBase) Show() {
 	C.uiControlShow(c.c)
 }
 
+//Hide ..
 func (c *ControlBase) Hide() {
 	C.uiControlHide(c.c)
 }
 
+//Enabled  ..
 func (c *ControlBase) Enabled() bool {
 	return tobool(C.uiControlEnabled(c.c))
 }
 
+//Enable ..
 func (c *ControlBase) Enable() {
 	C.uiControlEnable(c.c)
 }
 
+//Disable 
 func (c *ControlBase) Disable() {
 	C.uiControlDisable(c.c)
 }

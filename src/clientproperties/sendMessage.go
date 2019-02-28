@@ -34,15 +34,15 @@ func RequestMessage(activeClient *ClientListen, name string, messageReceiverName
 		err = err1
 		count++
 		if count > 10 {
-			message_status := "not sent"
-			return message_status
+			messageStatus := "not sent"
+			return messageStatus
 			break
 		}
 	}
 
 	sendMessageToPeer(connection, messageRequest)
-	message_status := "sent"
-	return message_status
+	messageStatus := "sent"
+	return messageStatus
 }
 
 func MessageReceiverCredentials() (string, string) {

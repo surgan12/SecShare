@@ -6,7 +6,7 @@ import (
 	"net"
 )
 
-// To send the request to corresponding peer
+//SendFileRequestToPeer To send the request to corresponding peer
 func SendFileRequestToPeer(connection net.Conn, fileRequest FileRequest, requestType string) {
 	//handle with care, FilePartInfo field for this struct is Nil. Will throw seg fault if accessed
 
@@ -18,7 +18,7 @@ func SendFileRequestToPeer(connection net.Conn, fileRequest FileRequest, request
 	connection.Close() // closing connection after the requet is sent
 }
 
-// To broadcast the file request to everyone on network
+//RequestSomeFile To broadcast the file request to everyone on network
 func RequestSomeFile(activeClient *ClientListen, myname string, fileName string) string {
 
 	// creating the object to hold queries related to file
@@ -48,12 +48,12 @@ func RequestSomeFile(activeClient *ClientListen, myname string, fileName string)
 		}
 	}
 	// ConnectionKey := en.PerformHandshake(conn, PublicKey)
-	request_status := "completed"
-	return request_status
+	requestStatus := "completed"
+	return requestStatus
 
 }
 
-// To get file from a peer
+//GetRequestedFile To get file from a peer
 func GetRequestedFile(activeClient *ClientListen, myname string, fileSenderName string, fileName string) string {
 
 	// creating the object to hold queries related to file
@@ -76,12 +76,12 @@ func GetRequestedFile(activeClient *ClientListen, myname string, fileSenderName 
 	}
 
 	SendFileRequestToPeer(connection, fileRequest, "receive_from_peer")
-	request_status := "completed"
-	return request_status
+	requestStatus := "completed"
+	return requestStatus
 
 }
 
-// getting the details for sending file request
+//FileSenderCredentials getting the details for sending file request
 func FileSenderCredentials(broadcast bool) (string, string) {
 
 	// getting details of file Sender

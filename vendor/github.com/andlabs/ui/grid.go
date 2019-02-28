@@ -34,6 +34,7 @@ type Grid struct {
 // Align represents the alignment of a Control in its cell of a Grid.
 type Align int
 const (
+	//AlignFill ..
 	AlignFill Align = iota
 	AlignStart
 	AlignCenter
@@ -43,6 +44,7 @@ const (
 // At represents a side of a Control to add other Controls to a Grid to.
 type At int
 const (
+	//Leading ..
 	Leading At = iota
 	Top
 	Trailing
