@@ -1,11 +1,11 @@
 package serverproperties
 
 import (
-	// cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
-	cp "../clientproperties"
+	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
+	// cp "../clientproperties"
 )
 
-// RemoveFromClient removes the client who quits from the list
+// RemoveFromClient - removes the client details who quits
 func RemoveFromClient(clients []cp.Client, name string) []cp.Client {
 	tempClients := []cp.Client{}
 	for i := 0; i < len(clients); i++ {
@@ -32,5 +32,4 @@ func QueryDeal(clients *[]cp.Client, cli cp.ClientListen, name string) cp.Client
 
 	*clients = RemoveFromClient(*clients, name)
 	return cli
-	// fmt.Print(cli.List, clients)
 }

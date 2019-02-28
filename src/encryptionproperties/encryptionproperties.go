@@ -8,7 +8,7 @@ import (
 	"net"
 )
 
-// GenerateKeyPair generates a new key pair
+// GenerateKeyPair - generates a new key pair
 func GenerateKeyPair() (*rsa.PrivateKey, *rsa.PublicKey) {
 	privkey, _ := rsa.GenerateKey(rand.Reader, 2048)
 
@@ -17,8 +17,11 @@ func GenerateKeyPair() (*rsa.PrivateKey, *rsa.PublicKey) {
 
 // PerformHandshake performs handshake with encryption done
 func PerformHandshake(conn net.Conn, pub *rsa.PublicKey) *rsa.PublicKey {
+	// sending public key
 	encoder := json.NewEncoder(conn)
 	encoder.Encode(pub)
+
+	// receiving public key
 	serverkeys := &rsa.PublicKey{}
 	decoder := json.NewDecoder(conn)
 	decoder.Decode(&serverkeys)

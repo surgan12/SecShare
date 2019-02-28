@@ -10,7 +10,6 @@ import (
 	"time"
 )
 
-var mutex = &sync.Mutex{} // Lock and unlock (Mutex)
 //FilePartInfo for information regarding files
 type FilePartInfo struct {
 	FileName         string
@@ -20,12 +19,12 @@ type FilePartInfo struct {
 	FilePartContents []byte
 }
 
-//getFileParts ..
+// GetFileParts - goroutine to get all the parts of file to be sent over the network
 func GetFileParts(completefilename string, partSize uint64, filesize int64, i uint64, fileContents []byte,
 	allFileParts []FilePartInfo, wgSplit *sync.WaitGroup) {
-	// fmt.Println("Writing part ", i, " from file")
+	// size of the current part to be sent
 	currentSize := int(math.Min(float64(partSize), float64((filesize)-int64(i*partSize))))
-
+	// struct containing additional information alongside the byte contents
 	currentpart := FilePartInfo{FileName: completefilename, TotalParts: 1, PartName: "part_" + strconv.FormatUint(i, 10),
 		PartNumber: int(i), FilePartContents: make([]byte, currentSize)}
 
@@ -33,15 +32,12 @@ func GetFileParts(completefilename string, partSize uint64, filesize int64, i ui
 		currentpart.FilePartContents[j-int(i*partSize)] = fileContents[j]
 	}
 
-	mutex.Lock()
 	allFileParts[i] = currentpart
-	// fmt.Println("done")
-	mutex.Unlock()
-
+	// deferring the routine count by calling Done for the current goroutine
 	defer wgSplit.Done()
 }
 
-//GetSplitFile fuction to split files
+//GetSplitFile fuction to return the splitted parts
 func GetSplitFile(filename string, numberOfActiveClient int) []FilePartInfo {
 	fileDirectory := "../files"
 	file, err := os.Open(fileDirectory + "/image.jpg")
@@ -51,8 +47,6 @@ func GetSplitFile(filename string, numberOfActiveClient int) []FilePartInfo {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-
-	defer file.Close()
 
 	//Fetching info about file
 	fileInfo, err := file.Stat()
@@ -66,16 +60,19 @@ func GetSplitFile(filename string, numberOfActiveClient int) []FilePartInfo {
 	// Currently sending to one peer only
 	var partSize = uint64(math.Ceil(float64(filesize) / float64(numberOfActiveClient-1)))
 
+	// contents of the whole file as a byte array
 	fileContents, err := ioutil.ReadFile(fileDirectory + "/image.jpg")
 
 	startTime := time.Now()
 
+	// slice of size numberOfActiveClient-1, to store all parts' structs
 	allFileParts := make([]FilePartInfo, numberOfActiveClient-1)
 
+	// waitgroup to wait for all goroutines to finish
 	var wgSplit sync.WaitGroup
 
 	for i := uint64(0); i < uint64(numberOfActiveClient-1); i++ {
-		wgSplit.Add(1)
+		wgSplit.Add(1) // incrementing the count of waitgroup, for another goroutine is run
 		go GetFileParts(filename, partSize, filesize, i, fileContents, allFileParts, &wgSplit)
 	}
 
@@ -83,5 +80,8 @@ func GetSplitFile(filename string, numberOfActiveClient int) []FilePartInfo {
 	endTime := time.Now()
 	fmt.Println("Time taken to split the file ", endTime.Sub(startTime))
 
-	return allFileParts
+	// closing the file
+	defer file.Close()
+
+	return allFileParts // returning the slice
 }
