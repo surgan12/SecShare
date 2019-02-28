@@ -29,9 +29,9 @@ func TestRequestSomeFile(t *testing.T) {
 	// TestFilesInDir = append(TestFilesInDir, "image.jpg")
 	// directoryFiles := cp.ClientFiles{FilesInDir: TestFilesInDir}
 
-	request_status := cp.GetRequestedFile(&activeClient, name, "abc", "image.jpg")
+	requestStatus := cp.GetRequestedFile(&activeClient, name, "abc", "image.jpg")
 
-	if request_status == "error_no_file" {
+	if requestStatus == "error_no_file" {
 		t.Fatal("Error in requesting file ...")
 	}
 }

@@ -14,8 +14,8 @@ import "C"
 // select an integer.
 type Slider struct {
 	ControlBase
-	s	*C.uiSlider
-	onChanged		func(*Slider)
+	s         *C.uiSlider
+	onChanged func(*Slider)
 }
 
 // NewSlider creates a new Slider. If min >= max, they are swapped.

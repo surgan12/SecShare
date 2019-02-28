@@ -13,7 +13,7 @@ import "C"
 // visually separates controls.
 type Separator struct {
 	ControlBase
-	s	*C.uiSeparator
+	s *C.uiSeparator
 }
 
 // NewHorizontalSeparator creates a new horizontal Separator.

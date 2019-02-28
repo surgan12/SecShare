@@ -5,9 +5,9 @@ import (
 	en "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/encryptionproperties"
 	// cp "../src/clientproperties"
 	// en "../src/encryptionproperties"
+	"bufio"
 	"encoding/json"
 	"fmt"
-	"bufio"
 	"net"
 	"os"
 	"path/filepath"
@@ -68,10 +68,10 @@ func main() {
 	// queries currently supported
 	fmt.Println("The follwing queries are supported ->")
 	fmt.Println("for quitting - quit")
+	fmt.Println("for broadcasting a file request - ask_for_file")
 	fmt.Println("for receiving file - receive_file")
 	fmt.Println("for sending message - send_message")
 	fmt.Println("for displaying recent messages - display_recent_messages")
-	fmt.Println("for downloading a file - down")
 
 	for {
 		// getting others clients who are currenty active
@@ -173,8 +173,8 @@ func main() {
 					// getting credentials of the person, to whom I want to send some message
 					messageReceiverName, message := cp.MessageReceiverCredentials()
 					// status of the message, whether or not sent properly
-					message_status := cp.RequestMessage(&activeClient, name, messageReceiverName, message)
-					if message_status == "sent" {
+					messageStatus := cp.RequestMessage(&activeClient, name, messageReceiverName, message)
+					if messageStatus == "sent" {
 						fmt.Println("Message sent")
 					} else {
 						fmt.Println("Message not sent properly")
@@ -195,7 +195,7 @@ func main() {
 				fmt.Println("Display recent unseen messages - (type) 1")
 				fmt.Println("Display recent Num messages - (type) 2")
 				var queryMessage string
-				fmt.Scanln(&queryMessage)
+				fmt.Scanln("Input the type : ", &queryMessage)
 
 				// Display recently unseen messages
 				if queryMessage == "1" {
@@ -204,7 +204,7 @@ func main() {
 					// display N recent messages
 					var num int
 					fmt.Println("Number of recent messages you want to see : ")
-					fmt.Scanln(&num)
+					fmt.Scanln("Input the Number : ", &num)
 					cp.DisplayNumRecentMessages(&mymessages, num)
 				}
 
@@ -213,8 +213,8 @@ func main() {
 				fmt.Print("URL for downloading: ") // url string
 				var url string
 				scanner := bufio.NewScanner(os.Stdin)
-    			scanner.Scan() // use `for scanner.Scan()` to keep reading
-    			url = scanner.Text()
+				scanner.Scan() // use `for scanner.Scan()` to keep reading
+				url = scanner.Text()
 				go cp.Download(url)
 
 			}

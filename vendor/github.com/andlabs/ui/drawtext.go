@@ -62,21 +62,22 @@ func (s TextSize) toLibui() *C.uiAttribute {
 // this); to specify Arial Black, use family Arial and weight
 // TextWeightBlack.
 type TextWeight int
+
 const (
 	//TextWeightMinimum ..
-	TextWeightMinimum TextWeight = 0
-	TextWeightThin TextWeight = 100
+	TextWeightMinimum    TextWeight = 0
+	TextWeightThin       TextWeight = 100
 	TextWeightUltraLight TextWeight = 200
-	TextWeightLight TextWeight = 300
-	TextWeightBook TextWeight = 350
-	TextWeightNormal TextWeight = 400
-	TextWeightMedium TextWeight = 500
-	TextWeightSemiBold TextWeight = 600
-	TextWeightBold TextWeight = 700
-	TextWeightUltraBold TextWeight = 800
-	TextWeightHeavy TextWeight = 900
+	TextWeightLight      TextWeight = 300
+	TextWeightBook       TextWeight = 350
+	TextWeightNormal     TextWeight = 400
+	TextWeightMedium     TextWeight = 500
+	TextWeightSemiBold   TextWeight = 600
+	TextWeightBold       TextWeight = 700
+	TextWeightUltraBold  TextWeight = 800
+	TextWeightHeavy      TextWeight = 900
 	TextWeightUltraHeavy TextWeight = 950
-	TextWeightMaximum TextWeight = 1000
+	TextWeightMaximum    TextWeight = 1000
 )
 
 func (w TextWeight) toLibui() *C.uiAttribute {
@@ -89,6 +90,7 @@ func (w TextWeight) toLibui() *C.uiAttribute {
 // that are merely slanted versions of the normal glyphs. Most fonts
 // usually have one or the other.
 type TextItalic int
+
 const (
 	//TextItalicNormal ...
 	TextItalicNormal TextItalic = iota
@@ -112,6 +114,7 @@ func (i TextItalic) toLibui() *C.uiAttribute {
 // not do this); to specify Arial Condensed, use family Arial and
 // stretch TextStretchCondensed.
 type TextStretch int
+
 const (
 	//TextStretchUltraCondensed ..
 	TextStretchUltraCondensed TextStretch = iota
@@ -132,10 +135,10 @@ func (s TextStretch) toLibui() *C.uiAttribute {
 // TextColor is an Attribute that changes the color of the text it is
 // applied to.
 type TextColor struct {
-	R	float64
-	G	float64
-	B	float64
-	A	float64
+	R float64
+	G float64
+	B float64
+	A float64
 }
 
 func (c TextColor) toLibui() *C.uiAttribute {
@@ -145,10 +148,10 @@ func (c TextColor) toLibui() *C.uiAttribute {
 // TextBackground is an Attribute that changes the background
 // color of the text it is applied to.
 type TextBackground struct {
-	R	float64
-	G	float64
-	B	float64
-	A	float64
+	R float64
+	G float64
+	B float64
+	A float64
 }
 
 func (b TextBackground) toLibui() *C.uiAttribute {
@@ -158,12 +161,13 @@ func (b TextBackground) toLibui() *C.uiAttribute {
 // Underline is an Attribute that specifies a type of underline to use
 // on text.
 type Underline int
+
 const (
 	//UnderlineNone ..
 	UnderlineNone Underline = iota
 	UnderlineSingle
 	UnderlineDouble
-	UnderlineSuggestion		// wavy or dotted underlines used for spelling/grammar checkers
+	UnderlineSuggestion // wavy or dotted underlines used for spelling/grammar checkers
 )
 
 func (u Underline) toLibui() *C.uiAttribute {
@@ -175,21 +179,22 @@ func (u Underline) toLibui() *C.uiAttribute {
 // underline. In addition to being able to specify the
 // platform-specific colors for suggestion underlines here, you can
 // also use a custom color with UnderlineColorCustom.
-// 
+//
 // To use the constants here correctly, pair them with
 // UnderlineSuggestion (though they can be used on other types of
 // underline as well).
-// 
+//
 // If an underline type is applied but no underline color is
 // specified, the text color is used instead. If an underline color
 // is specified without an underline type, the underline color
 // attribute is ignored, but not removed from the uiAttributedString.
 type UnderlineColor int
+
 const (
 	//UnderlineColorSpelling ..
 	UnderlineColorSpelling UnderlineColor = iota + 1
 	UnderlineColorGrammar
-	UnderlineColorAuxiliary		// for instance, the color used by smart replacements on macOS or in Microsoft Office
+	UnderlineColorAuxiliary // for instance, the color used by smart replacements on macOS or in Microsoft Office
 )
 
 func (u UnderlineColor) toLibui() *C.uiAttribute {
@@ -199,10 +204,10 @@ func (u UnderlineColor) toLibui() *C.uiAttribute {
 // UnderlineColorCustom is an Attribute like UnderlineColor, except
 // it allows specifying a custom color.
 type UnderlineColorCustom struct {
-	R	float64
-	G	float64
-	B	float64
-	A	float64
+	R float64
+	G float64
+	B float64
+	A float64
 }
 
 func (u UnderlineColorCustom) toLibui() *C.uiAttribute {
@@ -218,16 +223,16 @@ func (u UnderlineColorCustom) toLibui() *C.uiAttribute {
 // uiOpenTypeFeatures instance. Each value is a 32-bit integer,
 // often used as a Boolean flag, but sometimes as an index to choose
 // a glyph shape to use.
-// 
+//
 // If a font does not support a certain feature, that feature will be
 // ignored. (TODO verify this on all OSs)
-// 
+//
 // See the OpenType specification at
 // https://www.microsoft.com/typography/otspec/featuretags.htm
 // for the complete list of available features, information on specific
 // features, and how to use them.
 // TODO invalid features
-// 
+//
 // Note that if a feature is not present in a OpenTypeFeatures,
 // the feature is NOT treated as if its value was zero, unlike in Go.
 // Script-specific font shaping rules and font-specific feature
@@ -235,7 +240,7 @@ func (u UnderlineColorCustom) toLibui() *C.uiAttribute {
 // should likewise NOT treat a missing feature as having a value of
 // zero either. Instead, a missing feature should be treated as
 // having some unspecified default value.
-// 
+//
 // Note that despite OpenTypeFeatures being a map, its contents
 // are copied by AttributedString. Modifying an OpenTypeFeatures
 // after giving it to an AttributedString, or modifying one that comes
@@ -285,20 +290,20 @@ func attributeFromLibui(a *C.uiAttribute) Attribute {
 		defer C.pkguiFreeColorDoubles(cc)
 		C.uiAttributeColor(a, cc.r, cc.g, cc.b, cc.a)
 		return TextColor{
-			R:	float64(*(cc.r)),
-			G:	float64(*(cc.g)),
-			B:	float64(*(cc.b)),
-			A:	float64(*(cc.a)),
+			R: float64(*(cc.r)),
+			G: float64(*(cc.g)),
+			B: float64(*(cc.b)),
+			A: float64(*(cc.a)),
 		}
 	case C.uiAttributeTypeBackground:
 		cc := C.pkguiAllocColorDoubles()
 		defer C.pkguiFreeColorDoubles(cc)
 		C.uiAttributeColor(a, cc.r, cc.g, cc.b, cc.a)
 		return TextBackground{
-			R:	float64(*(cc.r)),
-			G:	float64(*(cc.g)),
-			B:	float64(*(cc.b)),
-			A:	float64(*(cc.a)),
+			R: float64(*(cc.r)),
+			G: float64(*(cc.g)),
+			B: float64(*(cc.b)),
+			A: float64(*(cc.a)),
 		}
 	case C.uiAttributeTypeUnderline:
 		return Underline(C.uiAttributeUnderline(a))
@@ -310,10 +315,10 @@ func attributeFromLibui(a *C.uiAttribute) Attribute {
 		C.uiAttributeUnderlineColor(a, cu, cc.r, cc.g, cc.b, cc.a)
 		if *cu == C.uiUnderlineColorCustom {
 			return UnderlineColorCustom{
-				R:	float64(*(cc.r)),
-				G:	float64(*(cc.g)),
-				B:	float64(*(cc.b)),
-				A:	float64(*(cc.a)),
+				R: float64(*(cc.r)),
+				G: float64(*(cc.g)),
+				B: float64(*(cc.b)),
+				A: float64(*(cc.a)),
 			}
 		}
 		return UnderlineColor(*cu)
@@ -363,7 +368,7 @@ func attributeFromLibui(a *C.uiAttribute) Attribute {
 // is built from the combination of an AttributedString and a set of
 // layout-specific properties.
 type AttributedString struct {
-	s	*C.uiAttributedString
+	s *C.uiAttributedString
 }
 
 // NewAttributedString creates a new AttributedString from
@@ -372,7 +377,7 @@ func NewAttributedString(initialString string) *AttributedString {
 	cs := C.CString(initialString)
 	defer freestr(cs)
 	return &AttributedString{
-		s:	C.uiNewAttributedString(cs),
+		s: C.uiNewAttributedString(cs),
 	}
 }
 
@@ -424,11 +429,11 @@ func (s *AttributedString) SetAttribute(a Attribute, start, end int) {
 // one is needed. Currently, this means as the default font of a
 // DrawTextLayout and as the data returned by FontButton.
 type FontDescriptor struct {
-	Family	TextFamily
-	Size		TextSize
-	Weight	TextWeight
-	Italic		TextItalic
-	Stretch	TextStretch
+	Family  TextFamily
+	Size    TextSize
+	Weight  TextWeight
+	Italic  TextItalic
+	Stretch TextStretch
 }
 
 func (d *FontDescriptor) fromLibui(fd *C.uiFontDescriptor) {
@@ -466,13 +471,14 @@ func freeLibuiFontDescriptor(fd *C.uiFontDescriptor) {
 //
 // TODO talk about OS-specific differences with text drawing that libui can't account for...
 type DrawTextLayout struct {
-	tl	*C.uiDrawTextLayout
+	tl *C.uiDrawTextLayout
 }
 
 // DrawTextAlign specifies the alignment of lines of text in a
 // DrawTextLayout.
 // TODO should this really have Draw in the name?
 type DrawTextAlign int
+
 const (
 	//DrawTextAlignLeft ..
 	DrawTextAlignLeft DrawTextAlign = iota
@@ -485,10 +491,10 @@ const (
 // sufficiently in String. Width determines the width of the bounding
 // box of the text; the height is determined automatically.
 type DrawTextLayoutParams struct {
-	String		*AttributedString
-	DefaultFont	*FontDescriptor
-	Width		float64
-	Align		DrawTextAlign
+	String      *AttributedString
+	DefaultFont *FontDescriptor
+	Width       float64
+	Align       DrawTextAlign
 }
 
 // DrawNewTextLayout   creates a new DrawTextLayout from
@@ -502,7 +508,7 @@ func DrawNewTextLayout(p *DrawTextLayoutParams) *DrawTextLayout {
 	dp.Width = C.double(p.Width)
 	dp.Align = C.uiDrawTextAlign(p.Align)
 	return &DrawTextLayout{
-		tl:	C.uiDrawNewTextLayout(dp),
+		tl: C.uiDrawNewTextLayout(dp),
 	}
 }
 

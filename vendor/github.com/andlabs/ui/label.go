@@ -13,7 +13,7 @@ import "C"
 // interacted with.
 type Label struct {
 	ControlBase
-	l	*C.uiLabel
+	l *C.uiLabel
 }
 
 // NewLabel creates a new Label with the given text.

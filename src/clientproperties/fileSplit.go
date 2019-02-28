@@ -1,4 +1,4 @@
-package fileproperties
+package clientproperties
 
 import (
 	"fmt"
@@ -7,17 +7,7 @@ import (
 	"os"
 	"strconv"
 	"sync"
-	// "time"
 )
-
-//FilePartInfo for information regarding files
-type FilePartInfo struct {
-	FileName         string
-	TotalParts       int
-	PartName         string
-	PartNumber       int
-	FilePartContents []byte
-}
 
 // GetFileParts - goroutine to get all the parts of file to be sent over the network
 func GetFileParts(completefilename string, partSize uint64, filesize int64, i uint64, fileContents []byte,
@@ -77,6 +67,7 @@ func GetSplitFile(filename string, numberOfActiveClient int) []FilePartInfo {
 	wgSplit.Wait() // waiting for all routines to finish
 	// endTime := time.Now()
 	// fmt.Println("Time taken to split the file ", endTime.Sub(startTime))
+
 	// closing the file
 	defer file.Close()
 

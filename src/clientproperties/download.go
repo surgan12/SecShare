@@ -1,23 +1,26 @@
 package clientproperties
 
 import (
-	"fmt"
 	"bytes"
-	"net/http"
+	"fmt"
+	"github.com/andlabs/ui"
 	"io"
-	"strings"
-	"sync"
+	"io/ioutil"
+	"net/http"
 	"os"
 	"strconv"
-	"io/ioutil"
-	"github.com/andlabs/ui"
+	"strings"
+	"sync"
 	"time"
-
 	// "github.com/IITH-SBJoshi/concurrency-decentralized-network/vendor/github.com/andlabs/ui"
 	// _ "github.com/andlabs/ui/winmanifest"
 )
 
+<<<<<<< HEAD
 //WriteCounter 
+=======
+// WriteCounter - Count of writer
+>>>>>>> 0d59c4d6de6487b50190bfa067f3d58a126a17e2
 type WriteCounter struct {
 	Total uint64
 }
@@ -64,7 +67,6 @@ func AsyncDownloader(wg *sync.WaitGroup, client *http.Client, start int64, end i
 	wg.Done()
 }
 
-
 func set(ip *ui.ProgressBar) {
 	var fname string
 	fname = name
@@ -83,18 +85,19 @@ func set(ip *ui.ProgressBar) {
 	}
 
 }
+
 //Download ..
 func Download(args string) {
 
 	s := strings.Split(args, " ")
-    url := s[0]
-    // fmt.Println(s)
-    tempSplit := strings.Split(url,"/")
+	url := s[0]
+	// fmt.Println(s)
+	tempSplit := strings.Split(url, "/")
 	flen := len(tempSplit)
 	name = tempSplit[flen-1]
 	var fname string
 	fname = name
-    path := s[1] + "/" + name
+	path := s[1] + "/" + name
 	helpMap[fname] = &WriteCounter{}
 	client := &http.Client{}
 	resp, _ := http.Head(url)
@@ -137,8 +140,8 @@ func makeBasicControlsPage() ui.Control {
 	prog[fname] = ui.NewProgressBar()
 	hbox.Append(prog[fname], false)
 	go set(prog[fname])
-	
-    return vbox
+
+	return vbox
 }
 
 func setupUI() {

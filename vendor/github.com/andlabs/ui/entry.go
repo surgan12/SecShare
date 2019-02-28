@@ -17,8 +17,8 @@ import "C"
 // type a single line of text into.
 type Entry struct {
 	ControlBase
-	e	*C.uiEntry
-	onChanged		func(*Entry)
+	e         *C.uiEntry
+	onChanged func(*Entry)
 }
 
 func finishNewEntry(ee *C.uiEntry) *Entry {
