@@ -13,7 +13,7 @@ import "C"
 // is filled in progressively over time as a process completes.
 type ProgressBar struct {
 	ControlBase
-	p	*C.uiProgressBar
+	p *C.uiProgressBar
 }
 
 // NewProgressBar creates a new ProgressBar.

@@ -15,7 +15,7 @@ import "C"
 // functions; if used, that jparticular Table colum is not editable
 // by the user and always editable by the user, respectively.
 const (
-	TableModelColumnNeverEditable = -1
+	TableModelColumnNeverEditable  = -1
 	TableModelColumnAlwaysEditable = -2
 )
 
@@ -28,7 +28,7 @@ type TableTextColumnOptionalParams struct {
 	//
 	// If CellValue for this column for any cell returns nil, that
 	// cell will also use the default text color.
-	ColorModelColumn		int
+	ColorModelColumn int
 }
 
 func (p *TableTextColumnOptionalParams) toLibui() *C.uiTableTextColumnOptionalParams {
@@ -44,7 +44,7 @@ func (p *TableTextColumnOptionalParams) toLibui() *C.uiTableTextColumnOptionalPa
 type TableParams struct {
 	// Model is the TableModel to use for this uiTable.
 	// This parameter cannot be nil.
-	Model		*TableModel
+	Model *TableModel
 
 	// RowBackgroundColorModelColumn is a model column
 	// number that defines the background color used for the
@@ -53,7 +53,7 @@ type TableParams struct {
 	//
 	// If CellValue for this column for any row returns NULL, that
 	// row will also use the default background color.
-	RowBackgroundColorModelColumn		int
+	RowBackgroundColorModelColumn int
 }
 
 func (p *TableParams) toLibui() *C.uiTableParams {
@@ -67,7 +67,7 @@ func (p *TableParams) toLibui() *C.uiTableParams {
 // manipulate rows of such data at a time.
 type Table struct {
 	ControlBase
-	t	*C.uiTable
+	t *C.uiTable
 }
 
 // NewTable creates a new Table with the specified parameters.

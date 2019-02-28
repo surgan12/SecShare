@@ -17,8 +17,8 @@ import "C"
 // can type multiple lines of text into.
 type MultilineEntry struct {
 	ControlBase
-	e	*C.uiMultilineEntry
-	onChanged		func(*MultilineEntry)
+	e         *C.uiMultilineEntry
+	onChanged func(*MultilineEntry)
 }
 
 func finishNewMultilineEntry(ee *C.uiMultilineEntry) *MultilineEntry {

@@ -1,10 +1,7 @@
 package clientproperties
 
 import (
-	// fp "../../fileproperties"
 	"encoding/json"
-	"fmt"
-	fp "github.com/IITH-SBJoshi/concurrency-decentralized-network/fileproperties"
 	"net"
 	"strings"
 	"sync"
@@ -14,44 +11,56 @@ import (
 var mutexFiles = &sync.Mutex{}    // Lock and unlock (mutexFiles)
 var mutexMessages = &sync.Mutex{} // Lock and unlock (mutexFiles)
 
+// SendPart - To send each file part concurrently
+func SendPart(names string, activeClient *ClientListen, newfilerequest FileRequest,
+	countSent int, allfileparts []FilePartInfo, wgSplit *sync.WaitGroup) {
+	count := 0
+	connection, err := net.Dial("tcp", ":"+activeClient.PeerListenPort[names])
+	for err != nil {
+		// fmt.Println("Error in dialing to: ", names, " dialing again...")
+		connection1, err1 := net.Dial("tcp", ":"+activeClient.PeerListenPort[names])
+		connection = connection1
+		err = err1
+		count++
+		if count > 100 {
+			// fmt.Println("Error in sending current file part - ", err)
+			break
+		}
+	}
+
+	// sending the file part corresponding to this peer
+	// fmt.Println("Connection established to send a file part to connection - ", connection)
+	baseRequest := BaseRequest{RequestType: "received_some_file", FileRequest: newfilerequest,
+		FilePartInfo: allfileparts[countSent]}
+	encoder := json.NewEncoder(connection)
+	encoder.Encode(&baseRequest)
+
+	defer wgSplit.Done()
+}
+
 //SendFileParts send various file parts to peers
-func SendFileParts(newfilerequest FileRequest, allfileparts []fp.FilePartInfo,
+func SendFileParts(newfilerequest FileRequest, allfileparts []FilePartInfo,
 	activeClient *ClientListen, myname string) int {
+
+	// waitgroup to wait for all goroutines to finish
+	var wgSplit sync.WaitGroup
 
 	countSent := 0
 	for names := range activeClient.PeerListenPort {
 		if names != myname {
-
-			count := 0
-			connection, err := net.Dial("tcp", ":"+activeClient.PeerListenPort[names])
-			for err != nil {
-				fmt.Println("Error in dialing to: ", names, " dialing again...")
-				connection1, err1 := net.Dial("tcp", ":"+activeClient.PeerListenPort[names])
-				connection = connection1
-				err = err1
-				count++
-				if count > 100 {
-					fmt.Println("Error in sending current file part - ", err)
-				}
-			}
-
-			// sending the file part corresponding to this peer
-			// fmt.Println("Connection established to send a file part to connection - ", connection)
-			baseRequest := BaseRequest{RequestType: "received_some_file", FileRequest: newfilerequest,
-				FilePartInfo: allfileparts[countSent]}
-			encoder := json.NewEncoder(connection)
-			encoder.Encode(&baseRequest)
+			wgSplit.Add(1) // incrementing the count of waitgroup, for another goroutine is run
+			go SendPart(names, activeClient, newfilerequest, countSent, allfileparts, &wgSplit)
 			countSent++
 		}
-
 	}
+	wgSplit.Wait()
 	return countSent
 }
 
 // Handle request to send some file to a peer
 func handleNewFileSendRequest(newfilerequest FileRequest, myname string, activeClient *ClientListen) {
 	// getting all splits of file
-	allfileparts := fp.GetSplitFile(newfilerequest.RequestedFile, len(activeClient.List))
+	allfileparts := GetSplitFile(newfilerequest.RequestedFile, len(activeClient.List))
 	_ = SendFileParts(newfilerequest, allfileparts, activeClient, myname)
 
 }
@@ -71,7 +80,6 @@ func handleReceivedFile(newrequest BaseRequest, myfiles map[string]MyReceivedFil
 	if _, ok := myfiles[requestedFileName]; ok {
 
 		mutexFiles.Lock()
-		// fmt.Println("file part number is : ", filePartNum)
 		var x = myfiles[requestedFileName]
 		x.PartsReceived++
 		myfiles[requestedFileName] = x
@@ -90,7 +98,6 @@ func handleReceivedFile(newrequest BaseRequest, myfiles map[string]MyReceivedFil
 
 		// locking
 		mutexFiles.Lock()
-		// fmt.Println("file part number is : ", filePartNum)
 		var x = myfiles[requestedFileName]
 		x.PartsReceived++
 		myfiles[requestedFileName] = x
@@ -114,17 +121,18 @@ func handleReceivedRequest(connection net.Conn, activeClient *ClientListen, myna
 
 	} else {
 		// if file is received to be forwarded to some other peer
-		
+
 		count := 0
 		connection, err := net.Dial("tcp", ":"+activeClient.PeerListenPort[newrequest.FileRequest.MyName])
 		for err != nil {
-			fmt.Println("Error in dialing to: ", newrequest.FileRequest.MyName, " dialing again...")
+			// fmt.Println("Error in dialing to: ", newrequest.FileRequest.MyName, " dialing again...")
 			connection1, err1 := net.Dial("tcp", ":"+activeClient.PeerListenPort[newrequest.FileRequest.MyName])
 			connection = connection1
 			err = err1
 			count++
 			if count > 100 {
-				fmt.Println("Error in forwarding file part - ", err)
+				// fmt.Println("Error in forwarding file part - ", err)
+				break
 			}
 		}
 

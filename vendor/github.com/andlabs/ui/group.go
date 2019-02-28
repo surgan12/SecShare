@@ -14,8 +14,8 @@ import "C"
 // You can use this to group related controls together.
 type Group struct {
 	ControlBase
-	g	*C.uiGroup
-	child		Control
+	g     *C.uiGroup
+	child Control
 }
 
 // NewGroup creates a new Group.

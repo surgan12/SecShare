@@ -13,6 +13,7 @@ func MsgBoxError(w *Window, title string, description string) {
 	defer freestr(cdescription)
 	C.uiMsgBoxError(w.w, ctitle, cdescription)
 }
+
 // OpenFile ..
 func OpenFile(w *Window) string {
 	cname := C.uiOpenFile(w.w)
@@ -22,6 +23,7 @@ func OpenFile(w *Window) string {
 	defer C.uiFreeText(cname)
 	return C.GoString(cname)
 }
+
 //SaveFile ..
 func SaveFile(w *Window) string {
 	cname := C.uiSaveFile(w.w)
@@ -31,6 +33,7 @@ func SaveFile(w *Window) string {
 	defer C.uiFreeText(cname)
 	return C.GoString(cname)
 }
+
 //MsgBox ..
 func MsgBox(w *Window, title string, description string) {
 	ctitle := C.CString(title)

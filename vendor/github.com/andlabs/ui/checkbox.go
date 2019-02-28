@@ -14,8 +14,8 @@ import "C"
 // in the box; clicking it again removes the check.
 type Checkbox struct {
 	ControlBase
-	c	*C.uiCheckbox
-	onToggled		func(*Checkbox)
+	c         *C.uiCheckbox
+	onToggled func(*Checkbox)
 }
 
 // NewCheckbox creates a new Checkbox with the given text as its

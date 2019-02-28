@@ -15,9 +15,9 @@ import "C"
 // a Window cannot be the child of another Control.
 type Window struct {
 	ControlBase
-	w	*C.uiWindow
-	child		Control
-	onClosing		func(w *Window) bool
+	w         *C.uiWindow
+	child     Control
+	onClosing func(w *Window) bool
 }
 
 // NewWindow creates a new Window.
@@ -37,7 +37,7 @@ func NewWindow(title string, width int, height int, hasMenubar bool) *Window {
 // Destroy destroys the Window. If the Window has a child,
 // Destroy calls Destroy on that as well.
 func (w *Window) Destroy() {
-	w.Hide()		// first hide the window, in case anything in the below if statement forces an immediate redraw
+	w.Hide() // first hide the window, in case anything in the below if statement forces an immediate redraw
 	if w.child != nil {
 		c := w.child
 		w.SetChild(nil)

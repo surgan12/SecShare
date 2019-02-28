@@ -13,8 +13,8 @@ import "C"
 // click to select a font.
 type FontButton struct {
 	ControlBase
-	b	*C.uiFontButton
-	onChanged		func(*FontButton)
+	b         *C.uiFontButton
+	onChanged func(*FontButton)
 }
 
 // NewFontButton creates a new FontButton.

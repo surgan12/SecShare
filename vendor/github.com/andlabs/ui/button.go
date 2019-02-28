@@ -14,8 +14,8 @@ import "C"
 // describe what the button does.
 type Button struct {
 	ControlBase
-	b	*C.uiButton
-	onClicked		func(*Button)
+	b         *C.uiButton
+	onClicked func(*Button)
 }
 
 // NewButton creates a new Button with the given text as its label.

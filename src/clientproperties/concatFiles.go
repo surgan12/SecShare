@@ -1,13 +1,12 @@
 package clientproperties
 
 import (
-	"time"
 	"fmt"
+	"github.com/andlabs/ui"
 	"io/ioutil"
 	"os"
-	"github.com/andlabs/ui"
-	// "strconv"
 	"sync"
+	"time"
 )
 
 var popwin = map[string]*ui.Window{}
@@ -15,6 +14,7 @@ var popwin = map[string]*ui.Window{}
 // creating waitgroup to wait for all goroutines to finish
 var wgConcat sync.WaitGroup
 var curr string
+
 // func to write the filepart details to all Files byte slice
 func concatFiles(i int, allFiles []byte, filePartContent FilePartContents) {
 	defer wgConcat.Done()
@@ -68,15 +68,15 @@ func concatenateFileParts(file MyReceivedFiles) {
 	}
 	curr = fileName
 	go ui.Main(setupPop)
-	time.Sleep(4000*time.Millisecond)
+	time.Sleep(4000 * time.Millisecond)
 	popwin[curr].Destroy()
-	
+
 }
 
 func setupPop() {
 	var fname string
 	fname = curr
-	popwin[fname] = ui.NewWindow("Downloading"+fname, 300, 150, true)
+	popwin[fname] = ui.NewWindow("Receiving_"+fname, 300, 150, true)
 
 	tab := ui.NewTab()
 	popwin[fname].SetChild(tab)
@@ -84,7 +84,7 @@ func setupPop() {
 
 	tab.Append("Received ", makePopup())
 	tab.SetMargined(0, true)
-	
+
 	popwin[fname].Show()
 }
 func makePopup() ui.Control {

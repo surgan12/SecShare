@@ -28,12 +28,13 @@ func RequestMessage(activeClient *ClientListen, name string, messageReceiverName
 
 	count := 0
 	for err != nil {
-		fmt.Println("Error in dialing to: ", messageReceiverName, " dialing again...")
+
 		connection1, err1 := net.Dial("tcp", ":"+activeClient.PeerListenPort[messageReceiverName])
 		connection = connection1
 		err = err1
 		count++
-		if count > 10 {
+		if count > 100 {
+			fmt.Println("Error in dialing to: ", messageReceiverName, " recheck credentials")
 			messageStatus := "not sent"
 			return messageStatus
 			break
@@ -45,6 +46,7 @@ func RequestMessage(activeClient *ClientListen, name string, messageReceiverName
 	return messageStatus
 }
 
+// MessageReceiverCredentials - To get the credentials of peer to send message to
 func MessageReceiverCredentials() (string, string) {
 
 	// getting credentials of the person to send message to

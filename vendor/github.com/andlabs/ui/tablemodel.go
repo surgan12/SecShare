@@ -25,7 +25,7 @@ func (s TableString) toLibui() *C.uiTableValue {
 // of the Image is not copied; you must keep it alive alongside the
 // TableImage.
 type TableImage struct {
-	I	*Image
+	I *Image
 }
 
 func (i TableImage) toLibui() *C.uiTableValue {
@@ -40,7 +40,7 @@ type TableInt int
 // TableFalse and TableTrue are the Boolean constants for TableInt.
 const (
 	TableFalse TableInt = 0
-	TableTrue TableInt = 1
+	TableTrue  TableInt = 1
 )
 
 func (i TableInt) toLibui() *C.uiTableValue {
@@ -49,10 +49,10 @@ func (i TableInt) toLibui() *C.uiTableValue {
 
 // TableColor is a TableValue that represents a color.
 type TableColor struct {
-	R	float64
-	G	float64
-	B	float64
-	A	float64
+	R float64
+	G float64
+	B float64
+	A float64
 }
 
 func (c TableColor) toLibui() *C.uiTableValue {
@@ -98,7 +98,7 @@ var models = make(map[*C.uiTableModel]*TableModel)
 // Row and column numbers start at 0. A TableModel can be
 // associated with more than one Table at a time.
 type TableModel struct {
-	m	*C.uiTableModel
+	m *C.uiTableModel
 }
 
 // TableModelHandler defines the methods that TableModel
@@ -185,7 +185,7 @@ func pkguiDoTableModelSetCellValue(umh *C.uiTableModelHandler, um *C.uiTableMode
 // NewTableModel creates a new TableModel.
 func NewTableModel(handler TableModelHandler) *TableModel {
 	m := &TableModel{
-		m:	C.uiNewTableModel(&C.pkguiTableModelHandler),
+		m: C.uiNewTableModel(&C.pkguiTableModelHandler),
 	}
 	modelhandlers[m.m] = handler
 	models[m.m] = m
