@@ -2,8 +2,8 @@ package main
 
 import (
 	"testing"
-	//cp "../src/clientproperties"
-	//fp "../fileproperties"
+	// cp "../src/clientproperties"
+	// fp "../fileproperties"
 	"fmt"
 	fp "github.com/IITH-SBJoshi/concurrency-decentralized-network/fileproperties"
 	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"

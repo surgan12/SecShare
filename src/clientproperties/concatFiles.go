@@ -39,7 +39,7 @@ func concatenateFileParts(file MyReceivedFiles) {
 	allFiles := make([]byte, byteSizeLength)
 
 	// writing the received parts to allFiles slice
-	for i := int(0); i < 1; i++ {
+	for i := int(0); i < file.FilePartInfo.TotalParts; i++ {
 		wgConcat.Add(1)
 		go concatFiles(i, allFiles, fileParts[i])
 	}
