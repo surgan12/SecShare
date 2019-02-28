@@ -23,7 +23,7 @@ type FilePartInfo struct {
 }
 
 //getFileParts ..
-func getFileParts(completefilename string, partSize uint64, filesize int64, i uint64, fileContents []byte,
+func GetFileParts(completefilename string, partSize uint64, filesize int64, i uint64, fileContents []byte,
 	allFileParts []FilePartInfo) {
 	// fmt.Println("Writing part ", i, " from file")
 	currentSize := int(math.Min(float64(partSize), float64((filesize)-int64(i*partSize))))
@@ -43,7 +43,7 @@ func getFileParts(completefilename string, partSize uint64, filesize int64, i ui
 	defer wgSplit.Done()
 }
 
-//GetSplitFile fuction to split files 
+//GetSplitFile fuction to split files
 func GetSplitFile(filename string, numberOfActiveClient int) []FilePartInfo {
 	fileDirectory := "../files"
 	file, err := os.Open(fileDirectory + "/image.jpg")
@@ -66,7 +66,7 @@ func GetSplitFile(filename string, numberOfActiveClient int) []FilePartInfo {
 	// fmt.Println("Size of file is -> ", filesize)
 
 	// Currently sending to one peer only
-	var partSize = uint64(math.Ceil(float64(filesize) / float64(1)))
+	var partSize = uint64(math.Ceil(float64(filesize) / float64(numberOfActiveClient - 1)))
 
 	fileContents, err := ioutil.ReadFile(fileDirectory + "/image.jpg")
 
@@ -74,9 +74,9 @@ func GetSplitFile(filename string, numberOfActiveClient int) []FilePartInfo {
 
 	allFileParts := make([]FilePartInfo, numberOfActiveClient - 1)
 
-	for i := uint64(0); i < 1; i++ {
+	for i := uint64(0); i < uint64(numberOfActiveClient - 1); i++ {
 		wgSplit.Add(numberOfActiveClient - 1)
-		go getFileParts(filename, partSize, filesize, i, fileContents, allFileParts)
+		go GetFileParts(filename, partSize, filesize, i, fileContents, allFileParts)
 	}
 
 	// wgSplit.Wait() // waiting for all routines to finish

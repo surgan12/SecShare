@@ -1,10 +1,10 @@
 package main
 
 import (
-	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
-	en "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/encryptionproperties"
-	// en "../src/encryptionproperties"
-	// cp "../src/clientproperties"
+	// cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
+	// en "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/encryptionproperties"
+	cp "../src/clientproperties"
+	en "../src/encryptionproperties"
 	"encoding/json"
 	"fmt"
 	"net"
@@ -44,7 +44,7 @@ func main() {
 	_, PublicKey := en.GenerateKeyPair()
 
 	conn, err := net.Dial("tcp", "127.0.0.1:8081")
-	
+
 	dialCount := 0
 	for err != nil {
 		fmt.Println("error in connecting to server, dialing again")
@@ -52,7 +52,7 @@ func main() {
 		conn = conn1
 		err = err1
 		dialCount++
-		if (dialCount > 10){
+		if dialCount > 10 {
 			fmt.Println("Apparantly server's port is not open...")
 			os.Exit(1)
 		}
@@ -90,16 +90,16 @@ func main() {
 				if info.IsDir() {
 					return nil
 				}
-        		directoryFiles.FilesInDir = append(directoryFiles.FilesInDir, info.Name())
-        		return nil
-    		})
-    		if error1 != nil {
-        		panic(error1)
-    		}
-    		//for printing files in the directory
-    		// for _, file := range directoryFiles.FilesInDir {
-      //   		fmt.Println(file)
-    		// }
+				directoryFiles.FilesInDir = append(directoryFiles.FilesInDir, info.Name())
+				return nil
+			})
+			if error1 != nil {
+				panic(error1)
+			}
+			//for printing files in the directory
+			// for _, file := range directoryFiles.FilesInDir {
+			//     fmt.Println(file)
+			// }
 
 			mylistenport := en.EncryptWithPublicKey([]byte(listenPort), ServerKey)
 			cp.SendingToServer(nameByte, queryByte, conn, query, mylistenport)
@@ -119,12 +119,23 @@ func main() {
 				cp.SendingToServer(nameByte, queryByte, conn, query, mylistenport)
 				os.Exit(2)
 			} else if query == "receive_file" {
-				cp.RequestSomeFile(&activeClient, name, &directoryFiles)
+
+				var fileSenderName string // is the person who will send the file
+				fmt.Print("Whom do you want to receive the file from ? : ")
+				fmt.Scanln(&fileSenderName)
+				var fileName string
+				fmt.Print("What file do you want ? ")
+				fmt.Scanln(&fileName) // file we want to receive
+
+				request_status := cp.RequestSomeFile(&activeClient, name, &directoryFiles, fileSenderName, fileName)
+				if request_status == "completed" {
+					fmt.Println("Request sent")
+				} else {
+					fmt.Println("Request not sent properly")
+				}
 			} else if query == "send_message" {
 				cp.RequestChatting(&activeClient, name)
 			}
-
 		}
-
 	}
 }

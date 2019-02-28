@@ -3,8 +3,8 @@ package clientproperties
 import (
 	// "time"
 	"fmt"
-	"os"
 	"io/ioutil"
+	"os"
 	// "strconv"
 	"sync"
 )
@@ -16,13 +16,13 @@ func concatFiles(i int, allFiles []byte, filePartContent FilePartContents) {
 
 	filePartContents := filePartContent.Contents
 
-	for j := i*len(filePartContents); j < i*len(filePartContents) + len(filePartContents) ; j++ {
+	for j := i * len(filePartContents); j < i*len(filePartContents)+len(filePartContents); j++ {
 		allFiles[j] = filePartContents[j-i*len(filePartContents)]
 	}
 
 }
 
-func concatenateFileParts (file MyReceivedFiles) {
+func concatenateFileParts(file MyReceivedFiles) {
 	var byteSizeLength int
 	fileName := file.MyFileName
 	fileParts := file.MyFile
@@ -32,9 +32,9 @@ func concatenateFileParts (file MyReceivedFiles) {
 	//TODO : calculate file size from file parts
 	// fmt.Println(byteSizeLength)
 	allFiles := make([]byte, byteSizeLength)
-	
+
 	// startTme := time.Now()
-	
+
 	for i := int(0); i < 1; i++ {
 		wgConcat.Add(1)
 		go concatFiles(i, allFiles, fileParts[i])
@@ -58,7 +58,7 @@ func concatenateFileParts (file MyReceivedFiles) {
 		}
 	}
 	// fmt.Println("File exist.")
- 
+
 	// Change permissions Linux.
 	err = os.Chmod(currentfilename, 0777)
 	if err != nil {
