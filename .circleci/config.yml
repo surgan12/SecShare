@@ -20,7 +20,7 @@ jobs:
       - run: 
           name: running linters
           command: |
-              /go/bin/fgt golint ./...
+              /go/bin/fgt golint $(go list ./... | grep -v /vendor/)
 
       - run:
          name: run tests
