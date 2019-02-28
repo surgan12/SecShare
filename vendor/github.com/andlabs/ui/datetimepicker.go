@@ -14,8 +14,8 @@ import "C"
 // can enter a date and/or a time.
 type DateTimePicker struct {
 	ControlBase
-	d	*C.uiDateTimePicker
-	onChanged	func(*DateTimePicker)
+	d         *C.uiDateTimePicker
+	onChanged func(*DateTimePicker)
 }
 
 func finishNewDateTimePicker(dd *C.uiDateTimePicker) *DateTimePicker {
@@ -54,8 +54,8 @@ func (d *DateTimePicker) Time() time.Time {
 	defer C.pkguiFreeTime(tm)
 	C.uiDateTimePickerTime(d.d, tm)
 	return time.Date(
-		int(tm.tm_year + 1900),
-		time.Month(tm.tm_mon + 1),
+		int(tm.tm_year+1900),
+		time.Month(tm.tm_mon+1),
 		int(tm.tm_mday),
 		int(tm.tm_hour),
 		int(tm.tm_min),

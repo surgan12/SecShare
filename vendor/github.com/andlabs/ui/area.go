@@ -15,7 +15,7 @@ import "C"
 // and event handling are handled through an instance of a type
 // that implements AreaHandler that every Area has; see AreaHandler
 // for details.
-// 
+//
 // There are two types of areas. Non-scrolling areas are rectangular
 // and have no scrollbars. Programs can draw on and get mouse
 // events from any point in the Area, and the size of the Area is
@@ -25,7 +25,7 @@ import "C"
 // size changes; instead, you are given the area size as part of the
 // draw and mouse event handlers, for use solely within those
 // handlers.
-// 
+//
 // Scrolling areas have horziontal and vertical scrollbars. The amount
 // that can be scrolled is determined by the area's size, which is
 // decided by the programmer (both when creating the Area and by
@@ -33,7 +33,7 @@ import "C"
 // drawing and mouse events are automatically adjusted to match
 // what portion is visible, so you do not have to worry about scrolling
 // in your event handlers. AreaHandler has more information.
-// 
+//
 // The internal coordinate system of an Area is points, which are
 // floating-point and device-independent. For more details, see
 // AreaHandler. The size of a scrolling Area must be an exact integer
@@ -43,9 +43,9 @@ import "C"
 // structures (including sizes of drawn objects) are float64s.
 type Area struct {
 	ControlBase
-	a	*C.uiArea
-	ah	*C.uiAreaHandler
-	scrolling	bool
+	a         *C.uiArea
+	ah        *C.uiAreaHandler
+	scrolling bool
 }
 
 // NewArea creates a new non-scrolling Area.

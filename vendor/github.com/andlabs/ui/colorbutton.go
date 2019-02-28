@@ -13,8 +13,8 @@ import "C"
 // click to select a color.
 type ColorButton struct {
 	ControlBase
-	b	*C.uiColorButton
-	onChanged		func(*ColorButton)
+	b         *C.uiColorButton
+	onChanged func(*ColorButton)
 }
 
 // NewColorButton creates a new ColorButton.

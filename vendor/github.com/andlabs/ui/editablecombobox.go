@@ -14,8 +14,8 @@ import "C"
 // an entry field that the user can type an alternate choice into.
 type EditableCombobox struct {
 	ControlBase
-	c	*C.uiEditableCombobox
-	onChanged		func(*EditableCombobox)
+	c         *C.uiEditableCombobox
+	onChanged func(*EditableCombobox)
 }
 
 // NewEditableCombobox creates a new EditableCombobox.

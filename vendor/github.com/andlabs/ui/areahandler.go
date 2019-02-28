@@ -18,7 +18,7 @@ var areahandlers = make(map[*C.uiAreaHandler]AreaHandler)
 // should be assumed to only be valid during the life of the method
 // call (so for instance, do not save AreaDrawParams.AreaWidth, as
 // that might change without generating an event).
-// 
+//
 // Coordinates to Draw and MouseEvent are given in points. Points
 // are generic, floating-point, device-independent coordinates with
 // (0,0) at the top left corner. You never have to worry about the
@@ -27,7 +27,7 @@ var areahandlers = make(map[*C.uiAreaHandler]AreaHandler)
 // monitors for free. Proper documentation on the matter is being
 // written. In the meantime, there are several referenes to this kind of
 // drawing, most notably on Apple's website: https://developer.apple.com/library/mac/documentation/GraphicsAnimation/Conceptual/HighResolutionOSX/Explained/Explained.html#//apple_ref/doc/uid/TP40012302-CH4-SW1
-// 
+//
 // For a scrolling Area, points are automatically offset by the scroll
 // position. So if the mouse moves to position (5,5) while the
 // horizontal scrollbar is at position 10 and the horizontal scrollbar is
@@ -40,7 +40,7 @@ type AreaHandler interface {
 	// size of the area. The rectangle that needs to be drawn will
 	// have been cleared by the system prior to drawing, so you are
 	// always working on a clean slate.
-	// 
+	//
 	// If you call Save on the drawing context, you must call Release
 	// before returning from Draw, and the number of calls to Save
 	// and Release must match. Failure to do so results in undefined
@@ -50,7 +50,7 @@ type AreaHandler interface {
 	// MouseEvent is called when the mouse moves over the Area
 	// or when a mouse button is pressed or released. See
 	// AreaMouseEvent for more details.
-	// 
+	//
 	// If a mouse button is being held, MouseEvents will continue to
 	// be generated, even if the mouse is not within the area. On
 	// some systems, the system can interrupt this behavior;
@@ -61,7 +61,7 @@ type AreaHandler interface {
 	// leaves the Area. It is called even if the mouse buttons are being
 	// held (see MouseEvent above). If the mouse has entered the
 	// Area, left is false; if it has left the Area, left is true.
-	// 
+	//
 	// If, when the Area is first shown, the mouse is already inside
 	// the Area, MouseCrossed will be called with left=false.
 	// TODO what about future shows?
@@ -75,7 +75,7 @@ type AreaHandler interface {
 	// method is provided to allow your program to cope with the
 	// loss of the mouse in this case. You should cope by cancelling
 	// whatever drag-related operation you were doing.
-	// 
+	//
 	// Note that this is only generated on some systems under
 	// specific conditions. Do not implement behavior that only
 	// takes effect when DragBroken is called.
@@ -84,7 +84,7 @@ type AreaHandler interface {
 	// KeyEvent is called when a key is pressed while the Area has
 	// keyboard focus (if the Area has been tabbed into or if the
 	// mouse has been clicked on it). See AreaKeyEvent for specifics.
-	// 
+	//
 	// Because some keyboard events are handled by the system
 	// (for instance, menu accelerators and global hotkeys), you
 	// must return whether you handled the key event; return true
@@ -115,25 +115,25 @@ func unregisterAreaHandler(uah *C.uiAreaHandler) {
 type AreaDrawParams struct {
 	// Context is the drawing context to draw on. See DrawContext
 	// for how to draw.
-	Context		*DrawContext
+	Context *DrawContext
 
 	// AreaWidth and AreaHeight provide the size of the Area for
 	// non-scrolling Areas. For scrolling Areas both values are zero.
-	// 
+	//
 	// To reiterate the AreaHandler documentation, do NOT save
 	// these values for later; they can change without generating
 	// an event.
-	AreaWidth	float64
-	AreaHeight	float64
+	AreaWidth  float64
+	AreaHeight float64
 
 	// These four fields define the rectangle that needs to be
 	// redrawn. The system will not draw anything outside this
 	// rectangle, but you can make your drawing faster if you
 	// also stay within the lines.
-	ClipX		float64
-	ClipY		float64
-	ClipWidth		float64
-	ClipHeight	float64
+	ClipX      float64
+	ClipY      float64
+	ClipWidth  float64
+	ClipHeight float64
 }
 
 //export pkguiDoAreaHandlerDraw
@@ -141,44 +141,44 @@ func pkguiDoAreaHandlerDraw(uah *C.uiAreaHandler, ua *C.uiArea, udp *C.uiAreaDra
 	ah := areahandlers[uah]
 	a := ControlFromLibui(uintptr(unsafe.Pointer(ua))).(*Area)
 	dp := &AreaDrawParams{
-		Context:		&DrawContext{udp.Context},
-		AreaWidth:	float64(udp.AreaWidth),
-		AreaHeight:	float64(udp.AreaHeight),
-		ClipX:		float64(udp.ClipX),
-		ClipY:		float64(udp.ClipY),
-		ClipWidth:		float64(udp.ClipWidth),
-		ClipHeight:	float64(udp.ClipHeight),
+		Context:    &DrawContext{udp.Context},
+		AreaWidth:  float64(udp.AreaWidth),
+		AreaHeight: float64(udp.AreaHeight),
+		ClipX:      float64(udp.ClipX),
+		ClipY:      float64(udp.ClipY),
+		ClipWidth:  float64(udp.ClipWidth),
+		ClipHeight: float64(udp.ClipHeight),
 	}
 	ah.Draw(a, dp)
 }
 
 //AreaMouseEvent  document all these
-// 
+//
 // TODO note that in the case of a drag, X and Y can be out of bounds, or in the event of a scrolling area, in places that are not visible
 type AreaMouseEvent struct {
-	X			float64
-	Y			float64
+	X float64
+	Y float64
 
 	// AreaWidth and AreaHeight provide the size of the Area for
 	// non-scrolling Areas. For scrolling Areas both values are zero.
-	// 
+	//
 	// To reiterate the AreaHandler documentation, do NOT save
 	// these values for later; they can change without generating
 	// an event.
-	AreaWidth	float64
-	AreaHeight	float64
+	AreaWidth  float64
+	AreaHeight float64
 
-	Down		uint
-	Up			uint
-	Count		uint
-	Modifiers		Modifiers
-	Held			[]uint
+	Down      uint
+	Up        uint
+	Count     uint
+	Modifiers Modifiers
+	Held      []uint
 }
 
 func appendBits(out []uint, held C.uint64_t) []uint {
 	n := uint(1)
 	for i := 0; i < 64; i++ {
-		if held & 1 != 0 {
+		if held&1 != 0 {
 			out = append(out, n)
 		}
 		held >>= 1
@@ -192,15 +192,15 @@ func pkguiDoAreaHandlerMouseEvent(uah *C.uiAreaHandler, ua *C.uiArea, ume *C.uiA
 	ah := areahandlers[uah]
 	a := ControlFromLibui(uintptr(unsafe.Pointer(ua))).(*Area)
 	me := &AreaMouseEvent{
-		X:			float64(ume.X),
-		Y:			float64(ume.Y),
-		AreaWidth:	float64(ume.AreaWidth),
-		AreaHeight:	float64(ume.AreaHeight),
-		Down:		uint(ume.Down),
-		Up:			uint(ume.Up),
-		Count:		uint(ume.Count),
-		Modifiers:		Modifiers(ume.Modifiers),
-		Held:		make([]uint, 0, 64),
+		X:          float64(ume.X),
+		Y:          float64(ume.Y),
+		AreaWidth:  float64(ume.AreaWidth),
+		AreaHeight: float64(ume.AreaHeight),
+		Down:       uint(ume.Down),
+		Up:         uint(ume.Up),
+		Count:      uint(ume.Count),
+		Modifiers:  Modifiers(ume.Modifiers),
+		Held:       make([]uint, 0, 64),
 	}
 	me.Held = appendBits(me.Held, ume.Held1To64)
 	ah.MouseEvent(a, me)
@@ -219,13 +219,14 @@ func pkguiDoAreaHandlerDragBroken(uah *C.uiAreaHandler, ua *C.uiArea) {
 	a := ControlFromLibui(uintptr(unsafe.Pointer(ua))).(*Area)
 	ah.DragBroken(a)
 }
-//AreaKeyEvent 
+
+//AreaKeyEvent
 type AreaKeyEvent struct {
-	Key		rune
-	ExtKey	ExtKey
-	Modifier	Modifiers
-	Modifiers	Modifiers
-	Up		bool
+	Key       rune
+	ExtKey    ExtKey
+	Modifier  Modifiers
+	Modifiers Modifiers
+	Up        bool
 }
 
 //export pkguiDoAreaHandlerKeyEvent
@@ -233,20 +234,21 @@ func pkguiDoAreaHandlerKeyEvent(uah *C.uiAreaHandler, ua *C.uiArea, uke *C.uiAre
 	ah := areahandlers[uah]
 	a := ControlFromLibui(uintptr(unsafe.Pointer(ua))).(*Area)
 	ke := &AreaKeyEvent{
-		Key:			rune(uke.Key),
-		ExtKey:		ExtKey(uke.ExtKey),
-		Modifier:		Modifiers(uke.Modifier),
-		Modifiers:		Modifiers(uke.Modifiers),
-		Up:			tobool(uke.Up),
+		Key:       rune(uke.Key),
+		ExtKey:    ExtKey(uke.ExtKey),
+		Modifier:  Modifiers(uke.Modifier),
+		Modifiers: Modifiers(uke.Modifiers),
+		Up:        tobool(uke.Up),
 	}
 	return frombool(ah.KeyEvent(a, ke))
 }
 
 //Modifiers  TODO document
-// 
+//
 // Note: these must be numerically identical to their libui equivalents.
 type Modifiers uint
-// Ctrl 
+
+// Ctrl
 const (
 	//Ctrl ..
 	Ctrl Modifiers = 1 << iota
@@ -256,13 +258,14 @@ const (
 )
 
 // ExtKey document
-// 
+//
 // Note: these must be numerically identical to their libui equivalents.
 type ExtKey int
+
 const (
 	//Excape ..
 	Escape ExtKey = iota + 1
-	Insert			// equivalent to "Help" on Apple keyboards
+	Insert        // equivalent to "Help" on Apple keyboards
 	Delete
 	Home
 	End
@@ -272,7 +275,7 @@ const (
 	Down
 	Left
 	Right
-	F1			// F1..F12 are guaranteed to be consecutive
+	F1 // F1..F12 are guaranteed to be consecutive
 	F2
 	F3
 	F4
@@ -284,8 +287,8 @@ const (
 	F10
 	F11
 	F12
-	N0			// numpad keys; independent of Num Lock state
-	N1			// N0..N9 are guaranteed to be consecutive
+	N0 // numpad keys; independent of Num Lock state
+	N1 // N0..N9 are guaranteed to be consecutive
 	N2
 	N3
 	N4

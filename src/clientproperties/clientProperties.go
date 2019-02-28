@@ -1,32 +1,24 @@
 package clientproperties
 
 import (
-	// fp "../../fileproperties"
 	"encoding/json"
 	"fmt"
-	"sync"
-	// "crypto/rand"
-	// "crypto/rsa"
-	// "crypto/sha512"
-	fp "github.com/IITH-SBJoshi/concurrency-decentralized-network/fileproperties"
 	"net"
+	"sync"
 )
 
-// Client:  Struct to store details of specific client
+// Client - Struct to store details of specific client
 type Client struct {
 	Address          string
 	Name             string
 	ConnectionServer net.Conn
 }
 
-// Store - all client names,
-//		   IP to name mapping of all clients
-//		   Port at which all those clients are listening for P2P requests
-//ClientListen : above explained
+// ClientListen - Details of clients on Network
 type ClientListen struct {
-	List           []string
-	PeerIP         map[string]string
-	PeerListenPort map[string]string
+	List           []string          // names of all clients
+	PeerIP         map[string]string // IP to name mapping of all clients
+	PeerListenPort map[string]string //Port at which all those clients are listening for P2P requests
 }
 
 // ClientQuery :  To store name and query of a client
@@ -53,9 +45,9 @@ type MyPeers struct {
 //MyReceivedFiles :  To store the information of files received by client
 type MyReceivedFiles struct {
 	PartsReceived int
-	MyFileName   string             // name of file
-	MyFile       []FilePartContents // Contents of the file
-	FilePartInfo fp.FilePartInfo    // Information of various file parts
+	MyFileName    string             // name of file
+	MyFile        []FilePartContents // Contents of the file
+	FilePartInfo  FilePartInfo    // Information of various file parts
 }
 
 //MyReceivedMessages To store the information of the messages receievd
@@ -69,11 +61,20 @@ type FilePartContents struct {
 	Contents []byte
 }
 
+//FilePartInfo Complete Information regarding the file to share
+type FilePartInfo struct {
+	FileName         string
+	TotalParts       int
+	PartName         string
+	PartNumber       int
+	FilePartContents []byte
+}
+
 //BaseRequest : A base request which is used as a generic request for all types of P2P queries
 type BaseRequest struct {
 	RequestType    string          // type of request
 	FileRequest                    // Information about File requseter if its a file request
-	FilePartInfo   fp.FilePartInfo // Information about file parts if its a file request
+	FilePartInfo   FilePartInfo // Information about file parts if its a file request
 	MessageRequest                 // Details of message is its a message request
 }
 
@@ -87,10 +88,10 @@ type FileRequest struct {
 
 //MessageRequest Stores the information about requester, who is sending the message (for the receiver to reply back)
 type MessageRequest struct {
-	SenderQuery 	string
-	SenderAddress	string
-	SenderName 		string
-	Message 		string
+	SenderQuery   string
+	SenderAddress string
+	SenderName    string
+	Message       string
 }
 
 // ClientFiles stores the files in the "files" directory of client
@@ -115,7 +116,7 @@ func DisplayRecentUnseenMessages(mymessages *MyReceivedMessages) {
 	// locking it, so that new messages can't be written at the current moment
 	var mutex = &sync.Mutex{}
 	mutex.Lock() // locking
-	
+
 	if mymessages.Counter == len(mymessages.MyMessages) {
 		fmt.Println("No Recent Unseen messages!!")
 	} else {
@@ -124,7 +125,7 @@ func DisplayRecentUnseenMessages(mymessages *MyReceivedMessages) {
 		}
 		mymessages.Counter = len(mymessages.MyMessages) // incrementing the counter to latest count, as we have read all recent messages
 	}
-	
+
 	fmt.Println('\n')
 	mutex.Unlock()
 }

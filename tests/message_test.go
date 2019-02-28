@@ -27,8 +27,8 @@ func TestRequestMessage(t *testing.T) {
 
 	name := "my_name"
 
-	message_status := cp.RequestMessage(&activeClient, name, "abc", "hey buddy!")
-	if message_status != "sent" {
+	messageStatus := cp.RequestMessage(&activeClient, name, "abc", "hey buddy!")
+	if messageStatus != "sent" {
 		t.Fatal("Error in sending message ...")
 	}
 

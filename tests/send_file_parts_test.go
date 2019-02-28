@@ -5,7 +5,6 @@ import (
 	// cp "../src/clientproperties"
 	// fp "../fileproperties"
 	"fmt"
-	fp "github.com/IITH-SBJoshi/concurrency-decentralized-network/fileproperties"
 	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
 	"net"
 )
@@ -13,7 +12,7 @@ import (
 //TestSendFileParts testing send file parts
 func TestSendFileParts(t *testing.T) {
 	filename := "SomeImage"
-	allFileParts := fp.GetSplitFile(filename, 2)
+	allFileParts := cp.GetSplitFile(filename, 2)
 	myname := "def"
 	ln, err := net.Listen("tcp", ":45000")
 

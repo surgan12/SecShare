@@ -1,8 +1,8 @@
 package main
 
 import (
+	"os/exec"
 	"testing"
-	"ox/exec"
 )
 
 //TestGoFmt test for format errors
