@@ -17,7 +17,6 @@ import (
 	// _ "github.com/andlabs/ui/winmanifest"
 )
 
-// var mainwin *ui.Window
 //WriteCounter 
 type WriteCounter struct {
 	Total uint64

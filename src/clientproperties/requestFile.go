@@ -101,7 +101,6 @@ func FileSenderCredentials(broadcast bool) (string, string) {
 		fmt.Print("What file do you want ? ")
 		fmt.Scanln(&fileName) // file we want to receive
 
-		return "None", fileName
 	}
-
+	return "None", fileName
 }

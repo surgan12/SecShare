@@ -12,17 +12,17 @@ import (
 	"net"
 )
 
-// Client:  Struct to store details of specific client
+// Client :  Struct to store details of specific client
 type Client struct {
 	Address          string
 	Name             string
 	ConnectionServer net.Conn
 }
 
-// Store - all client names,
+//ClientListen  Store - all client names,
 //		   IP to name mapping of all clients
 //		   Port at which all those clients are listening for P2P requests
-//ClientListen : above explained
+// : above explained
 type ClientListen struct {
 	List           []string
 	PeerIP         map[string]string
