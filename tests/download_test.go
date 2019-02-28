@@ -14,10 +14,10 @@ import (
 func TestAsyncDownloader(t *testing.T)	{
 	
 	client := &http.Client{}
-	name := "test.mp3"
+	name := "images2.jpg"
 	var start int64
 	start = 0
-	url := "http://file-examples.com/wp-content/uploads/2017/11/file_example_MP3_1MG.mp3"
+	url := "http://qnimate.com/wp-content/uploads/2014/03/images2.jpg"
 	resp, _ := http.Head(url)
 	length := resp.Header.Get("content-length")
 	lenh, _ := strconv.Atoi(length)
@@ -28,8 +28,8 @@ func TestAsyncDownloader(t *testing.T)	{
 	var wg sync.WaitGroup
 	wg.Add(1)
 	result := cp.DummyAsync(&wg, client, start, end, 0, lenh, url, f)
-	
-	if result != nil{
+	err := os.Remove(name)
+	if result != nil || err != nil {
 		t.Fatal("Download not working correctly")
 	}
 	
