@@ -17,6 +17,11 @@ jobs:
       # - run : go get -u github.com/andlabs/ui
       - run: go get -u github.com/golang/lint/golint
       - run: go get -u github.com/GeertJohan/fgt
+      - run: 
+          name: running linters
+          command: |
+              /go/bin/fgt golint ./...
+
       - run:
          name: run tests
          command: |
