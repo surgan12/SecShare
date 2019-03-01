@@ -97,7 +97,7 @@ func main() {
 			// fmt.Println("Which port do you want to listen upon ? : ")
 			// fmt.Scanln(&listenPort)
 			ln, err := net.Listen("tcp", ":"+listenPort)
-			if err == nil{
+			if err == nil {
 				fmt.Println("[SUCCESS] Successfully logged in")
 			}
 			for err != nil {

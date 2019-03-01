@@ -1,18 +1,18 @@
 package main
-	
+
 import (
+	"fmt"
 	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
-	"testing"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"strconv"
 	"sync"
-	"fmt"
-	"io/ioutil"
+	"testing"
 )
 
-func TestAsyncDownloader(t *testing.T)	{
-	
+func TestAsyncDownloader(t *testing.T) {
+
 	client := &http.Client{}
 	name := "images2.jpg"
 	var start int64
@@ -32,5 +32,5 @@ func TestAsyncDownloader(t *testing.T)	{
 	if result != nil || err != nil {
 		t.Fatal("Download not working correctly")
 	}
-	
+
 }
