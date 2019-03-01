@@ -12,8 +12,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-	// "github.com/IITH-SBJoshi/concurrency-decentralized-network/vendor/github.com/andlabs/ui"
-	// _ "github.com/andlabs/ui/winmanifest"
 )
 
 // WriteCounter - Count of writer
@@ -30,6 +28,7 @@ func (wc *WriteCounter) Write(p []byte) (int, error) {
 	return n, nil
 }
 
+
 var helpMap = map[string]*WriteCounter{}
 var lenMap = map[string]int{}
 var mainwin = map[string]*ui.Window{}
@@ -37,14 +36,13 @@ var prog = map[string]*ui.ProgressBar{}
 var name string
 
 //DummyAsync simulates Async
-func DummyAsync(wg *sync.WaitGroup, client *http.Client, start int64, end int, i int, size int, url string, f *os.File) error {
-	helpMap[name] = &WriteCounter{}
-	err := AsyncDownloader(wg, client, start, end, i, size, url, f)
-	return err
+func DummyAsync(wg *sync.WaitGroup, client *http.Client, start int64, end int, i int, size int, url string, f *os.File) error{
+    helpMap[name]=&WriteCounter{}
+    err := AsyncDownloader(wg, client, start, end, i, size, url, f)
+    return err
 }
-
 //AsyncDownloader downloader function
-func AsyncDownloader(wg *sync.WaitGroup, client *http.Client, start int64, end int, i int, size int, url string, f *os.File) error {
+func AsyncDownloader(wg *sync.WaitGroup, client *http.Client, start int64, end int, i int, size int, url string, f *os.File) error{
 
 	if end > size {
 		end = size
@@ -55,14 +53,14 @@ func AsyncDownloader(wg *sync.WaitGroup, client *http.Client, start int64, end i
 
 	endString := strconv.Itoa(end)
 	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return err
-	}
+    if err!=nil {
+        return err
+    }
 	req.Header.Set("Range", "bytes="+startString+"-"+endString)
 	res, err2 := client.Do(req)
-	if err2 != nil {
-		return err2
-	}
+    if err2!=nil {
+        return err2
+    }   
 	f.Seek(start, 0)
 	var buf bytes.Buffer
 	io.Copy(&buf, io.TeeReader(res.Body, helpMap[fname]))
@@ -72,10 +70,10 @@ func AsyncDownloader(wg *sync.WaitGroup, client *http.Client, start int64, end i
 	f.Write(buffer)
 
 	wg.Done()
-	return nil
+    return nil
 }
 
-// set is used to update progressbar
+//set is used to update progressbar
 func set(ip *ui.ProgressBar) {
 	var fname string
 	fname = name
@@ -89,7 +87,7 @@ func set(ip *ui.ProgressBar) {
 			break
 		}
 		ip.SetValue(val)
-	}
+    }
 
 }
 

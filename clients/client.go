@@ -210,7 +210,7 @@ func main() {
 
 			} else if query == "down" {
 				// to download files, support within file concurrency and can donwload muliple files simultaneously
-				fmt.Print("URL for downloading: ") // url string
+				fmt.Print("<URL> <filepath>") // url string
 				var url string
 				scanner := bufio.NewScanner(os.Stdin)
 				scanner.Scan() // use `for scanner.Scan()` to keep reading

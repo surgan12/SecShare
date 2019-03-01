@@ -5,6 +5,9 @@ import (
 	"net"
 	"strings"
 	"sync"
+	"fmt"
+	"strconv"
+
 )
 
 // creating locks for messages and files array
@@ -140,8 +143,10 @@ func handleReceivedRequest(connection net.Conn, activeClient *ClientListen, myna
 		newSendRequest := newrequest
 		newconn := json.NewEncoder(connection)
 		newconn.Encode(&newSendRequest)
-		// fmt.Println("forwarded to ", newrequest.FileRequest.MyName, "\n")
-
+		bytes_forwarded := len(newrequest.FilePartInfo.FilePartContents)
+		t := strconv.Itoa(bytes_forwarded)
+		fmt.Println("\nforwarded " + t + "bytes to",newrequest.FileRequest.MyAddress)
+		
 	}
 }
 
