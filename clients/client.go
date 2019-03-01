@@ -3,14 +3,16 @@ package main
 import (
 	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
 	en "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/encryptionproperties"
-// 	cp "../src/clientproperties"
-// 	en "../src/encryptionproperties"
+	// cp "../src/clientproperties"
+	// en "../src/encryptionproperties"
 	"bufio"
 	"encoding/json"
 	"fmt"
 	"net"
 	"os"
+	"os/signal"
 	"path/filepath"
+	"syscall"
 )
 
 // function to fetch peers which are currently active
@@ -47,14 +49,14 @@ func main() {
 
 	// generating keys for connection with server
 	_, PublicKey := en.GenerateKeyPair()
-
-	conn, err := net.Dial("tcp", "127.0.0.1:8081")
+	addr := argsWithoutProg[2]
+	conn, err := net.Dial("tcp", addr)
 
 	// limiting the dial count
 	dialCount := 0
 	for err != nil {
 		// fmt.Println("error in connecting to server, dialing again")
-		conn1, err1 := net.Dial("tcp", "127.0.0.1:8081")
+		conn1, err1 := net.Dial("tcp", "192.168.111.252:8081")
 		conn = conn1
 		err = err1
 		dialCount++
@@ -77,6 +79,22 @@ func main() {
 	fmt.Println("for receiving file - receive_file")
 	fmt.Println("for sending message - send_message")
 	fmt.Println("for displaying recent messages - display_recent_messages")
+	fmt.Println("for displaying current peers - display_peers")
+	c := make(chan os.Signal)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-c
+		query = "quit"
+		// encrypting credentials to notify server, when a client wants to quit
+		nameByte := en.EncryptWithPublicKey([]byte(name), ServerKey)
+		mylistenport := en.EncryptWithPublicKey([]byte(listenPort), ServerKey)
+		// sending the information to server
+		queryByte := en.EncryptWithPublicKey([]byte(query), ServerKey)
+		fmt.Print(query)
+		cp.SendingToServer(nameByte, queryByte, conn, query, mylistenport)
+		os.Exit(1)
+
+	}()
 
 	for {
 		// getting others clients who are currenty active
@@ -94,18 +112,14 @@ func main() {
 			nameByte := en.EncryptWithPublicKey([]byte(name), ServerKey)
 			queryByte := en.EncryptWithPublicKey([]byte(query), ServerKey)
 
-			// fmt.Println("Which port do you want to listen upon ? : ")
-			// fmt.Scanln(&listenPort)
 			ln, err := net.Listen("tcp", ":"+listenPort)
 			if err == nil {
 				fmt.Println("[SUCCESS] Successfully logged in")
 			}
 			for err != nil {
 				fmt.Println("Cant listen on this port, choose another : ")
-				fmt.Scanln(&listenPort)
-				ln1, err1 := net.Listen("tcp", ":"+listenPort)
-				ln = ln1
-				err = err1
+				os.Exit(2)
+
 			}
 
 			// adds files in directory to a clientFiles
@@ -120,10 +134,6 @@ func main() {
 			if error1 != nil {
 				panic(error1)
 			}
-			//for printing files in the directory
-			// for _, file := range directoryFiles.FilesInDir {
-			//     fmt.Println(file)
-			// }
 
 			mylistenport := en.EncryptWithPublicKey([]byte(listenPort), ServerKey)
 			// sending credentials to server
@@ -155,6 +165,7 @@ func main() {
 				} else {
 					fmt.Println("Request not broadcasted properly")
 				}
+
 				// display the status of file existence from all clients
 				cp.DisplayRecentUnseenMessages(&mymessages)
 
@@ -189,8 +200,8 @@ func main() {
 
 					// whether I want to exit the message mode
 					var queryMessage string
-					fmt.Println("Do you want to send more messages? If Yes type Y, else N")
-					fmt.Scanln(&queryMessage)
+					fmt.Print("Do you want to send more messages? If Yes type Y, else N: ")
+					fmt.Scan(&queryMessage)
 					if queryMessage == "N" {
 						fmt.Println("Exiting messaging mode...")
 						break
@@ -202,7 +213,7 @@ func main() {
 				fmt.Println("Display recent unseen messages - (type) 1")
 				fmt.Println("Display recent Num messages - (type) 2")
 				var queryMessage string
-				fmt.Scanln("Input the type : ", &queryMessage)
+				fmt.Scanln(&queryMessage)
 
 				// Display recently unseen messages
 				if queryMessage == "1" {
@@ -210,8 +221,8 @@ func main() {
 				} else {
 					// display N recent messages
 					var num int
-					fmt.Println("Number of recent messages you want to see : ")
-					fmt.Scanln("Input the Number : ", &num)
+					fmt.Print("Number of recent messages you want to see : ")
+					fmt.Scan(&num)
 					_ = cp.DisplayNumRecentMessages(&mymessages, num)
 				}
 
@@ -224,6 +235,8 @@ func main() {
 				url = scanner.Text()
 				go cp.Download(url)
 
+			} else if query == "display_peers" {
+				fmt.Println("Active peers : ", activeClient)
 			}
 		}
 	}

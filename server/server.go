@@ -4,6 +4,7 @@ import (
 	"crypto/rsa"
 	"encoding/json"
 	"fmt"
+	// "strings"
 	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
 	en "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/encryptionproperties"
 	sp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/serverproperties"
@@ -122,7 +123,7 @@ func main() {
 
 	ln, _ := net.Listen("tcp", ":8081") // making a server
 	fmt.Println(": SERVER STARTED ON PORT 8081  : ")
-
+	// fmt.Print(ln.LocalAddr().String())
 	PrivateKey, PublicKey := en.GenerateKeyPair()
 
 	PeerKeys := make(map[net.Conn]*rsa.PublicKey)
