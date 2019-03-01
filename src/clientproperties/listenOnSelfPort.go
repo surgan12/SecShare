@@ -17,10 +17,11 @@ var mutexMessages = &sync.Mutex{} // Lock and unlock (mutexFiles)
 func SendPart(names string, activeClient *ClientListen, newfilerequest FileRequest,
 	countSent int, allfileparts []FilePartInfo, wgSplit *sync.WaitGroup) {
 	count := 0
-	connection, err := net.Dial("tcp", ":"+activeClient.PeerListenPort[names])
+	tempSplit := strings.Split(activeClient.PeerIP[names], ":")
+	connection, err := net.Dial("tcp", tempSplit[0]+":"+activeClient.PeerListenPort[names])
 	for err != nil {
 		// fmt.Println("Error in dialing to: ", names, " dialing again...")
-		connection1, err1 := net.Dial("tcp", ":"+activeClient.PeerListenPort[names])
+		connection1, err1 := net.Dial("tcp", tempSplit[0]+":"+activeClient.PeerListenPort[names])
 		connection = connection1
 		err = err1
 		count++
@@ -125,10 +126,11 @@ func handleReceivedRequest(connection net.Conn, activeClient *ClientListen, myna
 		// if file is received to be forwarded to some other peer
 
 		count := 0
-		connection, err := net.Dial("tcp", ":"+activeClient.PeerListenPort[newrequest.FileRequest.MyName])
+		tempSplit := strings.Split(activeClient.PeerIP[newrequest.FileRequest.MyName], ":")
+		connection, err := net.Dial("tcp", tempSplit[0]+":"+activeClient.PeerListenPort[newrequest.FileRequest.MyName])
 		for err != nil {
 			// fmt.Println("Error in dialing to: ", newrequest.FileRequest.MyName, " dialing again...")
-			connection1, err1 := net.Dial("tcp", ":"+activeClient.PeerListenPort[newrequest.FileRequest.MyName])
+			connection1, err1 := net.Dial("tcp", tempSplit[0]+":"+activeClient.PeerListenPort[newrequest.FileRequest.MyName])
 			connection = connection1
 			err = err1
 			count++
@@ -144,7 +146,8 @@ func handleReceivedRequest(connection net.Conn, activeClient *ClientListen, myna
 		newconn.Encode(&newSendRequest)
 		bytesForwarded := len(newrequest.FilePartInfo.FilePartContents)
 		t := strconv.Itoa(bytesForwarded)
-		fmt.Println("\nforwarded "+t+"bytes to", newrequest.FileRequest.MyAddress)
+		fmt.Println("\nforwarded "+t+" bytes to", newrequest.FileRequest.MyAddress)
+		fmt.Print("[QUERY]>>")
 
 	}
 }

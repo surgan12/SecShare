@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"strings"
 )
 
 //sendMessageRequestToPeer encodes the baserequest
@@ -23,13 +24,13 @@ func RequestMessage(activeClient *ClientListen, name string, messageReceiverName
 	messageRequest := MessageRequest{
 		SenderQuery: "message_request", SenderName: name,
 		SenderAddress: activeClient.PeerIP[name], Message: message}
-
-	connection, err := net.Dial("tcp", ":"+activeClient.PeerListenPort[messageReceiverName])
+	tempSplit := strings.Split(activeClient.PeerIP[messageReceiverName], ":")
+	connection, err := net.Dial("tcp", tempSplit[0]+":"+activeClient.PeerListenPort[messageReceiverName])
 
 	count := 0
 	for err != nil {
 
-		connection1, err1 := net.Dial("tcp", ":"+activeClient.PeerListenPort[messageReceiverName])
+		connection1, err1 := net.Dial("tcp", tempSplit[0]+":"+activeClient.PeerListenPort[messageReceiverName])
 		connection = connection1
 		err = err1
 		count++

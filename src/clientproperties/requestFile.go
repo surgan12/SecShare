@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
+	"strings"
 )
 
 //SendFileRequestToPeer To send the request to corresponding peer
@@ -29,13 +30,13 @@ func RequestSomeFile(activeClient *ClientListen, myname string, fileName string)
 	// sending to all peers
 	for names := range activeClient.PeerListenPort {
 		if names != myname {
-
-			connection, err := net.Dial("tcp", ":"+activeClient.PeerListenPort[names])
+			tempSplit := strings.Split(activeClient.PeerIP[names], ":")
+			connection, err := net.Dial("tcp", tempSplit[0]+":"+activeClient.PeerListenPort[names])
 			// diling for finite number of times
 			count := 0
 			for err != nil {
 				fmt.Println("Error in dialing to: ", names, " dialing again...")
-				connection1, err1 := net.Dial("tcp", ":"+activeClient.PeerListenPort[names])
+				connection1, err1 := net.Dial("tcp", tempSplit[0]+":"+activeClient.PeerListenPort[names])
 				connection = connection1
 				err = err1
 				count++
@@ -60,13 +61,14 @@ func GetRequestedFile(activeClient *ClientListen, myname string, fileSenderName 
 	fileRequest := FileRequest{Query: "receive_from_peer",
 		MyAddress: activeClient.PeerIP[myname],
 		MyName:    myname, RequestedFile: fileName}
+	tempSplit := strings.Split(activeClient.PeerIP[fileSenderName], ":")
 
 	// sending to respective peer
-	connection, err := net.Dial("tcp", ":"+activeClient.PeerListenPort[fileSenderName])
+	connection, err := net.Dial("tcp", tempSplit[0]+":"+activeClient.PeerListenPort[fileSenderName])
 	count := 0
 	for err != nil {
 		fmt.Println("Error in dialing to: ", fileSenderName, " dialing again...")
-		connection1, err1 := net.Dial("tcp", ":"+activeClient.PeerListenPort[fileSenderName])
+		connection1, err1 := net.Dial("tcp", tempSplit[0]+":"+activeClient.PeerListenPort[fileSenderName])
 		connection = connection1
 		err = err1
 		count++
