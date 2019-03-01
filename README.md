@@ -28,6 +28,10 @@ It is a decentralized network to share files among peer on the network
 ### These test cases are required in order to test whether the designed functions opearte precisely or not.
 
 ## Deployment
+ * To use this project
+ ```
+ go get github.com/IITH-SBJoshi/concurrency-decentralized-network
+ ```
  * To launch the sever, initiate :
  ```
  go run server.go
