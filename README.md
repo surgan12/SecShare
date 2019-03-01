@@ -1,4 +1,4 @@
-![Project Logo](files\SecShare.gif)
+![Project Logo](files/SecShare.gif)
 
 # Concurrency-Decentralized-Network
 It is a decentralized network to share files among peer on the network
