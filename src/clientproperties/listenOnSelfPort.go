@@ -143,8 +143,8 @@ func handleReceivedRequest(connection net.Conn, activeClient *ClientListen, myna
 		newSendRequest := newrequest
 		newconn := json.NewEncoder(connection)
 		newconn.Encode(&newSendRequest)
-		bytes_forwarded := len(newrequest.FilePartInfo.FilePartContents)
-		t := strconv.Itoa(bytes_forwarded)
+		bytesForwarded := len(newrequest.FilePartInfo.FilePartContents)
+		t := strconv.Itoa(bytesForwarded)
 		fmt.Println("\nforwarded " + t + "bytes to",newrequest.FileRequest.MyAddress)
 		
 	}
