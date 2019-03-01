@@ -1,10 +1,10 @@
 package main
 
 import (
-	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
-	en "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/encryptionproperties"
-	// cp "../src/clientproperties"
-	// en "../src/encryptionproperties"
+	// cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
+	// en "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/encryptionproperties"
+	cp "../src/clientproperties"
+	en "../src/encryptionproperties"
 	"bufio"
 	"encoding/json"
 	"fmt"
@@ -210,7 +210,7 @@ func main() {
 
 			} else if query == "down" {
 				// to download files, support within file concurrency and can donwload muliple files simultaneously
-				fmt.Print("URL for downloading: ") // url string
+				fmt.Print("<URL> <filepath>") // url string
 				var url string
 				scanner := bufio.NewScanner(os.Stdin)
 				scanner.Scan() // use `for scanner.Scan()` to keep reading
