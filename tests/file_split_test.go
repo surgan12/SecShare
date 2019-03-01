@@ -8,7 +8,7 @@ import (
 //TestFileSplit test file split
 func TestFileSplit(t *testing.T) {
 
-	filename := "SomeImage"
+	filename := "image.jpg"
 	allFileParts := cp.GetSplitFile(filename, 2)
 
 	if len(allFileParts[0].FilePartContents) == 0 {

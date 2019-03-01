@@ -12,8 +12,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-	// "github.com/IITH-SBJoshi/concurrency-decentralized-network/vendor/github.com/andlabs/ui"
-	// _ "github.com/andlabs/ui/winmanifest"
 )
 
 // WriteCounter - Count of writer
@@ -75,7 +73,7 @@ func AsyncDownloader(wg *sync.WaitGroup, client *http.Client, start int64, end i
 	return nil
 }
 
-// set is used to update progressbar
+//set is used to update progressbar
 func set(ip *ui.ProgressBar) {
 	var fname string
 	fname = name

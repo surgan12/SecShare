@@ -2,7 +2,9 @@ package clientproperties
 
 import (
 	"encoding/json"
+	"fmt"
 	"net"
+	"strconv"
 	"strings"
 	"sync"
 )
@@ -140,7 +142,9 @@ func handleReceivedRequest(connection net.Conn, activeClient *ClientListen, myna
 		newSendRequest := newrequest
 		newconn := json.NewEncoder(connection)
 		newconn.Encode(&newSendRequest)
-		// fmt.Println("forwarded to ", newrequest.FileRequest.MyName, "\n")
+		bytesForwarded := len(newrequest.FilePartInfo.FilePartContents)
+		t := strconv.Itoa(bytesForwarded)
+		fmt.Println("\nforwarded "+t+"bytes to", newrequest.FileRequest.MyAddress)
 
 	}
 }

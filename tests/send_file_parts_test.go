@@ -11,7 +11,7 @@ import (
 
 //TestSendFileParts testing send file parts
 func TestSendFileParts(t *testing.T) {
-	filename := "SomeImage"
+	filename := "image.jpg"
 	allFileParts := cp.GetSplitFile(filename, 2)
 	myname := "def"
 	ln, err := net.Listen("tcp", ":45000")
