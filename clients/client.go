@@ -3,8 +3,8 @@ package main
 import (
 	cp "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/clientproperties"
 	en "github.com/IITH-SBJoshi/concurrency-decentralized-network/src/encryptionproperties"
-	// cp "../src/clientproperties"
-	// en "../src/encryptionproperties"
+// 	cp "../src/clientproperties"
+// 	en "../src/encryptionproperties"
 	"bufio"
 	"encoding/json"
 	"fmt"
@@ -23,6 +23,8 @@ func gettingPeersFromServer(c net.Conn, peers *[]string, msg *cp.ClientListen) {
 }
 
 func main() {
+
+	argsWithoutProg := os.Args[1:] //taking the args from the user
 
 	var activeClient cp.ClientListen  // to store information about peers
 	var directoryFiles cp.ClientFiles // to store information about files in the directory
@@ -62,6 +64,9 @@ func main() {
 		}
 	}
 
+	//assigning names and ports.
+	name = argsWithoutProg[0]
+	listenPort = argsWithoutProg[1]
 	// performing handshake with server
 	ServerKey := en.PerformHandshake(conn, PublicKey)
 
@@ -80,8 +85,8 @@ func main() {
 		// flag == false, signifies the client has to login
 		if flag == false {
 
-			fmt.Print("Enter your credentials : ")
-			fmt.Scanln(&name)
+			// fmt.Print("Enter your credentials : ")
+			// fmt.Scanln(&name)
 			flag = true // has logged in
 			query = "login"
 
@@ -89,10 +94,12 @@ func main() {
 			nameByte := en.EncryptWithPublicKey([]byte(name), ServerKey)
 			queryByte := en.EncryptWithPublicKey([]byte(query), ServerKey)
 
-			fmt.Println("Which port do you want to listen upon ? : ")
-			fmt.Scanln(&listenPort)
+			// fmt.Println("Which port do you want to listen upon ? : ")
+			// fmt.Scanln(&listenPort)
 			ln, err := net.Listen("tcp", ":"+listenPort)
-			fmt.Println("error on listening is ", err)
+			if err == nil {
+				fmt.Println("[SUCCESS] Successfully logged in")
+			}
 			for err != nil {
 				fmt.Println("Cant listen on this port, choose another : ")
 				fmt.Scanln(&listenPort)
@@ -127,7 +134,7 @@ func main() {
 
 		} else {
 			// accepting further queries, after login is done
-			fmt.Print("What do you want to do? : ")
+			fmt.Print("[QUERY]>>")
 			fmt.Scanln(&query)
 
 			if query == "quit" {
