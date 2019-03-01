@@ -13,6 +13,7 @@
 # *.extension
 *.png
 *.mp3
+*.txt
 -----------------------------
 # add an exception (using !) to the preceding rule to track a specific file
 ---------------------------------
