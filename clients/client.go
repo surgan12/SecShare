@@ -199,13 +199,13 @@ func main() {
 
 				// Display recently unseen messages
 				if queryMessage == "1" {
-					cp.DisplayRecentUnseenMessages(&mymessages)
+					_ = cp.DisplayRecentUnseenMessages(&mymessages)
 				} else {
 					// display N recent messages
 					var num int
 					fmt.Println("Number of recent messages you want to see : ")
 					fmt.Scanln("Input the Number : ", &num)
-					cp.DisplayNumRecentMessages(&mymessages, num)
+					_ = cp.DisplayNumRecentMessages(&mymessages, num)
 				}
 
 			} else if query == "down" {

@@ -25,9 +25,6 @@ func TestRequestSomeFile(t *testing.T) {
 	activeClient := cp.ClientListen{List: list, PeerIP: TestMapPeerIP, PeerListenPort: TestMapPeerListenPort}
 
 	name := "requester"
-	// var TestFilesInDir []string
-	// TestFilesInDir = append(TestFilesInDir, "image.jpg")
-	// directoryFiles := cp.ClientFiles{FilesInDir: TestFilesInDir}
 
 	requestStatus := cp.GetRequestedFile(&activeClient, name, "abc", "image.jpg")
 
