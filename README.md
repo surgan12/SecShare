@@ -30,7 +30,7 @@ It is a decentralized network to share files among peer on the network
 ## Deployment
  * To use this project
  ```
- go get github.com/IITH-SBJoshi/concurrency-decentralized-network
+ go get -u github.com/IITH-SBJoshi/concurrency-decentralized-network
  ```
  * To launch the sever, initiate :
  ```
@@ -38,7 +38,7 @@ It is a decentralized network to share files among peer on the network
  ```
  * To generate clients, inititate :
  ```
- go run client.go <client name> <client port>
+ go run client.go <client name> <client port> <server IP>
  ```
  * To achieve message passing, file sharing, downloading :
  ```
