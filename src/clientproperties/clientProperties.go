@@ -49,7 +49,7 @@ type MyReceivedFiles struct {
 	PartsReceived int
 	MyFileName    string             // name of file
 	MyFile        []FilePartContents // Contents of the file
-	FilePartInfo  FilePartInfo    // Information of various file parts
+	FilePartInfo  FilePartInfo       // Information of various file parts
 }
 
 //MyReceivedMessages To store the information of the messages receievd
@@ -74,10 +74,10 @@ type FilePartInfo struct {
 
 //BaseRequest : A base request which is used as a generic request for all types of P2P queries
 type BaseRequest struct {
-	RequestType    string          // type of request
-	FileRequest                    // Information about File requseter if its a file request
+	RequestType    string       // type of request
+	FileRequest                 // Information about File requseter if its a file request
 	FilePartInfo   FilePartInfo // Information about file parts if its a file request
-	MessageRequest                 // Details of message is its a message request
+	MessageRequest              // Details of message is its a message request
 }
 
 // FileRequest stores the queries and information about requester
@@ -114,7 +114,7 @@ func SendingToServer(name []byte, query []byte, conn net.Conn,
 }
 
 //DisplayRecentUnseenMessages  To display the most recent messages which haven't been seen yet
-func DisplayRecentUnseenMessages(mymessages *MyReceivedMessages) {
+func DisplayRecentUnseenMessages(mymessages *MyReceivedMessages) string {
 	// locking it, so that new messages can't be written at the current moment
 	var mutex = &sync.Mutex{}
 	mutex.Lock() // locking
@@ -130,10 +130,12 @@ func DisplayRecentUnseenMessages(mymessages *MyReceivedMessages) {
 
 	fmt.Println('\n')
 	mutex.Unlock()
+	status := "Displayed"
+	return status
 }
 
 //DisplayNumRecentMessages To display Num recent messages
-func DisplayNumRecentMessages(mymessages *MyReceivedMessages, recentCount int) {
+func DisplayNumRecentMessages(mymessages *MyReceivedMessages, recentCount int) string {
 	// locking it, so that new messages can't be written at the current moment
 	var mutex = &sync.Mutex{}
 
@@ -148,7 +150,7 @@ func DisplayNumRecentMessages(mymessages *MyReceivedMessages, recentCount int) {
 
 	} else {
 		// if contains less than recentCount number of messages
-		fmt.Println("Displaying all messages!")
+		// fmt.Println("Displaying all messages!")
 		mutex.Lock() // locking
 		for i := 0; i < len(mymessages.MyMessages); i++ {
 			fmt.Println(mymessages.MyMessages[i].SenderName, " - sent you a message : ", mymessages.MyMessages[i].Message)
@@ -156,5 +158,6 @@ func DisplayNumRecentMessages(mymessages *MyReceivedMessages, recentCount int) {
 		fmt.Println('\n')
 		mutex.Unlock()
 	}
-
+	status := "Displayed"
+	return status
 }

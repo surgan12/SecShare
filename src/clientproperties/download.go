@@ -36,8 +36,15 @@ var mainwin = map[string]*ui.Window{}
 var prog = map[string]*ui.ProgressBar{}
 var name string
 
+//DummyAsync simulates Async
+func DummyAsync(wg *sync.WaitGroup, client *http.Client, start int64, end int, i int, size int, url string, f *os.File) error {
+	helpMap[name] = &WriteCounter{}
+	err := AsyncDownloader(wg, client, start, end, i, size, url, f)
+	return err
+}
+
 //AsyncDownloader downloader function
-func AsyncDownloader(wg *sync.WaitGroup, client *http.Client, start int64, end int, i int, size int, url string, f *os.File) {
+func AsyncDownloader(wg *sync.WaitGroup, client *http.Client, start int64, end int, i int, size int, url string, f *os.File) error {
 
 	if end > size {
 		end = size
@@ -47,11 +54,15 @@ func AsyncDownloader(wg *sync.WaitGroup, client *http.Client, start int64, end i
 	startString := strconv.FormatInt(start, 10)
 
 	endString := strconv.Itoa(end)
-	req, _ := http.NewRequest("GET", url, nil)
-
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return err
+	}
 	req.Header.Set("Range", "bytes="+startString+"-"+endString)
-	res, _ := client.Do(req)
-
+	res, err2 := client.Do(req)
+	if err2 != nil {
+		return err2
+	}
 	f.Seek(start, 0)
 	var buf bytes.Buffer
 	io.Copy(&buf, io.TeeReader(res.Body, helpMap[fname]))
@@ -61,8 +72,10 @@ func AsyncDownloader(wg *sync.WaitGroup, client *http.Client, start int64, end i
 	f.Write(buffer)
 
 	wg.Done()
+	return nil
 }
 
+// set is used to update progressbar
 func set(ip *ui.ProgressBar) {
 	var fname string
 	fname = name
@@ -72,12 +85,10 @@ func set(ip *ui.ProgressBar) {
 		g := int(helpMap[fname].Total) * 100
 		val := int(g / lenth)
 		time.Sleep(200 * time.Millisecond)
-		// fmt.Print(val)
 		if val > 90 {
 			break
 		}
 		ip.SetValue(val)
-
 	}
 
 }
@@ -121,7 +132,6 @@ func Download(args string) {
 	go ui.Main(setupUI)
 	wg.Wait()
 	mainwin[fname].Destroy() // waiting for the goroutines to finish
-	// prog[fname].Destroy
 	ui.Quit()
 }
 
