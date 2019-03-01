@@ -46,7 +46,7 @@ func RequestMessage(activeClient *ClientListen, name string, messageReceiverName
 	return messageStatus
 }
 
-//MessageReceiverCredentials for receiving message credientials
+// MessageReceiverCredentials - To get the credentials of peer to send message to
 func MessageReceiverCredentials() (string, string) {
 
 	// getting credentials of the person to send message to

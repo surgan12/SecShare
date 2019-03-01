@@ -96,7 +96,7 @@ func FileSenderCredentials(broadcast bool) (string, string) {
 		return fileSenderName, fileName
 	}
 
-	// if message is to be broadcasted, jsut get file name
+	// if message is to be broadcasted, just get file name
 	var fileName string
 	fmt.Print("What file do you want ? ")
 	fmt.Scanln(&fileName) // file we want to receive
