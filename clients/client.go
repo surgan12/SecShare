@@ -13,6 +13,7 @@ import (
 	"os/signal"
 	"path/filepath"
 	"syscall"
+	"time"
 )
 
 // function to fetch peers which are currently active
@@ -166,6 +167,7 @@ func main() {
 					fmt.Println("Request not broadcasted properly")
 				}
 
+				time.Sleep(2 * time.Second)
 				// display the status of file existence from all clients
 				cp.DisplayRecentUnseenMessages(&mymessages)
 
