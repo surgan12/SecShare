@@ -1,23 +1,62 @@
-<!--
-	Copyright 2009 The Go Authors. All rights reserved.
-	Use of this source code is governed by a BSD-style
-	license that can be found in the LICENSE file.
--->
-<!--
-	Note: Static (i.e., not template-generated) href and id
-	attributes start with "pkg-" to make it impossible for
-	them to conflict with generated attributes (some of which
-	correspond to Go identifiers).
--->
+<!DOCTYPE html>
+<html>
 
-	<script type='text/javascript'>
-	document.ANALYSIS_DATA = ;
-	document.CALLGRAPH = ;
-	</script>
 
-	
-		
-		<div id="short-nav">
+<head>
+<style>
+div#manual-nav a:link { color:  #34495e ; }
+div#links a:link { color:  #34495e ; }
+
+#manual-nav{
+	display: block;
+	padding:1em;
+	font-style: italic;
+}
+#links{
+	display: block;
+	padding:1em;
+	font-style: italic;
+}
+.sidenav {
+  height: 100%;
+  width: 160px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+.sidenav a {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+}
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+.main {
+  margin-left: 160px; /* Same as the width of the sidenav */
+  font-size: 20px; /* Increased text to enable scrolling */
+  padding: 0px 10px;
+}
+</style>
+<title> Encryption Properties </title>
+</head>
+<body bgcolor= "#ecf0f1">
+
+<div class="sidenav">
+  <a href="..\\clientproperties\about.html">About</a>
+  <a href="..\\clientproperties\services.html">Services</a>
+  <a href="..\\clientproperties\contact.html">Contact</a>
+</div>
+<div class="main">
+	<div id="short-nav">
 			<dl>
 			<dd><code>import "."</code></dd>
 			</dl>
@@ -29,31 +68,16 @@
 			</dl>
 		</div>
 		<!-- The package's Name is printed as title by the top-level template -->
-		<div id="pkg-overview" class="toggleVisible">
-			<div class="collapsed">
-				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
-			</div>
-			<div class="expanded">
-				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
-				
-			</div>
-		</div>
-		
 
 		<div id="pkg-index" class="toggleVisible">
-		<div class="collapsed">
-			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
-		</div>
+
 		<div class="expanded">
-			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
 
 		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
 			<div id="manual-nav">
 			<dl>
 			
 			
-			
-				
 				<dd><a href="#DecryptWithPrivateKey">func DecryptWithPrivateKey(ciphertext []byte, priv *rsa.PrivateKey) []byte</a></dd>
 			
 				
@@ -62,9 +86,9 @@
 				
 				<dd><a href="#GenerateKeyPair">func GenerateKeyPair() (*rsa.PrivateKey, *rsa.PublicKey)</a></dd>
 			
-				
 				<dd><a href="#PerformHandshake">func PerformHandshake(conn net.Conn, pub *rsa.PublicKey) *rsa.PublicKey</a></dd>
-			
+				
+								
 			
 			
 			</dl>
@@ -78,7 +102,7 @@
 			<span style="font-size:90%">
 			
 				<a href="/src/encryptionproperties.go">encryptionproperties.go</a>
-			
+				
 			</span>
 			</p>
 		
@@ -125,9 +149,9 @@
 		
 		
 		
+	<div id="links">
 			
-			
-			<h2 id="DecryptWithPrivateKey">func <a href="/src/encryptionproperties/encryptionproperties.go?s=952:1026#L30">DecryptWithPrivateKey</a>
+	<h2 id="DecryptWithPrivateKey">func <a href="/src/encryptionproperties/encryptionproperties.go?s=952:1026#L30">DecryptWithPrivateKey</a>
 				<a class="permalink" href="#DecryptWithPrivateKey">&#xb6;</a>
 			</h2>
 			<pre>func DecryptWithPrivateKey(ciphertext []<a href="/pkg/builtin/#byte">byte</a>, priv *<a href="/pkg/crypto/rsa/">rsa</a>.<a href="/pkg/crypto/rsa/#PrivateKey">PrivateKey</a>) []<a href="/pkg/builtin/#byte">byte</a></pre>
@@ -148,12 +172,10 @@ DecryptWithPrivateKey decrypts data with private key
 			<p>
 EncryptWithPublicKey encrypts data with public key
 </p>
-
 			
 			
 
 		
-			
 			
 			<h2 id="GenerateKeyPair">func <a href="/src/encryptionproperties/encryptionproperties.go?s=158:214#L2">GenerateKeyPair</a>
 				<a class="permalink" href="#GenerateKeyPair">&#xb6;</a>
@@ -162,7 +184,6 @@ EncryptWithPublicKey encrypts data with public key
 			<p>
 GenerateKeyPair - generates a new key pair
 </p>
-
 			
 			
 
@@ -181,8 +202,17 @@ PerformHandshake performs handshake with encryption done
 			
 
 		
-		
-	
+			
+			
+	</div>
+	</div>
+	<script type='text/javascript'>
+	document.ANALYSIS_DATA = ;
+	document.CALLGRAPH = ;
+	</script	>	
+				
+</body>
+</html>
 
 	
 
