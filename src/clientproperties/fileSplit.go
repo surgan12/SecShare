@@ -30,8 +30,8 @@ func GetFileParts(completefilename string, partSize uint64, filesize int64, i ui
 //GetSplitFile fuction to return the splitted parts
 func GetSplitFile(filename string, numberOfActiveClient int) []FilePartInfo {
 	fileDirectory := "../files"
-	file, err := os.Open(fileDirectory + "/image.jpg")
-	// file, err := os.Open(filename)
+	// file, err := os.Open(fileDirectory + "/image.jpg")
+	file, err := os.Open(fileDirectory + "/" + filename)
 
 	if err != nil {
 		fmt.Println(err)
@@ -51,7 +51,7 @@ func GetSplitFile(filename string, numberOfActiveClient int) []FilePartInfo {
 	var partSize = uint64(math.Ceil(float64(filesize) / float64(numberOfActiveClient-1)))
 
 	// contents of the whole file as a byte array
-	fileContents, err := ioutil.ReadFile(fileDirectory + "/image.jpg")
+	fileContents, err := ioutil.ReadFile(fileDirectory + "/" + filename)
 
 	// slice of size numberOfActiveClient-1, to store all parts' structs
 	allFileParts := make([]FilePartInfo, numberOfActiveClient-1)
