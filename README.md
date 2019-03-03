@@ -1,4 +1,6 @@
 ![Project Logo](files/SecShare.gif)
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
+
 
 # Concurrency-Decentralized-Network
 It is a decentralized network to share files among peer on the network
