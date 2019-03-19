@@ -59,5 +59,3 @@ import "github.com/andlabs/ui"
 * Jatin Chauhan
 * Happy Mahto
 
-## Acknowledgments
- A huge proportion of inspiritation behind this project was Dr Joshi's unconditional efforts in educating and expertise in his area
